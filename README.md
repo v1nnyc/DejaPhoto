@@ -8,6 +8,9 @@ HEY DON'T MESS WITH THE MASTER BRANCH, ONLY ALTER YOUR OWN BRANCHES
 git checkout (your branch name)
 
 # HOW TO PUSH TO YOUR OWN BRANCH:
+git add .
+
+git commit -m "comment"
 
 git push origin (your branch name)
 
