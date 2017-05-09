@@ -36,6 +36,7 @@ public class Picture {
     }
 
     public String timetoString(){
+        return "abc";
     }
 
     public boolean timeWithinBounds(double curr_time, int deviation){

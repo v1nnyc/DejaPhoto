@@ -11,9 +11,31 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
+    Button cameraRoll;
+    Button customAlbum;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.start_screen);
+        setContentView(R.layout.select_album);
+
+        final Button cameraRoll = (Button) findViewById(R.id.camera_roll_button);
+        final Button customAlbum = (Button) findViewById(R.id.custom_album_button);
+
+        cameraRoll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cameraRoll.setBackgroundResource(R.drawable.button_green);
+                customAlbum.setBackgroundResource(R.drawable.button_white);
+            }
+        });
+
+        customAlbum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cameraRoll.setBackgroundResource(R.drawable.button_white);
+                customAlbum.setBackgroundResource(R.drawable.button_green);
+            }
+        });
     }
 }
