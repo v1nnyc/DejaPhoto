@@ -15,6 +15,7 @@ git push origin (your branch name)
 1. go to the master branch
 2. click "new pull request"
 3. THE BASE SHOULD BE "MASTER" and you should be COMPARING TO YOUR BRANCH
+  
   base master ... compare vincent
 
 # IF YOU MESS SOMETHING UP REVERT
