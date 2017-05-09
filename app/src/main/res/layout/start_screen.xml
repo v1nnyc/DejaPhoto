@@ -44,17 +44,4 @@
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="296dp" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.84"
-        app:srcCompat="@mipmap/ic_launcher_round" />
-
-    <ImageView
-        android:id="@+id/hey"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/example_appwidget_preview" />
-
 </LinearLayout>
