@@ -6,13 +6,52 @@
     android:layout_height="match_parent"
     tools:context="comv1nnycdejaphoto.github.dejaphoto.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_weight="0.84"
+            android:ems="10"
+            android:gravity="center"
+            android:inputType="textPersonName"
+            android:text="DejaPhoto"
+            android:textSize="60dp" />
+
+        <Button
+            android:id="@+id/choose"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/release"
+            android:layout_gravity="center"
+            android:layout_marginTop="189dp"
+            android:layout_weight="0.62"
+            android:gravity="center_horizontal"
+            android:text="Choose Album"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="101dp" />
+
+        <Button
+            android:id="@+id/release"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:text="Release Photos"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="296dp" />
+
+
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
