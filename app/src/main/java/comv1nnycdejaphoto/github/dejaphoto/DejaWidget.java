@@ -1,9 +1,14 @@
 package comv1nnycdejaphoto.github.dejaphoto;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.widget.RemoteViews;
+
+import java.util.Random;
 
 /**
  * Implementation of App Widget functionality.
@@ -19,6 +24,7 @@ public class DejaWidget extends AppWidgetProvider {
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
+        Log.v("error","error");
     }
 
     @Override
