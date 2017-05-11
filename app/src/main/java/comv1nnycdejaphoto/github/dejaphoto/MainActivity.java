@@ -77,14 +77,14 @@ public class MainActivity extends AppCompatActivity {
         Button load_image = (Button) findViewById(R.id.choose);
         /*onClick Event*/
         load_image.setOnClickListener(new View.OnClickListener() {
-              @Override
-              public void onClick(View v) {
+                                          @Override
+                                          public void onClick(View v) {
                   /* Ask user to pick a image and save its uri, make the result become intent*/
-                  Intent intent =new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                              Intent intent =new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                   /* pass the intent with the option of choose button beign clicked*/
-                  startActivityForResult(intent, PICK_CHOOSE);
-              }
-        }
+                                              startActivityForResult(intent, PICK_CHOOSE);
+                                          }
+                                      }
         );
   /* Same thing but for the release button*/
         Button release_image = (Button) findViewById(R.id.release);
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(Intent.createChooser(intent,"Select Picture"), PICK_RELEASE);
             }
         });
-      
+
         wallpaper wp = new wallpaper();
         wp.changeWallpaper(R.drawable.hello);
     }
@@ -131,34 +131,32 @@ public class MainActivity extends AppCompatActivity {
         }
         /* Release button being clicked*/
         if(requestCode == PICK_RELEASE){
-            ClipData clipData = data.getClipData();
-            /* Handle the case that user only picks one picture*/
+            /*Only one picture is selected*/
             if(data.getData()!=null){
                 Uri uri = data.getData();
                 String path = uri.getPath();
-                Log.v("Single picture selected, Path :", uri.getPath());
+                Log.v("Single Picture", uri.getPath());
             }
-            /* Handle the case that user picks more than one picture*/
+            /*Multiple pictures were selected*/
             else if(data.getClipData() != null) {
-                    /*ClipData is like Clipboard but with data instead of text,
-                                    Copying the intent data to clipdata because the data is only one data */
-
-                    /*Make an array to store all the uri (Path of Images select by user)*/
+                /*ClipData is like Clipboard but with data instead of text,
+                                Copying the intent data to clipdata because the data is only one data */
+                ClipData mClipData = data.getClipData();
+                /*Make an array to store all the uri (Path of Images select by user)*/
                 ArrayList<Uri> uriList = new ArrayList<Uri>();
-                for (int i = 0; i < clipData.getItemCount(); ++i) {
-                    ClipData.Item item = clipData.getItemAt(i);
+                for (int i = 0; i < mClipData.getItemCount(); ++i) {
+                    ClipData.Item item = mClipData.getItemAt(i);
                     Uri uri = item.getUri();
                     uriList.add(uri);
                 }
 
-                    /*Log is for debuging purpose*/
-                    /*To get the real path, uriList.get(i).getPath(); will do the job*/
-                for(int i = 0;i<uriList.size();++i)
-                    Log.v("Multiple Picture Selected",i + " "+uriList.get(i).getPath());
+                /*Log is for debuging purpose*/
+                /*To get the real path, uriList.get(i).getPath(); will do the job*/
+                for (int i = 0; i < uriList.size(); ++i)
+                    Log.v("Multiple picture", i + " " + uriList.get(i).getPath());
 
                 //TODO Realse the path from the queue
             }
-
 
         }
     }
