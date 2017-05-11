@@ -29,6 +29,8 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
+    Button cameraRoll;
+    Button customAlbum;
     private static Context sContext;
 
     //constructor
@@ -39,6 +41,27 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         sContext = getApplicationContext();
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.select_album);
+
+        final Button cameraRoll = (Button) findViewById(R.id.camera_roll_button);
+        final Button customAlbum = (Button) findViewById(R.id.custom_album_button);
+
+        cameraRoll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cameraRoll.setBackgroundResource(R.drawable.button_green);
+                customAlbum.setBackgroundResource(R.drawable.button_white);
+            }
+        });
+
+        customAlbum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cameraRoll.setBackgroundResource(R.drawable.button_white);
+                customAlbum.setBackgroundResource(R.drawable.button_green);
+            }
+        });
+
         setContentView(R.layout.start_screen);
 
         ActivityCompat.requestPermissions(MainActivity.this,
@@ -105,5 +128,6 @@ public class MainActivity extends AppCompatActivity {
             }
             // add other cases for more permissions
         }
+>>>>>>> 18cfe83edde3f5278a1495aba18b5e23b53e2933
     }
 }
