@@ -12,13 +12,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/left"
         android:text="left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="right" />
@@ -29,14 +29,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/karma"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/button2"
         android:text="karma" />
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/release"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="X" />
