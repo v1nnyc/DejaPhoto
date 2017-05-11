@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.IBinder;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
@@ -26,6 +27,8 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+
+import static android.os.Environment.getExternalStoragePublicDirectory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,13 +51,17 @@ public class MainActivity extends AppCompatActivity {
         load_image.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View v) {
+                  /*The intent will ask to pick something, and it should be type of image that has uri*/
                   Intent intent =new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                  /*Since the action is pick, we need a result from the action */
                   startActivityForResult(intent, 1);
-
+                  /*This will give the path of system album*/
+                  String path = getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath();
+                  /*For debug*/
+                  Log.v("DCIM",path);
               }
         }
         );
-
 
     }
 
@@ -67,24 +74,24 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(data == null)
+            return;
+        /* Uri is a type of path ,extract the data from intent that was loaded with image*/
         Uri uri = data.getData();
         try {
+            /*Bitmap is a type of image, the following line loads the file with the uri into a bitmap(picture)*/
             Bitmap bitmap= MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+            /* This is same as the wallpapaer class, but I have to set the wallpaper with a bitmap, so I cannot use wallpapaer
+                        class. CAN BE SUBSTITUTE LATER  */
             WallpaperManager wallpaperManager=WallpaperManager.getInstance(this);
-            Log.v("in",bitmap.toString());
             wallpaperManager.setBitmap(bitmap);
         } catch (IOException e) {
-            Log.v("ERROR","ERROR");
             e.printStackTrace();
         }
-//        WallpaperManager wallpaperManager= WallpaperManager.getInstance(this);
-//        try {
-//            wallpaperManager.setBitmap(bitmap);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
     }
+    /*Get from piazza, original from codepath :
+         https://guides.codepath.com/android/Managing-Runtime-Permissions-with-PermissionsDispatcher
+       */
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {

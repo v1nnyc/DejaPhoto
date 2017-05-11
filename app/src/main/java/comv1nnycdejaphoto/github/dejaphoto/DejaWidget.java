@@ -24,7 +24,6 @@ public class DejaWidget extends AppWidgetProvider {
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
-        Log.v("error","error");
     }
 
     @Override
