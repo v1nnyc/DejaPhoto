@@ -31,6 +31,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    Button cameraRoll;
+    Button customAlbum;
     private static Context sContext;
     /* This will tell the different between choose or release, 1 is for choose, 0 for release*/
     static final int PICK_CHOOSE = 1 ;
@@ -44,6 +46,27 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         sContext = getApplicationContext();
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.select_album);
+
+        /*final Button cameraRoll = (Button) findViewById(R.id.camera_roll_button);
+        final Button customAlbum = (Button) findViewById(R.id.custom_album_button);
+
+        cameraRoll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cameraRoll.setBackgroundResource(R.drawable.button_green);
+                customAlbum.setBackgroundResource(R.drawable.button_white);
+            }
+        });
+
+        customAlbum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cameraRoll.setBackgroundResource(R.drawable.button_white);
+                customAlbum.setBackgroundResource(R.drawable.button_green);
+            }
+        });*/
+
         setContentView(R.layout.start_screen);
 
         /*Ask the permission to read the images*/
@@ -63,8 +86,7 @@ public class MainActivity extends AppCompatActivity {
               }
         }
         );
-
-        /* Same thing but for the release button*/
+  /* Same thing but for the release button*/
         Button release_image = (Button) findViewById(R.id.release);
         release_image.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -76,8 +98,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(Intent.createChooser(intent,"Select Picture"), PICK_RELEASE);
             }
         });
-
-
+      
+        wallpaper wp = new wallpaper();
+        wp.changeWallpaper(R.drawable.hello);
     }
 
     /*required for other classes to be able to access MainActivity*/

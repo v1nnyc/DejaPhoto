@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginTop="16dp"
     android:layout_weight="1"
-    android:gravity="center_vertical"
-    android:orientation="vertical">
+    android:gravity="center_vertical">
 
     <TextView
         android:id="@+id/title"
@@ -26,31 +23,35 @@
         android:textSize="60dp"
         android:background="#0099ff" />
 
-    <ImageView
-        android:id="@+id/image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-    <Button
-        android:id="@+id/choose"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Select which album to release photos from"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:layout_marginTop="20dp"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_gravity="center"
-        android:layout_weight="0.62"
-        android:gravity="center_horizontal"
-        android:text="Choose Album"
-        android:layout_marginTop="50dp"
-        android:width="200dp"
-        android:height="40dp"/>
+        android:layout_marginTop="20dp">
 
     <Button
-        android:id="@+id/release"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_gravity="center_horizontal"
-        android:text="Release Photos"
-        android:layout_marginTop="50dp"
-        android:width="200dp"
-        android:height="40dp"/>
+        android:id="@+id/release_camera"
+        android:text="Camera Roll"/>
 
-</LinearLayout>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/release_custom"
+            android:text="Custom Album"/>
+
+    </LinearLayout>
+
+
+
+    </LinearLayout>
