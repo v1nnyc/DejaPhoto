@@ -2,6 +2,7 @@ package comv1nnycdejaphoto.github.dejaphoto;
 
 import android.Manifest;
 import android.app.WallpaperManager;
+import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -67,8 +69,11 @@ public class MainActivity extends AppCompatActivity {
         release_image.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                Intent intent =new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, PICK_RELEASE);
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent,"Select Picture"), PICK_RELEASE);
             }
         });
 
@@ -103,14 +108,24 @@ public class MainActivity extends AppCompatActivity {
         }
         /* Release button being clicked*/
         if(requestCode == PICK_RELEASE){
-            Uri uri = data.getData();
-            /*pathOfFifle will give you the path of the file*/
-            String pathOfFile = uri.getPath();
+            /*ClipData is like Clipboard but with data instead of text,
+                            Copying the intent data to clipdata because the data is only one data */
+            ClipData mClipData = data.getClipData();
+            /*Make an array to store all the uri (Path of Images select by user)*/
+            ArrayList<Uri> uriList = new ArrayList<Uri>();
+            for (int i = 0; i < mClipData.getItemCount(); ++i) {
+                ClipData.Item item = mClipData.getItemAt(i);
+                Uri uri = item.getUri();
+                uriList.add(uri);
+            }
+
+            /*Log is for debuging purpose*/
+            /*To get the real path, uriList.get(i).getPath(); will do the job*/
+            for(int i = 0;i<uriList.size();++i)
+                Log.v("PATH",i + " "+uriList.get(i).getPath());
 
             //TODO Realse the path from the queue
 
-            /*Log is for debuging purpose*/
-            Log.v("Path", uri.getPath());
         }
     }
 
