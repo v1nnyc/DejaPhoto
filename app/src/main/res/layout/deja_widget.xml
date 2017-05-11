@@ -32,7 +32,7 @@
             <!--android:layout_height="match_parent" />-->
     <!--</TableLayout>-->
 
-    <Button
+    <TextView
         android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -60,11 +60,11 @@
         android:text="Button" />
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/release"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/button4"
         android:layout_toEndOf="@+id/button2"
         android:layout_toRightOf="@+id/button2"
-        android:text="Button" />
+        android:text="Real" />
 </RelativeLayout>
