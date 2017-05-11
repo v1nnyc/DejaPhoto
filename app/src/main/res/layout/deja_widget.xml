@@ -32,39 +32,39 @@
             <!--android:layout_height="match_parent" />-->
     <!--</TableLayout>-->
 
-    <TextView
-        android:id="@+id/button2"
+    <Button
+        android:id="@+id/left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:text="Left"
         android:layout_alignTop="@+id/tableLayout"
         android:layout_alignLeft="@+id/tableLayout"
         android:layout_alignStart="@+id/tableLayout" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/button2"
-        android:layout_toEndOf="@+id/button2"
-        android:layout_toRightOf="@+id/button2"
-        android:text="Button" />
+        android:layout_alignBottom="@+id/left"
+        android:layout_toEndOf="@+id/left"
+        android:layout_toRightOf="@+id/left"
+        android:text="Rihgt" />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/karma"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/tableLayout"
         android:layout_alignStart="@+id/tableLayout"
-        android:layout_below="@+id/button2"
-        android:text="Button" />
+        android:layout_below="@+id/left"
+        android:text="Karma" />
 
     <Button
         android:id="@+id/release"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/button4"
-        android:layout_toEndOf="@+id/button2"
-        android:layout_toRightOf="@+id/button2"
+        android:layout_alignBottom="@+id/karma"
+        android:layout_toEndOf="@+id/karma"
+        android:layout_toRightOf="@+id/karma"
         android:text="Real" />
 </RelativeLayout>

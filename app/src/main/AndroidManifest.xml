@@ -41,13 +41,6 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".Realease"
-            android:enabled="true"
-            android:exported="true" >
-
-
-        </service>
     </application>
 
 </manifest>

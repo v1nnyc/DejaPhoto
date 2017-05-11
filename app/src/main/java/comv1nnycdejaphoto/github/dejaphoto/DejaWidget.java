@@ -17,20 +17,25 @@ import java.util.Random;
  * Implementation of App Widget functionality.
  */
 public class DejaWidget extends AppWidgetProvider {
-    private static final String MyOnClick = "myOnClickTag";
+    /*This 4 string will indicate which button being clicked*/
+    private static final String Release = "release";
+    private static final String Karma = "Karma";
+    private static final String Left = "left";
+    private static final String Right = "right";
 
-    protected PendingIntent getPendingSelfIntent(Context context, String action) {
-        Intent intent = new Intent(context, getClass());
-        intent.setAction(action);
-        return PendingIntent.getBroadcast(context, 0, intent, 0);
-    }
     void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                          int appWidgetId) {
-
+        /*Get the private Strings above*/
         CharSequence widgetText = context.getString(R.string.appwidget_text);
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.deja_widget);
-        views.setOnClickPendingIntent(R.id.release, getPendingSelfIntent(context, MyOnClick));
+
+        /*The onClick event, first argument will be the button id, second one will be the string
+                   Assigning a String to a pending Intent, the string works like a case switch later on*/
+        views.setOnClickPendingIntent(R.id.release, getPendingIntent(context, Release));
+        views.setOnClickPendingIntent(R.id.karma, getPendingIntent(context, Karma));
+        views.setOnClickPendingIntent(R.id.left, getPendingIntent(context, Left));
+        views.setOnClickPendingIntent(R.id.right, getPendingIntent(context, Right));
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -39,19 +44,8 @@ public class DejaWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
-
         for (int appWidgetId : appWidgetIds) {
-
-            Log.v("Debug","FIRST TIME\n");
-//            RemoteViews remoteViews =  new RemoteViews(context.getPackageName(), R.layout.deja_widget);
-//
-//            Intent intent = new Intent(context,MainActivity.class);
-//
-//            PendingIntent pendingIntent = PendingIntent.getActivity(context,0,intent,0);
-//            remoteViews.setOnClickPendingIntent(R.id.release,pendingIntent);
             updateAppWidget(context, appWidgetManager, appWidgetId);
-
-
 
         }
     }
@@ -68,16 +62,38 @@ public class DejaWidget extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        /*This line will actually call onUpdate(), to make sure everything is okay first*/
         super.onReceive(context, intent);
-        if (MyOnClick.equals(intent.getAction())) {
-            //your onClick action is here
-            //display in short period of time
-            Toast.makeText(context, "msg msgasdasd", Toast.LENGTH_SHORT).show();
+
+        /*The case switch statements. It is matching the string being saved in the pending Intent*/
+        /*The toast text just help for debug, make the button being clicked, will be deleted later*/
+        if (Release.equals(intent.getAction())) {
+            Toast.makeText(context, "Release", Toast.LENGTH_SHORT).show();
             wallpaper wp = new wallpaper();
             wp.changeWallpaper(R.drawable.hello);
-
-
         }
+        if (Karma.equals(intent.getAction())) {
+            Toast.makeText(context, "Karma", Toast.LENGTH_SHORT).show();
+            wallpaper wp = new wallpaper();
+            wp.changeWallpaper(R.drawable.hey);
+        }
+        if (Left.equals(intent.getAction())) {
+            Toast.makeText(context, "Left", Toast.LENGTH_SHORT).show();
+            wallpaper wp = new wallpaper();
+            wp.changeWallpaper(R.drawable.hi);
+        }
+        if (Right.equals(intent.getAction())) {
+            Toast.makeText(context, "Right", Toast.LENGTH_SHORT).show();
+            wallpaper wp = new wallpaper();
+            wp.changeWallpaper(R.drawable.hi);
+        }
+    }
+
+    /* This method will put a string into a pending Intent */
+    protected PendingIntent getPendingIntent(Context context, String action) {
+        Intent intent = new Intent(context, getClass());
+        intent.setAction(action);
+        return PendingIntent.getBroadcast(context, 0, intent, 0);
     }
 }
 
