@@ -131,23 +131,34 @@ public class MainActivity extends AppCompatActivity {
         }
         /* Release button being clicked*/
         if(requestCode == PICK_RELEASE){
-            /*ClipData is like Clipboard but with data instead of text,
-                            Copying the intent data to clipdata because the data is only one data */
-            ClipData mClipData = data.getClipData();
-            /*Make an array to store all the uri (Path of Images select by user)*/
-            ArrayList<Uri> uriList = new ArrayList<Uri>();
-            for (int i = 0; i < mClipData.getItemCount(); ++i) {
-                ClipData.Item item = mClipData.getItemAt(i);
-                Uri uri = item.getUri();
-                uriList.add(uri);
+            ClipData clipData = data.getClipData();
+            /* Handle the case that user only picks one picture*/
+            if(data.getData()!=null){
+                Uri uri = data.getData();
+                String path = uri.getPath();
+                Log.v("Single picture selected, Path :", uri.getPath());
+            }
+            /* Handle the case that user picks more than one picture*/
+            else if(data.getClipData() != null) {
+                    /*ClipData is like Clipboard but with data instead of text,
+                                    Copying the intent data to clipdata because the data is only one data */
+
+                    /*Make an array to store all the uri (Path of Images select by user)*/
+                ArrayList<Uri> uriList = new ArrayList<Uri>();
+                for (int i = 0; i < clipData.getItemCount(); ++i) {
+                    ClipData.Item item = clipData.getItemAt(i);
+                    Uri uri = item.getUri();
+                    uriList.add(uri);
+                }
+
+                    /*Log is for debuging purpose*/
+                    /*To get the real path, uriList.get(i).getPath(); will do the job*/
+                for(int i = 0;i<uriList.size();++i)
+                    Log.v("Multiple Picture Selected",i + " "+uriList.get(i).getPath());
+
+                //TODO Realse the path from the queue
             }
 
-            /*Log is for debuging purpose*/
-            /*To get the real path, uriList.get(i).getPath(); will do the job*/
-            for(int i = 0;i<uriList.size();++i)
-                Log.v("PATH",i + " "+uriList.get(i).getPath());
-
-            //TODO Realse the path from the queue
 
         }
     }
