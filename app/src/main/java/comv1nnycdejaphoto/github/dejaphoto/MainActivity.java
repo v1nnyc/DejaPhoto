@@ -78,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
         }
         );
 
+        wallpaper wp = new wallpaper();
+        wp.changeWallpaper(R.drawable.hello);
 
     }
 
