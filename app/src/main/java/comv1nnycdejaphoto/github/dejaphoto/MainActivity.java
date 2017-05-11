@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_album);
 
-        final Button cameraRoll = (Button) findViewById(R.id.camera_roll_button);
+        /*final Button cameraRoll = (Button) findViewById(R.id.camera_roll_button);
         final Button customAlbum = (Button) findViewById(R.id.custom_album_button);
 
         cameraRoll.setOnClickListener(new View.OnClickListener() {
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
                 cameraRoll.setBackgroundResource(R.drawable.button_white);
                 customAlbum.setBackgroundResource(R.drawable.button_green);
             }
-        });
+        });*/
 
         setContentView(R.layout.start_screen);
 
@@ -128,6 +128,5 @@ public class MainActivity extends AppCompatActivity {
             }
             // add other cases for more permissions
         }
->>>>>>> 18cfe83edde3f5278a1495aba18b5e23b53e2933
     }
 }
