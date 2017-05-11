@@ -12,21 +12,29 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/left"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/layout_button"
-            android:text="left"
-            android:textSize="15dp" />
+        // create swipe left button
+        <ImageButton
+            android:id="@+id/swipeleft"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/leftbutton"
+            android:elevation="8dp" />
 
-        <Button
-            android:id="@+id/right"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/layout_button"
-            android:text="right"
-            android:textSize="15dp" />
+        // create swipe right button
+        <ImageButton
+            android:id="@+id/swiperight"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/rightbutton" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -34,24 +42,28 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+        // create karma button
         <ImageButton
             android:id="@+id/karma"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="@dimen/button_height"
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:layout_marginTop="10dp"
-            android:background="@drawable/karma"
+            android:background="@drawable/karmabutton"
             android:elevation="8dp" />
 
+        // create release button
         <ImageButton
             android:id="@+id/release"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="@dimen/button_height"
             android:layout_marginBottom="10dp"
-            android:layout_marginLeft="25dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:layout_marginTop="10dp"
-            android:background="@drawable/no" />
+            android:background="@drawable/releasebutton" />
 
     </LinearLayout>
 
