@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="180dp"
+        android:layout_marginLeft="10dp"
+        android:text="Choose the display rate"
+        android:textColor="@android:color/black"
+        android:textSize="24sp"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:max="60"/>
+
+    <TextView
+        android:id="@+id/rateView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="150dp"
+        android:layout_marginLeft="175dp"
+        android:layout_below="@+id/seekBar"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Rate"
+        android:textColor="@android:color/black"
+        android:textSize="15sp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="200dp"
+            android:layout_marginLeft="30dp"
+            android:text="5 sec"
+            android:textColor="@android:color/black"
+            android:textSize="10sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="25dp"
+            android:layout_marginLeft="330dp"
+            android:text="1 min"
+            android:textColor="@android:color/black"
+            android:textSize="10sp"/>
+    </RelativeLayout>
+
+
+
+</LinearLayout>
+
