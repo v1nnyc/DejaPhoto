@@ -101,6 +101,17 @@ public class MainActivity extends AppCompatActivity {
       
         wallpaper wp = new wallpaper();
         wp.changeWallpaper(R.drawable.hello);
+        
+        /* link to the setting page for users to set display rate */
+        Button setting = (Button) findViewById(R.id.setting);
+        setting.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                setContentView(R.layout.rate);
+                Intent intent = new Intent(getBaseContext(),RateActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     /*required for other classes to be able to access MainActivity*/
