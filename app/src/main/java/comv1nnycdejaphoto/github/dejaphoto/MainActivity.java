@@ -105,9 +105,10 @@ public class MainActivity extends AppCompatActivity {
         /* link to the setting page for users to set display rate */
         Button setting = (Button) findViewById(R.id.setting);
         setting.setOnClickListener(new View.OnClickListener(){
+            /* onClick Event */
             @Override
             public void onClick(View view){
-                setContentView(R.layout.rate);
+                /* setContentView(R.layout.rate); */
                 Intent intent = new Intent(getBaseContext(),RateActivity.class);
                 startActivity(intent);
             }
