@@ -1,4 +1,4 @@
-package com.android.dejaphoto;
+package comv1nnycdejaphoto.github.dejaphoto;
 
 import android.widget.ImageView;
 

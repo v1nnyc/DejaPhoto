@@ -19,6 +19,9 @@ import java.io.File;
 import java.util.List;
 import java.util.Vector;
 
+import static java.lang.Integer.MAX_VALUE;
+import static java.lang.Integer.MIN_VALUE;
+
 
 /**
  * Created by Ken on 5/9/2017.
@@ -32,6 +35,7 @@ public class Default_Gallery{
 
     private Vector<Picture> pictures = new Vector<Picture>();
     SharedPreferences load;
+    private int num_photos = 0;
 
 
     public void Default_Gallery(){
@@ -42,7 +46,8 @@ public class Default_Gallery{
     }
 
     public void Load_All(Context context){
-       /*
+
+       /* Future implementation of load only on first call to app???
        load = context.getSharedPreferences("first", 0);
        SharedPreferences.Editor editor = load.edit();
        if( load.getBoolean("first", false) == false){
@@ -75,43 +80,60 @@ public class Default_Gallery{
 
             int i = 0;  // iteration/number of photos
             do{
-                // finds specific location, retrieves PATH of image, and stores in string
+                // finds specific location of indicated info (DATA or PATH in this case)
+                // for the current photo, to retrieve as a string
                 int data_index = finder.getColumnIndex(MediaStore.Images.Media.DATA);
+
+                // gets the String data indicated at location by data_index
                 String path = finder.getString(data_index);
+
+                // default value for time if no time in photo (ie negative time)
+                double time = MIN_VALUE;
+
+                // default gps and location if no gps in photo
+                double latitude = MAX_VALUE;
+                double longitude = MAX_VALUE;
+                String location = "No Location";
 
                 // gets Date Taken data field and checks if it exists
                 data_index = finder.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN);
-                if(data_index == -1 || finder.getString(data_index) == null) {
-                    continue;
+                if(data_index != -1 && finder.getString(data_index) != null) {
+
+                    // if date taken exists, store date as a double
+                    String date = finder.getString(data_index);
+                    time = Double.parseDouble(date);
                 }
 
-                // if date taken exists, store date as a double
-                String date = finder.getString(data_index);
-                double time = Double.parseDouble(date);
+
 
                 // gets the Latitude GPS data field and checks if it exists
                 data_index = finder.getColumnIndex(MediaStore.Images.Media.LATITUDE);
-                if(data_index == -1 || finder.getString(data_index) == null) {
-                    continue;
+                if(data_index != -1 && finder.getString(data_index) != null) {
+
+                    // if latitude exists, store data of gps as double
+                    latitude = Double.parseDouble(finder.getString(data_index));
                 }
 
-                // if latitude exists, store data of gps as double
-                double latitude = Double.parseDouble(finder.getString(data_index));
+
 
                 // gets the Longitude GPS data field and checks if it exists
                 data_index = finder.getColumnIndex(MediaStore.Images.Media.LONGITUDE);
-                if(data_index == -1 || finder.getString(data_index) == null){
-                    continue;
+                if(data_index != -1 && finder.getString(data_index) != null){
+                    // if longitude exists, store gps as double
+                    longitude = Double.parseDouble(finder.getString(data_index));
                 }
-
-                // if longitude exists, store gps as double
-                double longitude = Double.parseDouble(finder.getString(data_index));
-
                 // finds path again
                 data_index = finder.getColumnIndex(MediaStore.Images.Media.DATA);
 
-                // gets the location name depending on the gps
-                String location = get_Location(context, latitude, longitude, decoder);
+
+
+                if(longitude != MAX_VALUE && latitude != MAX_VALUE){
+                    // gets the location name depending on the gps
+                    location = get_Location(context, latitude, longitude, decoder);
+                }
+
+
+
 
                 /**
                 *** Part that possibily needs changing since Image view might be too big of an
@@ -128,7 +150,7 @@ public class Default_Gallery{
                 i++;
             }
             while(finder.moveToNext());
-
+            num_photos = i;
         }
     }
 
@@ -144,6 +166,10 @@ public class Default_Gallery{
 
     }
 
+    public int get_photos(){
+        return num_photos;
+    }
+
     public String get_Location(Context context, double latitude, double longitude, Geocoder decoder){
         decoder = new Geocoder(context);  // using the geocoder
         List<Address> address = null;
@@ -152,11 +178,14 @@ public class Default_Gallery{
 
         }
         catch(Exception e) {
-            // ignore (bad code) but to fix case of adjusting all methods to throw exception
+            // ignore (bad code style) but used to fix case of adjusting all methods to throw exception
         }
+
         // using the address data type retrieved from gps
         // check various location types and outputs the most suitable name first
         Address add = address.get(0);
+
+        // names are made sure that they aren't entirely just numbers
         if(add.getFeatureName() != null && !add.getFeatureName().matches("[0-9]+")) {
             return add.getFeatureName();
         }
