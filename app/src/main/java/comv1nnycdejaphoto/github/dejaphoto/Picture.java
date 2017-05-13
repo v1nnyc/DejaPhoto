@@ -1,5 +1,6 @@
-package com.android.dejaphoto;
+package comv1nnycdejaphoto.github.dejaphoto;
 
+import android.net.Uri;
 import android.widget.ImageView;
 
 /**
@@ -8,10 +9,11 @@ import android.widget.ImageView;
 
 public class Picture {
 
-    private ImageView image;
+    private String path;
     private double timeTaken;
     private String location;
     private boolean karma;
+    private boolean display;
 
     /**
      * Constructor for a Picture
@@ -20,11 +22,12 @@ public class Picture {
      * loc - location where picture was taken
      * initialize karma to 0
      */
-    public Picture(ImageView pic, int time, String loc) {
-        image = pic;
+    public Picture(String pic, int time, String loc) {
+        path = pic;
         timeTaken = time;
         location = loc;
         karma = false;
+        display = true;
     }
 
     /**
@@ -34,6 +37,8 @@ public class Picture {
     public void addKarma(){
         karma = true;
     }
+
+    public void hide(){ display = false;}
 
     public String timetoString(){
         return "abc";
@@ -48,8 +53,8 @@ public class Picture {
     }
 
     //getters
-    public ImageView getImage(){
-        return image;
+    public String getImage(){
+        return path;
     }
     public double gettimeTaken(){
         return timeTaken;
@@ -60,5 +65,6 @@ public class Picture {
     public boolean getKarma(){
         return karma;
     }
+    public boolean getDisplay(){return display;}
 
 }

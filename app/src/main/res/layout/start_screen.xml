@@ -63,5 +63,4 @@
         android:width="200dp"
         android:height="40dp"
         android:text="Setting" />
-
 </LinearLayout>

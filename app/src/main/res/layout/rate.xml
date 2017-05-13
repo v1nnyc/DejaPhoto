@@ -58,8 +58,5 @@
             android:textColor="@android:color/black"
             android:textSize="10sp"/>
     </RelativeLayout>
-
-
-
 </LinearLayout>
 
