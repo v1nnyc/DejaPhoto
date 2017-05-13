@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        sharedPreferences = getSharedPreferences("DejaPhoto",MODE_PRIVATE);
         /*Check is the sharedPreferences exists*/
         initialize(SKIP);
         /*Read the data from the shared preferences*/
@@ -113,6 +112,17 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent,"Select Picture"), PICK_RELEASE);
+            }
+        });
+        /* link to the setting page for users to set display rate */
+        Button setting = (Button) findViewById(R.id.setting);
+        setting.setOnClickListener(new View.OnClickListener(){
+            /* onClick Event */
+            @Override
+            public void onClick(View view){
+                /* setContentView(R.layout.rate); */
+                Intent intent = new Intent(getBaseContext(),RateActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -223,6 +233,7 @@ public class MainActivity extends AppCompatActivity {
     }
     /*This method will check the preferences value exist or not, if not, initialize them*/
     public void initialize(int Must_Update){
+        sharedPreferences = getSharedPreferences("DejaPhoto",MODE_PRIVATE);
         /*Create a editor to edit*/
         SharedPreferences.Editor editor = sharedPreferences.edit();
         /*Check for gallery*/
@@ -254,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
         }
         /*Check the rate that how long to change to another picture*/
         if(!sharedPreferences.contains("Rate")){
-            int rate = 5000;
+            int rate = 0;
             editor.putInt("Rate", rate);
             editor.apply();
         }
