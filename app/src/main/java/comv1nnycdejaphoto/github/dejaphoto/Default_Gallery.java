@@ -38,11 +38,6 @@ public class Default_Gallery{
     private Vector<Picture> pictures = new Vector<Picture>();
     private int num_photos = 0;
 
-
-    public int getSize()
-    {
-        return num_photos;
-    }
     public void Default_Gallery(){
     }
 
