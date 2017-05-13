@@ -125,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
 
     /*required for other classes to be able to access MainActivity*/

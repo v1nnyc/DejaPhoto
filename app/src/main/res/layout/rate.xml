@@ -15,25 +15,25 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-        <SeekBar
-            android:id="@+id/seekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:max="60"/>
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:max="60"/>
 
-        <TextView
-            android:id="@+id/rateView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="150dp"
-            android:layout_marginLeft="175dp"
-            android:layout_below="@+id/seekBar"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@android:color/black"
-            android:textSize="15sp"/>
+    <TextView
+        android:id="@+id/rateView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="150dp"
+        android:layout_marginLeft="175dp"
+        android:layout_below="@+id/seekBar"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/black"
+        android:textSize="15sp"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -58,7 +58,5 @@
             android:textColor="@android:color/black"
             android:textSize="10sp"/>
     </RelativeLayout>
-
-
-
 </LinearLayout>
+
