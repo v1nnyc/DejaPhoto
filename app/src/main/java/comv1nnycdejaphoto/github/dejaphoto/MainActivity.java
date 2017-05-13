@@ -146,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
             /*Get the data as type of Uri*/
                 Uri uri = data.getData();
                 wallpaper wp = new wallpaper();
-                wp.changeWallpaper(uri);
         }
         /* Release button being clicked*/
         if(requestCode == PICK_RELEASE){

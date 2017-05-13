@@ -118,7 +118,7 @@ public class DejaWidget extends AppWidgetProvider {
                     File file = new File(picture.getImage());
                     Uri uriFromGallery = Uri.fromFile(file);
                     /*Make it becomes the wallpaper*/
-                    wp.changeWallpaper(uriFromGallery);
+                    wp.changeWallpaper(uriFromGallery, picture.getLocatio());
                     /*Update the index*/
                     editor.putInt("Index", index - 1);
                     changed = true;
@@ -140,7 +140,7 @@ public class DejaWidget extends AppWidgetProvider {
                     Picture picture = defaultGallery.getPictures().elementAt(index + 1);
                     File file = new File(picture.getImage());
                     Uri uriFromGallery = Uri.fromFile(file);
-                    wp.changeWallpaper(uriFromGallery);
+                    wp.changeWallpaper(uriFromGallery, picture.getLocatio());
                     editor.putInt("Index", index + 1);
                     changed = true;
                     break;
