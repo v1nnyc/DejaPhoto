@@ -18,7 +18,9 @@ import android.widget.ImageView;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.Vector;
 
 import comv1nnycdejaphoto.github.dejaphoto.Picture;
@@ -236,12 +238,37 @@ public class Default_Gallery{
     }
     public void readPreferences(){
         /* Read the shared preferences*/
-        sharedPreferences = MainActivity.getContext().getSharedPreferences("DejaPhoto",MODE_PRIVATE);
+        sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto",MODE_PRIVATE);
         /*gson is a way to put the object into shared preferences*/
         Gson gson = new Gson();
         String json = sharedPreferences.getString("Gallery","");
         defaultGallery = gson.fromJson(json, Default_Gallery.class);
         index = sharedPreferences.getInt("Index",0);
+    }
+
+    public void add(Picture picture){
+        readPreferences();
+        Random rand = new Random();
+        /*Add fewer duplicates when the gallery size is small, add more if it is larger*/
+        for(int i = 0; i < defaultGallery.get_photos()/5 || i < 3; ++i ) {
+            int randIndex = rand.nextInt(defaultGallery.get_photos());
+            /*Add the picture to the end*/
+            defaultGallery.pictures.add(picture);
+            if(picture.getKarma())
+                defaultGallery.pictures.elementAt(defaultGallery.get_photos()).addKarma();
+            /*Put that picture in a random spot*/
+            Collections.swap(defaultGallery.pictures, defaultGallery.get_photos(), randIndex);
+            defaultGallery.num_photos++;
+            save();
+        }
+    }
+
+    public void save(){
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(defaultGallery);
+        editor.putString("Gallery", json);
+        editor.apply();
     }
 
 }
