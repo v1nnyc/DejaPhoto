@@ -20,8 +20,10 @@ public class BackgroundService extends Service {
     private final IBinder iBinder = new LocalService();
     Default_Gallery defaultGallery;
     SharedPreferences sharedPreferences;
+
     /*Index of the image that is displaying.*/
     int index;
+
     /*How fast would the image change automatically*/
     int rate;
 
@@ -32,11 +34,13 @@ public class BackgroundService extends Service {
     public IBinder onBind(Intent intent) {
         return iBinder;
     }
+
     class LocalService extends Binder{
         public BackgroundService getService(){
             return BackgroundService.this;
         }
     }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         final Handler handler = new Handler();
@@ -45,6 +49,7 @@ public class BackgroundService extends Service {
             public void run() {
                 /* Read the shared preferences*/
                 readPreferences();
+
                 /*Load the next picture by calling the gallery's method*/
                 defaultGallery.next();
                 if (true) {
@@ -52,21 +57,25 @@ public class BackgroundService extends Service {
                 }
             }
         };
+
         /*loop the task by delay it for rate*5000 millisecond*/
         handler.postDelayed(task, rate*5000);
+
         return START_STICKY;
     }
 
     public void readPreferences() {
         sharedPreferences = MainActivity.getContext().getSharedPreferences("DejaPhoto",MODE_PRIVATE);
+
         /*gson is a way to put the object into shared preferences*/
         Gson gson = new Gson();
         String json = sharedPreferences.getString("Gallery", "");
         defaultGallery = gson.fromJson(json, Default_Gallery.class);
+
         /*Index for last displayed image's index*/
         index = sharedPreferences.getInt("Index", 0);
+
         /*An User pick speed to change the image*/
         rate = sharedPreferences.getInt("Rate", 1);
-
     }
 }
