@@ -43,6 +43,7 @@ public class BackgroundService extends Service {
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
         sContext = getApplicationContext();
         final Handler handler = new Handler();
         final Runnable task = new Runnable() {
@@ -60,20 +61,31 @@ public class BackgroundService extends Service {
         };
         /*loop the task by delay it for rate*5000 millisecond*/
         handler.postDelayed(task, rate*5000);
-
         return START_STICKY;
     }
 
     public void readPreferences() {
-        sharedPreferences = this.getApplicationContext().getSharedPreferences("DejaPhoto", MODE_PRIVATE);
+        sharedPreferences = getContext().getSharedPreferences("DejaPhoto", MODE_PRIVATE);
+        //sharedPreferences.edit().clear().apply();
         /*gson is a way to put the object into shared preferences*/
         Gson gson = new Gson();
         String json = sharedPreferences.getString("Gallery", "");
         defaultGallery = gson.fromJson(json, Default_Gallery.class);
+        if(defaultGallery== null) {
+            defaultGallery=new Default_Gallery();
+            defaultGallery.Load_All(getContext());
+            json = gson.toJson(defaultGallery);
+            sharedPreferences.edit().putString("Gallery", json).apply();
+            /*Save the value into shared preferences*/
+        }
         /*Index for last displayed image's index*/
         index = sharedPreferences.getInt("Index", 0);
         /*An User pick speed to change the image*/
         rate = sharedPreferences.getInt("Rate", 1);
+        Log.v("Total.number",Integer.toString(defaultGallery.get_photos()));
+        for(int i = 0; i<defaultGallery.get_photos();++i)
+            if(defaultGallery.getPictures().elementAt(i).getKarma())
+                Log.v(Integer.toString(i),"Karmared");
         }
 
 
