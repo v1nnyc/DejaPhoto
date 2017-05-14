@@ -103,31 +103,31 @@ public class DejaWidget extends AppWidgetProvider {
         }
         if (Left.equals(intent.getAction())) {
             if(defaultGallery.get_photos() != 0 ) {
-            /* To indicate the wallpaper is changed*/
+                /* To indicate the wallpaper is changed*/
                 Boolean changed = false;
-            /* To save the current displaying index*/
+                /* To save the current displaying index*/
                 int last = index;
-            /* If it already checks for all the picture in the Gallery*/
+                /* If it already checks for all the picture in the Gallery*/
                 while ((index - 1) != last) {
-                /* if index is 0, make the index become the last element*/
+                    /* if index is 0, make the index become the last element*/
                     if ((index) == 0)
                         index = defaultGallery.get_photos();
-                /* Check is it already released, if not, display it*/
+                    /* Check is it already released, if not, display it*/
                     if (defaultGallery.getPictures().elementAt(index - 1).getDisplay()) {
-                    /*Get the picture from the gallery*/
+                        /*Get the picture from the gallery*/
                         Picture picture = defaultGallery.getPictures().elementAt(index - 1);
                         File file = new File(picture.getImage());
                         Uri uriFromGallery = Uri.fromFile(file);
-                    /*Make it becomes the wallpaper*/
+                        /*Make it becomes the wallpaper*/
                         wp.changeWallpaper(uriFromGallery, picture.getLocatio());
-                    /*Update the index*/
+                        /*Update the index*/
                         editor.putInt("Index", index - 1);
                         changed = true;
                         break;
                     }
                     index = index - 1;
                 }
-            /*if the wall paper didn't change, it means all pictures are released or empty gallery*/
+                /*if the wall paper didn't change, it means all pictures are released or empty gallery*/
                 if (!changed)
                     Toast.makeText(context, "No picture can be displayed", Toast.LENGTH_SHORT).show();
             }
