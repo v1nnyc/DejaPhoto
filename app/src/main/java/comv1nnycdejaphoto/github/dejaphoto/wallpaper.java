@@ -20,7 +20,7 @@ import android.view.WindowManager;
 
 public class wallpaper extends Activity {
 
-    private MainActivity ma = new MainActivity();
+    private BackgroundService ma = new BackgroundService();
 
     public wallpaper(){}
 
@@ -32,7 +32,7 @@ public class wallpaper extends Activity {
      */
 
     public void changeWallpaper(Uri uri, String location){
-        Context main = MainActivity.getContext();
+        Context main = BackgroundService.getContext();
         try {
             /*Bitmap is one type of image, open the uri with bitmap*/
             Bitmap source = MediaStore.Images.Media.getBitmap(main.getContentResolver(), uri);

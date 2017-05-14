@@ -18,6 +18,7 @@ import java.util.Vector;
 
 public class BackgroundService extends Service {
     private final IBinder iBinder = new LocalService();
+    private static Context sContext;
     Default_Gallery defaultGallery;
     SharedPreferences sharedPreferences;
 
@@ -34,7 +35,11 @@ public class BackgroundService extends Service {
     public IBinder onBind(Intent intent) {
         return iBinder;
     }
-
+  
+    public static Context getContext() {
+        return sContext;
+    }
+  
     class LocalService extends Binder{
         public BackgroundService getService(){
             return BackgroundService.this;
@@ -43,17 +48,20 @@ public class BackgroundService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        sContext = getApplicationContext();
         final Handler handler = new Handler();
         final Runnable task = new Runnable() {
             @Override
             public void run() {
+                android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
                 /* Read the shared preferences*/
                 readPreferences();
 
                 /*Load the next picture by calling the gallery's method*/
-                defaultGallery.next();
-                if (true) {
-                    handler.postDelayed(this , rate*5000);
+                if(defaultGallery != null) {
+                    defaultGallery.next();
+                    handler.postDelayed(this, rate * 5000);
                 }
             }
         };
@@ -65,17 +73,28 @@ public class BackgroundService extends Service {
     }
 
     public void readPreferences() {
-        sharedPreferences = MainActivity.getContext().getSharedPreferences("DejaPhoto",MODE_PRIVATE);
-
+        sharedPreferences = getContext().getSharedPreferences("DejaPhoto", MODE_PRIVATE);
+        //sharedPreferences.edit().clear().apply();
         /*gson is a way to put the object into shared preferences*/
         Gson gson = new Gson();
         String json = sharedPreferences.getString("Gallery", "");
         defaultGallery = gson.fromJson(json, Default_Gallery.class);
-
+        if(defaultGallery== null) {
+            defaultGallery=new Default_Gallery();
+            defaultGallery.Load_All(getContext());
+            json = gson.toJson(defaultGallery);
+            sharedPreferences.edit().putString("Gallery", json).apply();
+            /*Save the value into shared preferences*/
+        }
         /*Index for last displayed image's index*/
         index = sharedPreferences.getInt("Index", 0);
 
         /*An User pick speed to change the image*/
         rate = sharedPreferences.getInt("Rate", 1);
-    }
+        Log.v("Total.number",Integer.toString(defaultGallery.get_photos()));
+        for(int i = 0; i<defaultGallery.get_photos();++i)
+            if(defaultGallery.getPictures().elementAt(i).getKarma())
+                Log.v(Integer.toString(i),"Karmared");
+        }
+
 }

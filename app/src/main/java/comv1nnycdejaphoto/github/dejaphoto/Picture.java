@@ -1,7 +1,12 @@
 package comv1nnycdejaphoto.github.dejaphoto;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.widget.ImageView;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by avery2 on 5/9/17.
@@ -68,4 +73,44 @@ public class Picture {
         return karma;
     }
     public boolean getDisplay(){return display;}
+
+    public boolean isEqual(Picture other){
+        /*If other is null, it must be different then an exist object*/
+        if(other == null)
+            return false;
+        File thisFile = new File(this.getImage());
+        File otherFile = new File(other.getImage());
+        Uri thisUri = Uri.fromFile(thisFile);
+        Uri otherUri = Uri.fromFile(otherFile);
+        try {
+            Bitmap thisBitmap = MediaStore.Images.Media.getBitmap(BackgroundService.getContext().getContentResolver(), thisUri);
+            Bitmap otherBitmap = MediaStore.Images.Media.getBitmap(BackgroundService.getContext().getContentResolver(), otherUri);
+            if(thisBitmap.sameAs(otherBitmap))
+                return true;
+            return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        /*The try false, something went wrong so return false*/
+        return false;
+    };
+
+    public boolean isEqual(Uri otherUri){
+        /*If other is null, it must be different then an exist object*/
+        if(otherUri == null)
+            return false;
+        File thisFile = new File(this.getImage());
+        Uri thisUri = Uri.fromFile(thisFile);
+        try {
+            Bitmap thisBitmap = MediaStore.Images.Media.getBitmap(BackgroundService.getContext().getContentResolver(), thisUri);
+            Bitmap otherBitmap = MediaStore.Images.Media.getBitmap(BackgroundService.getContext().getContentResolver(), otherUri);
+            if(thisBitmap.sameAs(otherBitmap))
+                return true;
+            return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        /*The try false, something went wrong so return false*/
+        return false;
+    };
 }

@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         /*Check is the sharedPreferences exists*/
+        Log.v("123","321");
         initialize(SKIP);
 
         /*Read the data from the shared preferences*/
@@ -130,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         }
         );
     }
-
+  
     private ServiceConnection serviceConection =  new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -144,7 +145,6 @@ public class MainActivity extends AppCompatActivity {
             isBound = false;
         }
     };
-
     /*required for other classes to be able to access MainActivity*/
     public static Context getContext() {
         return sContext;
@@ -189,6 +189,8 @@ public class MainActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    if(picture.isEqual(uri))
+                        defaultGallery.getPictures().elementAt(i).hide();
                 }
             }
 
@@ -210,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
                 /*To get the real path, uriList.get(i).getPath(); will do the job*/
                 for (int i = 0; i < uriList.size(); ++i) {
                     for(int j = 0; j < defaultGallery.get_photos() ; ++j){
-                        /*load the picture fromt the gallery*/
+                        /*load the picture from the gallery*/
                         Picture picture = defaultGallery.getPictures().elementAt(j);
                         File file = new File(picture.getImage());
 
@@ -227,6 +229,8 @@ public class MainActivity extends AppCompatActivity {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        if(picture.isEqual(uriList.get(i)))
+                            defaultGallery.getPictures().elementAt(j).hide();
                     }
                 }
             }
@@ -261,7 +265,6 @@ public class MainActivity extends AppCompatActivity {
     /*This method will check the preferences value exist or not, if not, initialize them*/
     public void initialize(int Must_Update){
         sharedPreferences = getSharedPreferences("DejaPhoto",MODE_PRIVATE);
-
         /*Create a editor to edit*/
         SharedPreferences.Editor editor = sharedPreferences.edit();
 

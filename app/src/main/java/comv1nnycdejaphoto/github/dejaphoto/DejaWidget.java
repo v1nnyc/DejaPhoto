@@ -110,6 +110,7 @@ public class DejaWidget extends AppWidgetProvider {
 
         if (Karma.equals(intent.getAction())) {
             /* Call the add Karma function to modify the picture*/
+  //in jeffreys pull request, caused merge conflict
             defaultGallery.getPictures().elementAt(index).addKarma();
             Gson gson = new Gson();
             String json = gson.toJson(defaultGallery);
@@ -117,6 +118,18 @@ public class DejaWidget extends AppWidgetProvider {
             /*Updated the Gallery*/
             editor.putString("Gallery", json);
             Toast.makeText(context, "Added Karma", Toast.LENGTH_SHORT).show();
+          //end jeffrey
+            if(!defaultGallery.getPictures().elementAt(index).getKarma()) {
+                Toast.makeText(context, "Added Karma", Toast.LENGTH_SHORT).show();
+                defaultGallery.getPictures().elementAt(index).addKarma();
+                Gson gson = new Gson();
+                String json = gson.toJson(defaultGallery);
+                /*Updated the Gallery*/
+                editor.putString("Gallery", json);
+                editor.apply();
+                defaultGallery.add(defaultGallery.getPictures().elementAt(index));
+            }else
+                Toast.makeText(context, "Picture already added Karma", Toast.LENGTH_SHORT).show();
         }
 
         if (Left.equals(intent.getAction())) {
@@ -184,6 +197,7 @@ public class DejaWidget extends AppWidgetProvider {
                 wp.emptyPicture();
         }
         editor.apply();
+        Log.v("Now index",Integer.toString(index));
     }
 
     /* This method will put a string into a pending Intent */
