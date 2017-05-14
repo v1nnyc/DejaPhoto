@@ -4,7 +4,6 @@ package comv1nnycdejaphoto.github.dejaphoto;
  * Created by Ken on 5/11/2017.
  */
 
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -32,7 +31,6 @@ import static java.lang.Integer.MIN_VALUE;
 /**
  * Created by Ken on 5/9/2017.
  */
-
 
 /* Got basic idea of how code will be like from
 http://stackoverflow.com/questions/30777023/diplaying-all-images-from-device-inside-my-app
@@ -76,9 +74,7 @@ public class Default_Gallery{
             finder = context.getContentResolver().query(internal_storage, data, null, null, null);
         }
 
-
         if(finder != null) {
-
             finder.moveToFirst();       // moves cursor to point to first image
             if(finder.getCount() == 0){
                 return;
@@ -89,7 +85,6 @@ public class Default_Gallery{
                 // finds specific location of indicated info (DATA or PATH in this case)
                 // for the current photo, to retrieve as a string
                 int data_index = finder.getColumnIndex(MediaStore.Images.Media.DATA);
-
 
                 // gets the String data indicated at location by data_index
                 String path = finder.getString(data_index);
@@ -105,42 +100,22 @@ public class Default_Gallery{
                 // gets Date Taken data field and checks if it exists
                 data_index = finder.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN);
                 if(data_index != -1 && finder.getString(data_index) != null) {
-
                     // if date taken exists, store date as a double
                     String date = finder.getString(data_index);
                     time = Double.parseDouble(date);
                 }
 
+                //get lat and long
+                latitude = getLatitude(finder, latitude);
+                longitude = getLongitude(finder, longitude);
 
-
-                // gets the Latitude GPS data field and checks if it exists
-                data_index = finder.getColumnIndex(MediaStore.Images.Media.LATITUDE);
-                if(data_index != -1 && finder.getString(data_index) != null) {
-
-                    // if latitude exists, store data of gps as double
-                    latitude = Double.parseDouble(finder.getString(data_index));
-                }
-
-
-
-                // gets the Longitude GPS data field and checks if it exists
-                data_index = finder.getColumnIndex(MediaStore.Images.Media.LONGITUDE);
-                if(data_index != -1 && finder.getString(data_index) != null){
-                    // if longitude exists, store gps as double
-                    longitude = Double.parseDouble(finder.getString(data_index));
-                }
                 // finds path again
                 data_index = finder.getColumnIndex(MediaStore.Images.Media.DATA);
-
-
 
                 if(longitude != MAX_VALUE && latitude != MAX_VALUE){
                     // gets the location name depending on the gps
                     location = get_Location(context, latitude, longitude, decoder);
                 }
-
-
-
 
                 /**
                  *** Part that possibily needs changing since Image view might be too big of an
@@ -154,9 +129,37 @@ public class Default_Gallery{
                 pictures.add(new Picture(path, (int) time, location));
                 i++;
             }
+
             while(finder.moveToNext());
             num_photos = i;
         }
+    }
+
+    //this method obtain longitude
+    public double getLongitude(Cursor finder, double longitude) {
+        int data_index;
+
+        // gets the Longitude GPS data field and checks if it exists
+        data_index = finder.getColumnIndex(MediaStore.Images.Media.LONGITUDE);
+        if(data_index != -1 && finder.getString(data_index) != null){
+            // if longitude exists, store gps as double
+            longitude = Double.parseDouble(finder.getString(data_index));
+        }
+        return longitude;
+    }
+
+    //this method obtain latitude
+    public double getLatitude(Cursor finder, double latitude) {
+        int data_index;
+
+        // gets the Latitude GPS data field and checks if it exists
+        data_index = finder.getColumnIndex(MediaStore.Images.Media.LATITUDE);
+        if(data_index != -1 && finder.getString(data_index) != null) {
+
+            // if latitude exists, store data of gps as double
+            latitude = Double.parseDouble(finder.getString(data_index));
+        }
+        return latitude;
     }
 
 
@@ -190,6 +193,12 @@ public class Default_Gallery{
         // check various location types and outputs the most suitable name first
         Address add = address.get(0);
 
+        //obtain address details
+        return getAddressDetails(add);
+    }
+
+    //this method get detail information of the address
+    public String getAddressDetails(Address add) {
         // names are made sure that they aren't entirely just numbers
         if(add.getFeatureName() != null && !add.getFeatureName().matches("[0-9]+")) {
             return add.getFeatureName();
@@ -213,15 +222,18 @@ public class Default_Gallery{
             return "No Discernible Location Name";
         }
     }
+
     public void next(){
         readPreferences();
         wallpaper wp = new wallpaper();
         if (defaultGallery.get_photos() != 0) {
             int last = index;
             SharedPreferences.Editor editor = sharedPreferences.edit();
+
             while ((index + 1) != last) {
                 if (index == (defaultGallery.get_photos() - 1))
                     index = -1;
+
                 if (defaultGallery.getPictures().elementAt(index + 1).getDisplay()) {
                     Picture picture = defaultGallery.getPictures().elementAt(index + 1);
                     File file = new File(picture.getImage());
@@ -233,9 +245,10 @@ public class Default_Gallery{
                 index = index + 1;
             }
             editor.apply();
-        } else
-            wp.emptyPicture();
+        }
+        else wp.emptyPicture();
     }
+
     public void readPreferences(){
         /* Read the shared preferences*/
         sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto",MODE_PRIVATE);
@@ -245,7 +258,6 @@ public class Default_Gallery{
         defaultGallery = gson.fromJson(json, Default_Gallery.class);
         index = sharedPreferences.getInt("Index",0);
     }
-
     public void add(Picture picture){
         readPreferences();
         Random rand = new Random();
@@ -270,5 +282,4 @@ public class Default_Gallery{
         editor.putString("Gallery", json);
         editor.apply();
     }
-
 }
