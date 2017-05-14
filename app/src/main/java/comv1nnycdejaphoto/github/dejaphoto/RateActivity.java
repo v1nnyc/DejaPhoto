@@ -49,7 +49,6 @@ public class RateActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Toast.makeText(RateActivity.this,"Set Display Rate",Toast.LENGTH_LONG).show();
             }
-
         });
     }
 
@@ -60,5 +59,4 @@ public class RateActivity extends AppCompatActivity {
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
-
 }

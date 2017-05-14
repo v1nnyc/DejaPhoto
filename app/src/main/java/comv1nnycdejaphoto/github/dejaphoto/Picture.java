@@ -47,8 +47,10 @@ public class Picture {
     public boolean timeWithinBounds(double curr_time, int deviation){
         if( (timeTaken+deviation) <= curr_time )
             return true;
+
         if( (timeTaken-deviation) >= curr_time)
             return true;
+
         return false;
     }
 
@@ -66,5 +68,4 @@ public class Picture {
         return karma;
     }
     public boolean getDisplay(){return display;}
-
 }
