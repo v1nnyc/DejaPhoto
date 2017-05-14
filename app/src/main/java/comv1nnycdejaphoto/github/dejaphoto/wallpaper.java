@@ -62,5 +62,37 @@ public class wallpaper extends Activity {
             e.printStackTrace();
         }
     }
+    
+    /* Method display a photo indicates that there is no pic to display */
+    public void emptyPicture(){
+        WindowManager windowManager = (WindowManager) MainActivity.getContext().getSystemService(Context.WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+        /* get size of the screen */
+        Point size = new Point();
+        display.getSize(size);
+         /* create a new canvas using the bitmap */
+        Bitmap.Config config = Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = Bitmap.createBitmap(size.x, size.y, config);
+        Canvas canvas = new Canvas(bitmap);
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        /* set the text color be white */
+        paint.setColor(Color.rgb(252, 252, 252));
+        /* set the text size */
+        paint.setTextSize(50);
+        String string = "DejaPhoto\n";
+        /* draw on the bitmap */
+        canvas.drawText(string, size.x/3, size.y/2, paint);
+        string = "No photos in album";
+        /* draw on the bitmap */
+        canvas.drawText(string, size.x/3-150, size.y/2 +50, paint);
+        /* change the wallpaper to the loaded bitmap */
+        WallpaperManager wallpaperManager = WallpaperManager.getInstance(ma.getContext());
+        try {
+            wallpaperManager.setBitmap(bitmap);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 
 }
