@@ -110,15 +110,6 @@ public class DejaWidget extends AppWidgetProvider {
 
         if (Karma.equals(intent.getAction())) {
             /* Call the add Karma function to modify the picture*/
-  //in jeffreys pull request, caused merge conflict
-            defaultGallery.getPictures().elementAt(index).addKarma();
-            Gson gson = new Gson();
-            String json = gson.toJson(defaultGallery);
-
-            /*Updated the Gallery*/
-            editor.putString("Gallery", json);
-            Toast.makeText(context, "Added Karma", Toast.LENGTH_SHORT).show();
-          //end jeffrey
             if(!defaultGallery.getPictures().elementAt(index).getKarma()) {
                 Toast.makeText(context, "Added Karma", Toast.LENGTH_SHORT).show();
                 defaultGallery.getPictures().elementAt(index).addKarma();
