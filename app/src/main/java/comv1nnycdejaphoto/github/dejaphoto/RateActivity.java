@@ -29,19 +29,6 @@ public class RateActivity extends AppCompatActivity {
 
         textView.setText("Display Rate: " + seekBar.getProgress()*5);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
-  //in master but not simons branch?
-        setContentView(R.layout.rate);
-        Log.v("sdf","sdf");
-
-        final SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar);
-        final TextView textView = (TextView) findViewById(R.id.rateView);
-        seekBar.setProgress(0);
-        seekBar.setMax(12);
-
-        textView.setText("Display Rate: " + seekBar.getProgress());
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
-            int progress_value;
-          //end master
 
             /* display the value according to the seekbar */
             @Override
