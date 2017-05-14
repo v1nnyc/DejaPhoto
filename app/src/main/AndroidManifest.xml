@@ -40,9 +40,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-  
-        <activity android:name=".RateActivity"
-            android:label="@string/app_name" >
+        <activity
+            android:name=".RateActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -50,6 +50,10 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name=".BackgroundService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>
