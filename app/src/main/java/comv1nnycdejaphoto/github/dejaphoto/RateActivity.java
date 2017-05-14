@@ -25,16 +25,16 @@ public class RateActivity extends AppCompatActivity {
         final TextView textView = (TextView) findViewById(R.id.rateView);
         int progress =  sharedPreferences.getInt("Rate",0);
         seekBar.setProgress(progress);
-        seekBar.setMax(12);
+        seekBar.setMax(11);
 
-        textView.setText("Display Rate: " + seekBar.getProgress()*5);
+        textView.setText("Display Rate: " + (seekBar.getProgress()+1)*5);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
 
             /* display the value according to the seekbar */
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                textView.setText("Display Rate : " + progress*5);
-                editor.putInt("Rate",progress);
+                textView.setText("Display Rate : " + (progress+1)*5);
+                editor.putInt("Rate",progress+1);
                 editor.apply();
             }
 

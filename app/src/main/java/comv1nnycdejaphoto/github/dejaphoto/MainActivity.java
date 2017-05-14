@@ -42,9 +42,9 @@ public class MainActivity extends AppCompatActivity {
 
     SharedPreferences sharedPreferences;
     private Default_Gallery defaultGallery;
-    Button cameraRoll;
-    Button customAlbum;
     private static Context sContext;
+    private BackgroundService backgroundService;
+    private Boolean isBound;
     /* This will tell the different between choose or release, 1 is for choose, 0 for release*/
     static final int PICK_CHOOSE = 1 ;
     static final int PICK_RELEASE = 0 ;
@@ -66,28 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 /*Ask the permission to read the images*/
         ActivityCompat.requestPermissions(MainActivity.this,
                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},1);
-
-        /*final Button cameraRoll = (Button) findViewById(R.id.camera_roll_button);
-        final Button customAlbum = (Button) findViewById(R.id.custom_album_button);
-
-        cameraRoll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cameraRoll.setBackgroundResource(R.drawable.button_green);
-                customAlbum.setBackgroundResource(R.drawable.button_white);
-            }
-        });
-
-        customAlbum.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cameraRoll.setBackgroundResource(R.drawable.button_white);
-                customAlbum.setBackgroundResource(R.drawable.button_green);
-            }
-        });*/
-
         setContentView(R.layout.start_screen);
-
         /*Button that links to the Choose*/
         Button load_image = (Button) findViewById(R.id.choose);
         /*onClick Event*/
@@ -125,8 +104,23 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        Intent intent = new Intent(MainActivity.this, BackgroundService.class);
+        startService(intent);
     }
 
+    private ServiceConnection serviceConection =  new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            BackgroundService.LocalService localService = (BackgroundService.LocalService)service;
+            backgroundService = localService.getService();
+            isBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            isBound = false;
+        }
+    };
     /*required for other classes to be able to access MainActivity*/
     public static Context getContext() {
         return sContext;
@@ -205,7 +199,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
     /*Get from piazza, original from codepath :
         https://guides.codepath.com/android/Managing-Runtime-Permissions-with-PermissionsDispatcher */
     @Override
@@ -290,4 +283,5 @@ public class MainActivity extends AppCompatActivity {
             initialize(UPDATE);
         }
     }
+
 }

@@ -23,6 +23,7 @@ import java.util.Vector;
 
 import comv1nnycdejaphoto.github.dejaphoto.Picture;
 
+import static android.content.Context.MODE_PRIVATE;
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Integer.MIN_VALUE;
 
@@ -35,6 +36,9 @@ import static java.lang.Integer.MIN_VALUE;
 http://stackoverflow.com/questions/30777023/diplaying-all-images-from-device-inside-my-app
 */
 public class Default_Gallery{
+    Default_Gallery defaultGallery;
+    SharedPreferences sharedPreferences;
+    int index;
     private Vector<Picture> pictures = new Vector<Picture>();
     private int num_photos = 0;
 
@@ -87,7 +91,6 @@ public class Default_Gallery{
 
                 // gets the String data indicated at location by data_index
                 String path = finder.getString(data_index);
-                Log.v("Index", path);
 
                 // default value for time if no time in photo (ie negative time)
                 double time = MIN_VALUE;
@@ -207,6 +210,38 @@ public class Default_Gallery{
         else {
             return "No Discernible Location Name";
         }
+    }
+    public void next(){
+        readPreferences();
+        wallpaper wp = new wallpaper();
+        if (defaultGallery.get_photos() != 0) {
+            int last = index;
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            while ((index + 1) != last) {
+                if (index == (defaultGallery.get_photos() - 1))
+                    index = -1;
+                if (defaultGallery.getPictures().elementAt(index + 1).getDisplay()) {
+                    Picture picture = defaultGallery.getPictures().elementAt(index + 1);
+                    File file = new File(picture.getImage());
+                    Uri uriFromGallery = Uri.fromFile(file);
+                    wp.changeWallpaper(uriFromGallery, picture.getLocatio());
+                    editor.putInt("Index", index + 1);
+                    break;
+                }
+                index = index + 1;
+            }
+            editor.apply();
+        } else
+            wp.emptyPicture();
+    }
+    public void readPreferences(){
+        /* Read the shared preferences*/
+        sharedPreferences = MainActivity.getContext().getSharedPreferences("DejaPhoto",MODE_PRIVATE);
+        /*gson is a way to put the object into shared preferences*/
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("Gallery","");
+        defaultGallery = gson.fromJson(json, Default_Gallery.class);
+        index = sharedPreferences.getInt("Index",0);
     }
 
 }

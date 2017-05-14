@@ -102,53 +102,61 @@ public class DejaWidget extends AppWidgetProvider {
             Toast.makeText(context, "Added Karma", Toast.LENGTH_SHORT).show();
         }
         if (Left.equals(intent.getAction())) {
+            if(defaultGallery.get_photos() != 0 ) {
             /* To indicate the wallpaper is changed*/
-            Boolean changed = false;
+                Boolean changed = false;
             /* To save the current displaying index*/
-            int last = index;
+                int last = index;
             /* If it already checks for all the picture in the Gallery*/
-            while ((index - 1) != last) {
+                while ((index - 1) != last) {
                 /* if index is 0, make the index become the last element*/
-                if((index) == 0)
-                    index = defaultGallery.get_photos();
+                    if ((index) == 0)
+                        index = defaultGallery.get_photos();
                 /* Check is it already released, if not, display it*/
-                if(defaultGallery.getPictures().elementAt(index-1).getDisplay()) {
+                    if (defaultGallery.getPictures().elementAt(index - 1).getDisplay()) {
                     /*Get the picture from the gallery*/
-                    Picture picture = defaultGallery.getPictures().elementAt(index - 1);
-                    File file = new File(picture.getImage());
-                    Uri uriFromGallery = Uri.fromFile(file);
+                        Picture picture = defaultGallery.getPictures().elementAt(index - 1);
+                        File file = new File(picture.getImage());
+                        Uri uriFromGallery = Uri.fromFile(file);
                     /*Make it becomes the wallpaper*/
-                    wp.changeWallpaper(uriFromGallery, picture.getLocatio());
+                        wp.changeWallpaper(uriFromGallery, picture.getLocatio());
                     /*Update the index*/
-                    editor.putInt("Index", index - 1);
-                    changed = true;
-                    break;
+                        editor.putInt("Index", index - 1);
+                        changed = true;
+                        break;
+                    }
+                    index = index - 1;
                 }
-                index = index - 1;
-            }
             /*if the wall paper didn't change, it means all pictures are released or empty gallery*/
-            if(!changed)
-                Toast.makeText(context, "No picture can be displayed", Toast.LENGTH_SHORT).show();
+                if (!changed)
+                    Toast.makeText(context, "No picture can be displayed", Toast.LENGTH_SHORT).show();
+            }
+            else
+                wp.emptyPicture();
         }
         if (Right.equals(intent.getAction())) {
-            Boolean changed = false;
-            int last = index;
-            while( (index + 1) != last){
-                if(index == (defaultGallery.get_photos() - 1))
-                    index = -1;
-                if(defaultGallery.getPictures().elementAt(index+1).getDisplay()) {
-                    Picture picture = defaultGallery.getPictures().elementAt(index + 1);
-                    File file = new File(picture.getImage());
-                    Uri uriFromGallery = Uri.fromFile(file);
-                    wp.changeWallpaper(uriFromGallery, picture.getLocatio());
-                    editor.putInt("Index", index + 1);
-                    changed = true;
-                    break;
+            if(defaultGallery.get_photos() != 0) {
+                Boolean changed = false;
+                int last = index;
+                while ((index + 1) != last) {
+                    if (index == (defaultGallery.get_photos() - 1))
+                        index = -1;
+                    if (defaultGallery.getPictures().elementAt(index + 1).getDisplay()) {
+                        Picture picture = defaultGallery.getPictures().elementAt(index + 1);
+                        File file = new File(picture.getImage());
+                        Uri uriFromGallery = Uri.fromFile(file);
+                        wp.changeWallpaper(uriFromGallery, picture.getLocatio());
+                        editor.putInt("Index", index + 1);
+                        changed = true;
+                        break;
+                    }
+                    index = index + 1;
                 }
-                index = index + 1;
+                if (!changed)
+                    Toast.makeText(context, "No picture can be displayed", Toast.LENGTH_SHORT).show();
             }
-            if(!changed)
-                Toast.makeText(context, "No picture can be displayed", Toast.LENGTH_SHORT).show();
+            else
+                wp.emptyPicture();
         }
         editor.apply();
     }
