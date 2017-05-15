@@ -50,7 +50,7 @@ public class BackgroundService extends Service {
         final Runnable task = new Runnable() {
             @Override
             public void run() {
-                android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+                //android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
                 /* Read the shared preferences*/
                 readPreferences();
                 /*Load the next picture by calling the gallery's method*/
@@ -79,7 +79,6 @@ public class BackgroundService extends Service {
             json = gson.toJson(defaultGallery);
             sharedPreferences.edit().putString("Gallery", json).apply();
         }
-
         /*Save the value into shared preferences*/
         /*Index for last displayed image's index*/
         index = sharedPreferences.getInt("Index", 0);
@@ -87,14 +86,6 @@ public class BackgroundService extends Service {
         rate = sharedPreferences.getInt("Rate", 1);
         mode = sharedPreferences.getString("Mode","time");
         Log.v("mode",mode);
-//        if(mode == "time")
-//            defaultGallery.sortByTime();
-//        if(mode == "day")
-//            defaultGallery.sortByDay();
-//        if(mode == "week")
-//            defaultGallery.sortByWeek();
-//        json = gson.toJson(defaultGallery);
-//        sharedPreferences.edit().putString("Gallery", json).apply();
     }
 
 

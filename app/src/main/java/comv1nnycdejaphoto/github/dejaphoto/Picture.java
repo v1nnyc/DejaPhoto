@@ -49,7 +49,7 @@ public class Picture {
 
     public void hide(){ display = false;}
 
-    public boolean timeWithinBounds(double curr_time, int deviation){
+    public boolean timeWithinBounds(){
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
         String TimeBefore = simpleDateFormat.format(calendar.get(Calendar.HOUR_OF_DAY)-2);
@@ -70,6 +70,8 @@ public class Picture {
         return karma;
     }
     public boolean getDisplay(){return display;}
+    public String getTime(){return timeTaken;}
+    public String getDate(){return dateTaken;}
 
     public boolean isEqual(Picture other){
         /*If other is null, it must be different then an exist object*/

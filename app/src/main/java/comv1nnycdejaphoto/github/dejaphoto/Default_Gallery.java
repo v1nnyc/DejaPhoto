@@ -24,7 +24,9 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.Vector;
@@ -223,14 +225,189 @@ public class Default_Gallery{
     }
 
     public void sortByTime(){
+        SimpleDateFormat simpleDateFormat =new SimpleDateFormat("hh:mm:ss");
+        readPreferences();
+        int token = 0;
+        for(int i = 0; i<defaultGallery.get_photos();++i){
+            if(defaultGallery.getPictures().elementAt(i).timeWithinBounds()) {
+                if (token == defaultGallery.get_photos() - 2) {
+                    break;
+                }
+                else{
+                    Collections.swap(defaultGallery.pictures,i,token);
+                    token++;
+                }
+            }
+        }
+        int karmaCount = 0;
+        for(int i = 0; i < token; ++i){
+            if(defaultGallery.getPictures().elementAt(i).getKarma()){
+                Collections.swap(defaultGallery.pictures,i,karmaCount);
+                karmaCount++;
+            }
+        }
+        for(int i = 0; i < karmaCount-1; ++i){
+            for(int j = 1; j <karmaCount; ++j) {
+                try {
+                    Date date1 = simpleDateFormat.parse(defaultGallery.getPictures().get(i).getTime());
+                    Date date2 = simpleDateFormat.parse(defaultGallery.getPictures().get(j).getDate());
+                    if (date1.before(date2))
+                        Collections.swap(defaultGallery.pictures, i, j);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        for(int i = karmaCount; i < (token -1); i++){
+            for(int j = karmaCount + 1; j < token ; j++) {
+                try {
+                    Date date1 = simpleDateFormat.parse(defaultGallery.getPictures().get(i).getTime());
+                    Date date2 = simpleDateFormat.parse(defaultGallery.getPictures().get(j).getDate());
+                    if (date1.before(date2))
+                        Collections.swap(defaultGallery.pictures, i, j);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        for(int i = token ; i < defaultGallery.get_photos()-1; ++i) {
+            for (int j = token + 1; j < defaultGallery.get_photos(); j++) {
+                try {
+                    Date date1 = simpleDateFormat.parse(defaultGallery.getPictures().get(i).getTime());
+                    Date date2 = simpleDateFormat.parse(defaultGallery.getPictures().get(j).getDate());
+                    if (date1.before(date2))
+                        Collections.swap(defaultGallery.pictures, i, j);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
 
+        }
     }
 
     public void sortByDay(){
+        SimpleDateFormat simpleDateFormat =new SimpleDateFormat("MM:dd");
+        Date today = Calendar.getInstance().getTime();
+        today.setYear(0);
+        readPreferences();
+        int token  = 0;
+        for(int i = 0; i<defaultGallery.get_photos(); ++i){
+            try {
+                Date dateToken = simpleDateFormat.parse(defaultGallery.getPictures().get(i).getDate());
+                dateToken.setYear(0);
+                if(today.equals(dateToken)){
+                    Collections.swap(defaultGallery.pictures, i, token);
+                    token++;
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        int karmaCount = 0;
+        for(int i = 0; i < token; ++i){
+            if(defaultGallery.getPictures().elementAt(i).getKarma()){
+                Collections.swap(defaultGallery.pictures,i,karmaCount);
+                karmaCount++;
+            }
+        }
+        for(int i = 0; i < karmaCount-1; ++i){
+            for(int j = 1; j <karmaCount; ++j) {
+                try {
+                    Date date1 = simpleDateFormat.parse(defaultGallery.getPictures().get(i).getTime());
+                    Date date2 = simpleDateFormat.parse(defaultGallery.getPictures().get(j).getDate());
+                    if (date1.before(date2))
+                        Collections.swap(defaultGallery.pictures, i, j);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        for(int i = karmaCount; i < (token -1); i++){
+            for(int j = karmaCount + 1; j < token ; j++) {
+                try {
+                    Date date1 = simpleDateFormat.parse(defaultGallery.getPictures().get(i).getTime());
+                    Date date2 = simpleDateFormat.parse(defaultGallery.getPictures().get(j).getDate());
+                    if (date1.before(date2))
+                        Collections.swap(defaultGallery.pictures, i, j);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        for(int i = token ; i < defaultGallery.get_photos()-1; ++i) {
+            for (int j = token + 1; j < defaultGallery.get_photos(); j++) {
+                try {
+                    Date date1 = simpleDateFormat.parse(defaultGallery.getPictures().get(i).getTime());
+                    Date date2 = simpleDateFormat.parse(defaultGallery.getPictures().get(j).getDate());
+                    if (date1.before(date2))
+                        Collections.swap(defaultGallery.pictures, i, j);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
 
+        }
     }
     public void sortByWeek(){
-
+        SimpleDateFormat simpleDateFormat =new SimpleDateFormat("yyyy:MM:dd");
+        Calendar today = Calendar.getInstance();
+        today.setTime(today.getTime());
+        int dayOfWeek = today.get(Calendar.DAY_OF_WEEK);
+        int token = 0;
+        for(int i = 0; i < defaultGallery.get_photos() ; ++i){
+            try {
+                Calendar weekToken = Calendar.getInstance();
+                Date took = simpleDateFormat.parse(defaultGallery.getPictures().get(i).getDate());
+                weekToken.setTime(took);
+                if(dayOfWeek == weekToken.get(Calendar.DAY_OF_WEEK)) {
+                    Collections.swap(defaultGallery.pictures, i, token);
+                    token++;
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }int karmaCount = 0;
+        for(int i = 0; i < token; ++i){
+            if(defaultGallery.getPictures().elementAt(i).getKarma()){
+                Collections.swap(defaultGallery.pictures,i,karmaCount);
+                karmaCount++;
+            }
+        }
+        for(int i = 0; i < karmaCount-1; ++i){
+            for(int j = 1; j <karmaCount; ++j) {
+                try {
+                    Date date1 = simpleDateFormat.parse(defaultGallery.getPictures().get(i).getTime());
+                    Date date2 = simpleDateFormat.parse(defaultGallery.getPictures().get(j).getDate());
+                    if (date1.before(date2))
+                        Collections.swap(defaultGallery.pictures, i, j);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        for(int i = karmaCount; i < (token -1); i++){
+            for(int j = karmaCount + 1; j < token ; j++) {
+                try {
+                    Date date1 = simpleDateFormat.parse(defaultGallery.getPictures().get(i).getTime());
+                    Date date2 = simpleDateFormat.parse(defaultGallery.getPictures().get(j).getDate());
+                    if (date1.before(date2))
+                        Collections.swap(defaultGallery.pictures, i, j);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        for(int i = token ; i < defaultGallery.get_photos()-1; ++i) {
+            for (int j = token + 1; j < defaultGallery.get_photos(); j++) {
+                try {
+                    Date date1 = simpleDateFormat.parse(defaultGallery.getPictures().get(i).getTime());
+                    Date date2 = simpleDateFormat.parse(defaultGallery.getPictures().get(j).getDate());
+                    if (date1.before(date2))
+                        Collections.swap(defaultGallery.pictures, i, j);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
-
 }

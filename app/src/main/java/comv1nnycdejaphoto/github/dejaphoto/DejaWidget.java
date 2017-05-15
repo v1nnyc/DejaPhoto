@@ -109,7 +109,6 @@ public class DejaWidget extends AppWidgetProvider {
                 /*Updated the Gallery*/
                 editor.putString("Gallery", json);
                 editor.apply();
-                defaultGallery.add(defaultGallery.getPictures().elementAt(index));
             }else
                 Toast.makeText(context, "Picture already added Karma", Toast.LENGTH_SHORT).show();
         }
@@ -173,7 +172,7 @@ public class DejaWidget extends AppWidgetProvider {
                 wp.emptyPicture();
         }
         editor.apply();
-        Log.v("Now index",Integer.toString(index));
+        Log.v("Now displaying", "Index: " + index + "Date" + defaultGallery.getPictures().elementAt(index).getDate());
     }
 
     /* This method will put a string into a pending Intent */
