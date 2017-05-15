@@ -64,6 +64,8 @@ public class DejaWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.karma, getPendingIntent(context, Karma));
         views.setOnClickPendingIntent(R.id.left, getPendingIntent(context, Left));
         views.setOnClickPendingIntent(R.id.right, getPendingIntent(context, Right));
+
+        Log.v("setOnClick", "setting");
     }
 
     @Override
@@ -75,6 +77,8 @@ public class DejaWidget extends AppWidgetProvider {
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
+
+        Log.v("AppWidgetMgr", "update");
     }
 
     @Override
@@ -195,6 +199,8 @@ public class DejaWidget extends AppWidgetProvider {
     protected PendingIntent getPendingIntent(Context context, String action) {
         Intent intent = new Intent(context, getClass());
         intent.setAction(action);
+
+        Log.v("PendingIntent", "String obtained");
         return PendingIntent.getBroadcast(context, 0, intent, 0);
     }
 
@@ -208,6 +214,8 @@ public class DejaWidget extends AppWidgetProvider {
         String json = sharedPreferences.getString("Gallery","");
         defaultGallery = gson.fromJson(json, Default_Gallery.class);
         index = sharedPreferences.getInt("Index",0);
+
+        Log.v("readPreferences", "sharedPreferences read");
     }
 }
 
