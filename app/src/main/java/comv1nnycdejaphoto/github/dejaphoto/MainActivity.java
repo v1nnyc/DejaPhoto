@@ -45,11 +45,13 @@ public class MainActivity extends AppCompatActivity {
     private static Context sContext;
     private BackgroundService backgroundService;
     private Boolean isBound;
+
     /* This will tell the different between choose or release, 1 is for choose, 0 for release*/
     static final int PICK_CHOOSE = 1 ;
     static final int PICK_RELEASE = 0 ;
     private final int UPDATE = 1;
     private final int SKIP = 0;
+
     //constructor
     public MainActivity() {
     }
@@ -57,31 +59,47 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         /*Check is the sharedPreferences exists*/
+        Log.v("123","321");
         initialize(SKIP);
+
         /*Read the data from the shared preferences*/
         readPreferences();
         sContext = getApplicationContext();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_album);
-                /*Ask the permission to read the images*/
+
+        /*Ask the permission to read the images*/
         ActivityCompat.requestPermissions(MainActivity.this,
                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},1);
-        setContentView(R.layout.start_screen);
-        /*Button that links to the Choose*/
-        Button load_image = (Button) findViewById(R.id.choose);
-        /*onClick Event*/
-        load_image.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-           /*Ask user to pick a image and save its uri, make the result become intent*/
-              Intent intent =new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-              /* pass the intent with the option of choose button beign clicked*/
-              startActivityForResult(intent, PICK_CHOOSE);
-           }
-        }
 
-        );
-         /* Same thing but for the release button*/
+        setContentView(R.layout.start_screen);
+        addPictures();
+        releasePictures();
+        setDisplayRate();
+
+        //start background service
+        Intent intent = new Intent(MainActivity.this, BackgroundService.class);
+        startService(intent);
+    }
+
+    //this method let users select the duration of each picture being displayed
+    public void setDisplayRate() {
+    /* link to the setting page for users to set display rate */
+        Button setting = (Button) findViewById(R.id.setting);
+        setting.setOnClickListener(new View.OnClickListener(){
+            /* onClick Event */
+            @Override
+            public void onClick(View view){
+                /* setContentView(R.layout.rate); */
+                Intent intent = new Intent(getBaseContext(),RateActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    //this method is for users release pictures
+    public void releasePictures() {
+    /* Same thing but for the release button*/
         Button release_image = (Button) findViewById(R.id.release);
         release_image.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -93,21 +111,27 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(Intent.createChooser(intent,"Select Picture"), PICK_RELEASE);
             }
         });
-        /* link to the setting page for users to set display rate */
-        Button setting = (Button) findViewById(R.id.setting);
-        setting.setOnClickListener(new View.OnClickListener(){
-            /* onClick Event */
-            @Override
-            public void onClick(View view){
-                /* setContentView(R.layout.rate); */
-                Intent intent = new Intent(getBaseContext(),RateActivity.class);
-                startActivity(intent);
-            }
-        });
-        Intent intent = new Intent(MainActivity.this, BackgroundService.class);
-        startService(intent);
     }
 
+    //this method is for users adding pictures
+    public void addPictures() {
+    /*Button that links to the Choose*/
+        Button load_image = (Button) findViewById(R.id.choose);
+
+        /*onClick Event*/
+        load_image.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+              /*Ask user to pick a image and save its uri, make the result become intent*/
+              Intent intent =new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+               /* pass the intent with the option of choose button beign clicked*/
+              startActivityForResult(intent, PICK_CHOOSE);
+           }
+        }
+        );
+    }
+  
     private ServiceConnection serviceConection =  new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -140,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
                 Uri uri = data.getData();
                 wallpaper wp = new wallpaper();
         }
+
         /* Release button being clicked*/
         if(requestCode == PICK_RELEASE){
             /*Only one picture is selected*/
@@ -148,26 +173,33 @@ public class MainActivity extends AppCompatActivity {
                 for(int i = 0; i < defaultGallery.get_photos() ; ++i) {
                     Picture picture = defaultGallery.getPictures().elementAt(i);
                     File file = new File(picture.getImage());
-                        /*Turn the picture into uri*/
+
+                    /*Turn the picture into uri*/
                     Uri uriFromGallery = Uri.fromFile(file);
-                        /* Make the user selected picture and gallery picture into bitmap*/
+
+                    /* Make the user selected picture and gallery picture into bitmap*/
                     Bitmap bitmapUser = null;
                     try {
                         bitmapUser = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
                         Bitmap bitmapGallery = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uriFromGallery);
-                            /*If they are same, hide the picture in Gallery*/
+
+                        /*If they are same, hide the picture in Gallery*/
                         if (bitmapUser.sameAs(bitmapGallery))
                             defaultGallery.getPictures().elementAt(i).hide();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    if(picture.isEqual(uri))
+                        defaultGallery.getPictures().elementAt(i).hide();
                 }
             }
+
             /*Multiple pictures were selected*/
             else if(data.getClipData() != null) {
                 /*ClipData is like Clipboard but with data instead of text,
-                                Copying the intent data to clipdata because the data is only one data */
+                  Copying the intent data to clipdata because the data is only one data */
                 ClipData mClipData = data.getClipData();
+
                 /*Make an array to store all the uri (Path of Images select by user)*/
                 ArrayList<Uri> uriList = new ArrayList<Uri>();
                 for (int i = 0; i < mClipData.getItemCount(); ++i) {
@@ -175,32 +207,38 @@ public class MainActivity extends AppCompatActivity {
                     Uri uri = item.getUri();
                     uriList.add(uri);
                 }
+
                 /*Log is for debuging purpose*/
                 /*To get the real path, uriList.get(i).getPath(); will do the job*/
                 for (int i = 0; i < uriList.size(); ++i) {
                     for(int j = 0; j < defaultGallery.get_photos() ; ++j){
-                        /*load the picture fromt the gallery*/
+                        /*load the picture from the gallery*/
                         Picture picture = defaultGallery.getPictures().elementAt(j);
                         File file = new File(picture.getImage());
+
                         /*Turn the picture into uri*/
                         Uri uriFromGallery = Uri.fromFile(file);
                         try {
                             /* Make the user selected picture and gallery picture into bitmap*/
                             Bitmap bitmapUser = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uriList.get(i));
                             Bitmap bitmapGallery = MediaStore.Images.Media.getBitmap(this.getContentResolver(),uriFromGallery);
+
                             /*If they are same, hide the picture in Gallery*/
                             if(bitmapUser.sameAs(bitmapGallery))
                                 defaultGallery.getPictures().elementAt(j).hide();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        if(picture.isEqual(uriList.get(i)))
+                            defaultGallery.getPictures().elementAt(j).hide();
                     }
                 }
             }
         }
     }
+
     /*Get from piazza, original from codepath :
-        https://guides.codepath.com/android/Managing-Runtime-Permissions-with-PermissionsDispatcher */
+      https://guides.codepath.com/android/Managing-Runtime-Permissions-with-PermissionsDispatcher */
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -211,34 +249,40 @@ public class MainActivity extends AppCompatActivity {
                     // permission granted and now can proceed
                     //mymethod(); //a sample method called
 
-                } else {
-
+                }
+                else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                     Toast.makeText(MainActivity.this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
                 }
+
                 return;
             }
             // add other cases for more permissions
         }
     }
+
     /*This method will check the preferences value exist or not, if not, initialize them*/
     public void initialize(int Must_Update){
         sharedPreferences = getSharedPreferences("DejaPhoto",MODE_PRIVATE);
         /*Create a editor to edit*/
         SharedPreferences.Editor editor = sharedPreferences.edit();
+
         /*Check for gallery*/
         if(!sharedPreferences.contains("Gallery")){
             /*Make a new gallery and load all the pictures*/
             Default_Gallery defaultGallery=new Default_Gallery();
             defaultGallery.Load_All(this);
+
             /*Gson is an object that make an object into a string*/
             Gson gson = new Gson();
             String json = gson.toJson(defaultGallery);
             editor.putString("Gallery", json);
+
             /*Save the value into shared preferences*/
             editor.apply();
         }
+
         /*Check is the preferences saved the correct thing*/
         if(sharedPreferences.contains("Gallery")){
             /* Read from the preferences and see is it empty*/
@@ -246,6 +290,7 @@ public class MainActivity extends AppCompatActivity {
             Gson gson = new Gson();
             String json = sharedPreferences.getString("Gallery","");
             checkEmpty = gson.fromJson(json, Default_Gallery.class);
+
             /*Update it when it is empty or force it to update*/
             if(checkEmpty.get_photos() ==  0 || Must_Update == 1){
                 checkEmpty.Load_All(this);
@@ -254,12 +299,14 @@ public class MainActivity extends AppCompatActivity {
                 editor.apply();
             }
         }
+
         /*Check the rate that how long to change to another picture*/
         if(!sharedPreferences.contains("Rate")){
             int rate = 0;
             editor.putInt("Rate", rate);
             editor.apply();
         }
+
         /*Check the last picture being shown*/
         if(!sharedPreferences.contains("Index")){
             editor.putInt("Index", 0);
@@ -273,9 +320,11 @@ public class MainActivity extends AppCompatActivity {
         Gson gson = new Gson();
         String json = sharedPreferences.getString("Gallery","");
         defaultGallery = gson.fromJson(json, Default_Gallery.class);
+
         /*Make another gallery that loads everything in the gallery*/
         Default_Gallery checkUpdate = new Default_Gallery();
         checkUpdate.Load_All(this);
+
         /*If the number of photos are different, it means the user has more/lease images*/
         if(checkUpdate.get_photos() != defaultGallery.get_photos()){
             /* make the gallery be the new one and update it into the shared preferences*/
@@ -283,5 +332,4 @@ public class MainActivity extends AppCompatActivity {
             initialize(UPDATE);
         }
     }
-
 }

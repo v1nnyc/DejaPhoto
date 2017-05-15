@@ -13,7 +13,11 @@ import android.widget.Toast;
 public class RateActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-
+    private SeekBar seekBar;
+    private RadioGroup radioGroup;
+    private TextView textView;
+    int progress;
+    String mode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -21,17 +25,10 @@ public class RateActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("DejaPhoto", MODE_PRIVATE);
         editor = sharedPreferences.edit();
         setContentView(R.layout.rate);
+        readLastReference();
+        initialize();
 
-        final SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar);
-        final RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
-        final TextView textView = (TextView) findViewById(R.id.rateView);
-        int progress = sharedPreferences.getInt("Rate", 0);
-        seekBar.setProgress(progress);
-        seekBar.setMax(11);
-
-        textView.setText("Display Rate: " + (seekBar.getProgress() + 1) * 5);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
             /* display the value according to the seekbar */
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -70,7 +67,6 @@ public class RateActivity extends AppCompatActivity {
                 }
                 editor.apply();
             }
-
         });
     }
 
@@ -83,7 +79,24 @@ public class RateActivity extends AppCompatActivity {
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
-
-
-
+    /* Read the value from shared preference*/
+    private void readLastReference(){
+        progress = sharedPreferences.getInt("Rate", 0);
+        mode = sharedPreferences.getString("Mode","time");
+    }
+    /*Initialize the page*/
+    private void initialize(){
+        textView = (TextView) findViewById(R.id.rateView);
+        seekBar = (SeekBar) findViewById(R.id.seekBar);
+        radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+        seekBar.setProgress(progress);
+        seekBar.setMax(11);
+        textView.setText("Display Rate: " + (seekBar.getProgress() + 1) * 5);
+        if(mode.equals("time"))
+            radioGroup.check(R.id.time);
+        if(mode.equals("day"))
+            radioGroup.check(R.id.day);
+        if(mode.equals("week"))
+            radioGroup.check(R.id.week);
+    }
 }
