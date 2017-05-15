@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ImageView;
@@ -64,23 +65,29 @@ public class Default_Gallery{
            return;
        }
        */
-
+        Log.v("Loading","ALL");
         Geocoder decoder = new Geocoder(context);            // one time creation for location finding
-        Uri internal_storage = MediaStore.Images.Media.EXTERNAL_CONTENT_URI; // storage of all photos
+        //Uri internal_storage = MediaStore.Images.Media.INTERNAL_CONTENT_URI; // storage of all photos
+        Uri internal_storage = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath()); // storage of all photos
+        Log.v("Path of internal_storage",internal_storage.getPath());
         String [] data = {MediaStore.MediaColumns.DATA,                  // data to look for
                 MediaStore.Images.ImageColumns.LATITUDE,
                 MediaStore.Images.ImageColumns.LONGITUDE, MediaStore.Images.ImageColumns.DATE_TAKEN};
+        File directory = new File(internal_storage.getPath());
+        File[] files = directory.listFiles();
+        Log.d("Files", "Size: "+ files.length);
         Cursor finder = null;                                        // object that "points" to object
 
         if(internal_storage != null){
+            Log.v("internal storage", "Not NUll");
             finder = context.getContentResolver().query(internal_storage, data, null, null, null);
         }
 
-
         if(finder != null) {
-
+            Log.v("finder","Not Null");
             finder.moveToFirst();       // moves cursor to point to first image
             if(finder.getCount() == 0){
+                Log.v("File","Empty");
                 return;
             }
 
@@ -153,6 +160,7 @@ public class Default_Gallery{
                 // creates a new "picture" and adds it to storage
                 pictures.add(new Picture(path, (int) time, location));
                 i++;
+                Log.v("Loading Path",path);
             }
             while(finder.moveToNext());
             num_photos = i;

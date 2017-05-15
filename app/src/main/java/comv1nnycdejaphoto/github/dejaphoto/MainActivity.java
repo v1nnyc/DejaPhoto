@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
             //TODO  choose album
             /*Get the data as type of Uri*/
                 Uri uri = data.getData();
-                wallpaper wp = new wallpaper();
+                Log.v("Choosed Path",uri.getPath());
         }
         /* Release button being clicked*/
         if(requestCode == PICK_RELEASE){
