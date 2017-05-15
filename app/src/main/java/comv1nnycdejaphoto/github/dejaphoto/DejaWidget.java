@@ -114,6 +114,7 @@ public class DejaWidget extends AppWidgetProvider {
                 Toast.makeText(context, "Picture already added Karma", Toast.LENGTH_SHORT).show();
         }
         if (Left.equals(intent.getAction())) {
+            Log.v("LeftClicked","Widget");
             if(defaultGallery.get_photos() != 0 ) {
             /* To indicate the wallpaper is changed*/
                 Boolean changed = false;
@@ -133,7 +134,7 @@ public class DejaWidget extends AppWidgetProvider {
                     /*Make it becomes the wallpaper*/
                         wp.changeWallpaper(uriFromGallery, picture.getLocatio());
                     /*Update the index*/
-                        editor.putInt("Index", index - 1);
+                        editor.putInt("Index", index - 1).apply();
                         changed = true;
                         break;
                     }
@@ -147,6 +148,7 @@ public class DejaWidget extends AppWidgetProvider {
                 wp.emptyPicture();
         }
         if (Right.equals(intent.getAction())) {
+            Log.v("RightClicked","Widget");
             if(defaultGallery.get_photos() != 0) {
                 Boolean changed = false;
                 int last = index;

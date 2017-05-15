@@ -7,6 +7,8 @@ import android.widget.ImageView;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Created by avery2 on 5/9/17.
@@ -15,7 +17,8 @@ import java.io.IOException;
 public class Picture {
 
     private String path;
-    private double timeTaken;
+    private String timeTaken;
+    private  String dateTaken;
     private String location;
     private boolean karma;
     private boolean display;
@@ -27,8 +30,9 @@ public class Picture {
      * loc - location where picture was taken
      * initialize karma to 0
      */
-    public Picture(String pic, int time, String loc) {
+    public Picture(String pic, String date, String time, String loc) {
         path = pic;
+        dateTaken = date;
         timeTaken = time;
         location = loc;
         karma = false;
@@ -45,14 +49,12 @@ public class Picture {
 
     public void hide(){ display = false;}
 
-    public String timetoString(){
-        return "abc";
-    }
-
     public boolean timeWithinBounds(double curr_time, int deviation){
-        if( (timeTaken+deviation) <= curr_time )
-            return true;
-        if( (timeTaken-deviation) >= curr_time)
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+        String TimeBefore = simpleDateFormat.format(calendar.get(Calendar.HOUR_OF_DAY)-2);
+        String TimeAfter = simpleDateFormat.format(calendar.get(Calendar.HOUR_OF_DAY)-2);
+        if(TimeBefore.compareTo(timeTaken) >= 0 && TimeAfter.compareTo(timeTaken) <=0 )
             return true;
         return false;
     }
@@ -60,9 +62,6 @@ public class Picture {
     //getters
     public String getImage(){
         return path;
-    }
-    public double gettimeTaken(){
-        return timeTaken;
     }
     public String getLocatio(){
         return location;

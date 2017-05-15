@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -19,6 +20,10 @@ import android.widget.ImageView;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -74,97 +79,34 @@ public class Default_Gallery{
                 MediaStore.Images.ImageColumns.LATITUDE,
                 MediaStore.Images.ImageColumns.LONGITUDE, MediaStore.Images.ImageColumns.DATE_TAKEN};
         File directory = new File(internal_storage.getPath());
-        File[] files = directory.listFiles();
-        Log.d("Files", "Size: "+ files.length);
-        Cursor finder = null;                                        // object that "points" to object
+        File[] files = directory.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return (name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".png"));
+            }
+        });
+        if(files != null){
+            for(File f : files){ // loop and print all file
+                String fileName = f.getName(); // this is file name
+                try {
+                    ExifInterface exifInterface = new ExifInterface(f.getAbsolutePath());
+                    String time = exifInterface.getAttribute(ExifInterface.TAG_GPS_TIMESTAMP);
+                    String date = exifInterface.getAttribute(ExifInterface.TAG_GPS_DATESTAMP);
+                    String latitude =  null;
+                    String longitude = null;
+                    String location = "No Location";
+                    latitude= exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+                    longitude = exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+                    pictures.add(new Picture(f.getPath(), date, time, location));
+                    num_photos++;
+//                    SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy:mm:dd");
+//                    SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-        if(internal_storage != null){
-            Log.v("internal storage", "Not NUll");
-            finder = context.getContentResolver().query(internal_storage, data, null, null, null);
+            }
         }
 
-        if(finder != null) {
-            Log.v("finder","Not Null");
-            finder.moveToFirst();       // moves cursor to point to first image
-            if(finder.getCount() == 0){
-                Log.v("File","Empty");
-                return;
-            }
-
-            int i = 0;  // iteration/number of photos
-            do{
-                // finds specific location of indicated info (DATA or PATH in this case)
-                // for the current photo, to retrieve as a string
-                int data_index = finder.getColumnIndex(MediaStore.Images.Media.DATA);
-
-
-                // gets the String data indicated at location by data_index
-                String path = finder.getString(data_index);
-
-                // default value for time if no time in photo (ie negative time)
-                double time = MIN_VALUE;
-
-                // default gps and location if no gps in photo
-                double latitude = MAX_VALUE;
-                double longitude = MAX_VALUE;
-                String location = "No Location";
-
-                // gets Date Taken data field and checks if it exists
-                data_index = finder.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN);
-                if(data_index != -1 && finder.getString(data_index) != null) {
-
-                    // if date taken exists, store date as a double
-                    String date = finder.getString(data_index);
-                    time = Double.parseDouble(date);
-                }
-
-
-
-                // gets the Latitude GPS data field and checks if it exists
-                data_index = finder.getColumnIndex(MediaStore.Images.Media.LATITUDE);
-                if(data_index != -1 && finder.getString(data_index) != null) {
-
-                    // if latitude exists, store data of gps as double
-                    latitude = Double.parseDouble(finder.getString(data_index));
-                }
-
-
-
-                // gets the Longitude GPS data field and checks if it exists
-                data_index = finder.getColumnIndex(MediaStore.Images.Media.LONGITUDE);
-                if(data_index != -1 && finder.getString(data_index) != null){
-                    // if longitude exists, store gps as double
-                    longitude = Double.parseDouble(finder.getString(data_index));
-                }
-                // finds path again
-                data_index = finder.getColumnIndex(MediaStore.Images.Media.DATA);
-
-
-
-                if(longitude != MAX_VALUE && latitude != MAX_VALUE){
-                    // gets the location name depending on the gps
-                    location = get_Location(context, latitude, longitude, decoder);
-                }
-
-
-
-
-                /**
-                 *** Part that possibily needs changing since Image view might be too big of an
-                 *** object to create and put in pictures, causing an out of bounds memory error
-                 ***
-                 */
-//                ImageView img = new ImageView(context);
-//                img.setImageURI(Uri.parse(path));
-
-                // creates a new "picture" and adds it to storage
-                pictures.add(new Picture(path, (int) time, location));
-                i++;
-                Log.v("Loading Path",path);
-            }
-            while(finder.moveToNext());
-            num_photos = i;
-        }
     }
 
 
@@ -278,6 +220,17 @@ public class Default_Gallery{
         String json = gson.toJson(defaultGallery);
         editor.putString("Gallery", json);
         editor.apply();
+    }
+
+    public void sortByTime(){
+
+    }
+
+    public void sortByDay(){
+
+    }
+    public void sortByWeek(){
+
     }
 
 }
