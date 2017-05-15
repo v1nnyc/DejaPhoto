@@ -80,7 +80,7 @@
         android:id="@+id/radioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
+        android:checkedButton="@id/time"
         android:layout_marginLeft="10dp">
 
         <RadioButton
@@ -88,8 +88,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Time"
-            android:buttonTint="@android:color/holo_blue_light"
-            android:checked="true"/>
+            android:buttonTint="@android:color/holo_blue_light"/>
 
         <RadioButton
             android:id="@+id/day"
