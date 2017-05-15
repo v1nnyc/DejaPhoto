@@ -98,10 +98,5 @@ public class BackgroundService extends Service {
 //            if(defaultGallery.getPictures().elementAt(i).getKarma())
 //                Log.v(Integer.toString(i),"Karmared");
     }
-        Log.v("Total.number",Integer.toString(defaultGallery.get_photos()));
-        for(int i = 0; i<defaultGallery.get_photos();++i)
-            if(defaultGallery.getPictures().elementAt(i).getKarma())
-                Log.v(Integer.toString(i),"Karmared");
-        }
 
 }
