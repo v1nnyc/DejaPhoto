@@ -44,7 +44,6 @@ public class BackgroundService extends Service {
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         sContext = getApplicationContext();
         final Handler handler = new Handler();
         final Runnable task = new Runnable() {
