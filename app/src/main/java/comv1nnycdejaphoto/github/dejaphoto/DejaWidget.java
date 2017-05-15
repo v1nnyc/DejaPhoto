@@ -85,7 +85,14 @@ public class DejaWidget extends AppWidgetProvider {
         /*The toast text just help for debug, make the button being clicked, will be deleted later*/
         if (Release.equals(intent.getAction())) {
             /*Call the hide function to remove from display*/
-            defaultGallery.getPictures().elementAt(index).hide();
+            if(defaultGallery.getPictures().elementAt(index).getKarma()){
+                for(int i = 0; i<defaultGallery.get_photos(); ++i){
+                    if(defaultGallery.getPictures().elementAt(index).isEqual(defaultGallery.getPictures().elementAt(i)))
+                        defaultGallery.getPictures().elementAt(index).hide();
+                }
+            }
+            else
+                defaultGallery.getPictures().elementAt(index).hide();
             Gson gson = new Gson();
             String json = gson.toJson(defaultGallery);
             /* Updated the Gallery*/

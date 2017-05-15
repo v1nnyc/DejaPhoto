@@ -20,6 +20,7 @@ public class BackgroundService extends Service {
     private final IBinder iBinder = new LocalService();
     private static Context sContext;
     Default_Gallery defaultGallery;
+    String mode;
     SharedPreferences sharedPreferences;
     /*Index of the image that is displaying.*/
     int index;
@@ -82,11 +83,13 @@ public class BackgroundService extends Service {
         index = sharedPreferences.getInt("Index", 0);
         /*An User pick speed to change the image*/
         rate = sharedPreferences.getInt("Rate", 1);
-        Log.v("Total.number",Integer.toString(defaultGallery.get_photos()));
-        for(int i = 0; i<defaultGallery.get_photos();++i)
-            if(defaultGallery.getPictures().elementAt(i).getKarma())
-                Log.v(Integer.toString(i),"Karmared");
-        }
+        mode = sharedPreferences.getString("Mode","time");
+        Log.v("mode",mode);
+//        Log.v("Total.number",Integer.toString(defaultGallery.get_photos()));
+//        for(int i = 0; i<defaultGallery.get_photos();++i)
+//            if(defaultGallery.getPictures().elementAt(i).getKarma())
+//                Log.v(Integer.toString(i),"Karmared");
+    }
 
 
 }

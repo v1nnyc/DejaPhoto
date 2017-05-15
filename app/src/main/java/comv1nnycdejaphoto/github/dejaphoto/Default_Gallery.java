@@ -232,6 +232,7 @@ public class Default_Gallery{
                 }
                 index = index + 1;
             }
+            Log.v("Displaying",Integer.toString(index));
             editor.apply();
         } else
             wp.emptyPicture();

@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         /*If user press back while picking images, exit the method */
         if(data == null)
             return;
-
+        readPreferences();
         /*The choose button being clicked*/
         if(data != null && requestCode == PICK_CHOOSE) {
             //TODO  choose album
