@@ -10,7 +10,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 public class RateActivity extends AppCompatActivity {
+    Default_Gallery defaultGallery;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     private SeekBar seekBar;
@@ -56,12 +59,30 @@ public class RateActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checked) {
                 if (checked == R.id.time) {
+                    if(mode != "time"){
+                        Gson gson = new Gson();
+                        defaultGallery.sortByTime();
+                        String json = gson.toJson(defaultGallery);
+                        sharedPreferences.edit().putString("Gallery", json);
+                    }
                     editor.putString("Mode","time");
                     Toast.makeText(getApplicationContext(), "Set mode: Time", Toast.LENGTH_SHORT).show();
                 } else if (checked == R.id.day) {
+                    if(mode != "day"){
+                        Gson gson = new Gson();
+                        defaultGallery.sortByTime();
+                        String json = gson.toJson(defaultGallery);
+                        sharedPreferences.edit().putString("Gallery", json);
+                    }
                     editor.putString("Mode","day");
                     Toast.makeText(getApplicationContext(), "Set mode: Day", Toast.LENGTH_SHORT).show();
                 } else {
+                    if(mode != "week"){
+                        Gson gson = new Gson();
+                        defaultGallery.sortByTime();
+                        String json = gson.toJson(defaultGallery);
+                        sharedPreferences.edit().putString("Gallery", json);
+                    }
                     editor.putString("Mode","week");
                     Toast.makeText(getApplicationContext(), "Set mode: Week", Toast.LENGTH_SHORT).show();
                 }
@@ -83,6 +104,7 @@ public class RateActivity extends AppCompatActivity {
     private void readLastReference(){
         progress = sharedPreferences.getInt("Rate", 0);
         mode = sharedPreferences.getString("Mode","time");
+
     }
     /*Initialize the page*/
     private void initialize(){
@@ -98,5 +120,8 @@ public class RateActivity extends AppCompatActivity {
             radioGroup.check(R.id.day);
         if(mode.equals("week"))
             radioGroup.check(R.id.week);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("Gallery", "");
+        defaultGallery = gson.fromJson(json, Default_Gallery.class);
     }
 }

@@ -35,6 +35,7 @@ public class wallpaper extends Activity {
         Context main = BackgroundService.getContext();
         try {
             /*Bitmap is one type of image, open the uri with bitmap*/
+            Log.i("Wallpaper Uri",uri.getPath());
             Bitmap source = MediaStore.Images.Media.getBitmap(main.getContentResolver(), uri);
 
             /*Create a new canvas using the bitmap, because we cannot change directly on the bitmap so we need a new one*/
@@ -44,8 +45,12 @@ public class wallpaper extends Activity {
 
             /*Sert the text color be black*/
             paint.setColor(Color.rgb(0, 0, 0));
+<<<<<<< HEAD
             paint.setTextSize(20);
 
+=======
+            paint.setTextSize(bitmap.getHeight()/10);
+>>>>>>> 1a0bab856707dff6954de541b5d85ccb6b7450c7
             /*Draw on the bitmap*/
             canvas.drawText(location, 10, bitmap.getHeight() - bitmap.getHeight()/5, paint);
 
