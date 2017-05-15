@@ -45,14 +45,16 @@ public class BackgroundService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         sContext = getApplicationContext();
+
         final Handler handler = new Handler();
         final Runnable task = new Runnable() {
             @Override
             public void run() {
-                //android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+                android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
                 /* Read the shared preferences*/
                 readPreferences();
                 /*Load the next picture by calling the gallery's method*/
+                    //defaultGallery.Load_All(getContext());
                 if(defaultGallery != null) {
                     defaultGallery.next();
                     handler.postDelayed(this, rate * 5000);

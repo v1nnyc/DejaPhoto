@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         /*Check is the sharedPreferences exists*/
-//        initialize(SKIP);
+        //initialize();
         /*Read the data from the shared preferences*/
 //        readPreferences();
         sContext = getApplicationContext();
@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         /*If user press back while picking images, exit the method */
 //        if(data == null)
 //            return;
-//        readPreferences();
+        //initialize();
         /*The choose button being clicked*/
         if (data != null && requestCode == PICK_CHOOSE) {
             //TODO  choose album
@@ -201,24 +201,24 @@ public class MainActivity extends AppCompatActivity {
             // add other cases for more permissions
         }
     }
-}
+
     /*This method will check the preferences value exist or not, if not, initialize them*/
-//    public void initialize(int Must_Update){
-//        sharedPreferences = getSharedPreferences("DejaPoto",MODE_PRIVATE);
-//        /*Create a editor to edit*/
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        /*Check for gallery*/
-//        if(!sharedPreferences.contains("Gallery")){
-//            /*Make a new gallery and load all the pictures*/
-//            Default_Gallery defaultGallery=new Default_Gallery();
-//            defaultGallery.Load_All(this);
-//            /*Gson is an object that make an object into a string*/
-//            Gson gson = new Gson();
-//            String json = gson.toJson(defaultGallery);
-//            editor.putString("Gallery", json);
-//            /*Save the value into shared preferences*/
-//            editor.apply();
-//        }
+    public void initialize() {
+        sharedPreferences = getSharedPreferences("DejaPoto", MODE_PRIVATE);
+        /*Create a editor to edit*/
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        /*Check for gallery*/
+
+        /*Make a new gallery and load all the pictures*/
+        Default_Gallery defaultGallery = new Default_Gallery();
+        defaultGallery.Load_All(this);
+        /*Gson is an object that make an object into a string*/
+        Gson gson = new Gson();
+        String json = gson.toJson(defaultGallery);
+        editor.putString("Gallery", json).apply();
+        /*Save the value into shared preferences*/
+    }
+}
 //        /*Check is the preferences saved the correct thing*/
 //        if(sharedPreferences.contains("Gallery")){
 //            /* Read from the preferences and see is it empty*/

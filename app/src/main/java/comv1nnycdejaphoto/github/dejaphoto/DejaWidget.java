@@ -30,7 +30,7 @@ public class DejaWidget extends AppWidgetProvider {
     private wallpaper wp=new wallpaper();
     private SharedPreferences.Editor editor;
     SharedPreferences sharedPreferences ;
-    private Default_Gallery defaultGallery;
+    static Default_Gallery defaultGallery;
     /* index for the index of picture is displaying*/
     private int index;
     /*This 4 string will indicate which button being clicked*/
@@ -172,7 +172,6 @@ public class DejaWidget extends AppWidgetProvider {
                 wp.emptyPicture();
         }
         editor.apply();
-        Log.v("Now displaying", "Index: " + index + "Date" + defaultGallery.getPictures().elementAt(index).getDate());
     }
 
     /* This method will put a string into a pending Intent */

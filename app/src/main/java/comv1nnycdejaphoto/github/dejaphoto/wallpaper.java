@@ -43,9 +43,9 @@ public class wallpaper extends Activity {
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
             /*Sert the text color be black*/
             paint.setColor(Color.rgb(0, 0, 0));
-            paint.setTextSize(50);
+            paint.setTextSize(bitmap.getHeight()/10);
             /*Draw on the bitmap*/
-            canvas.drawText(location, 10, bitmap.getHeight()/5, paint);
+            canvas.drawText(location, 10, bitmap.getHeight() - bitmap.getHeight()/5, paint);
             /*Change the wallpaper to the loaded bitmap*/
             WallpaperManager wallpaperManager = WallpaperManager.getInstance(ma.getContext());
             wallpaperManager.setBitmap(bitmap);
