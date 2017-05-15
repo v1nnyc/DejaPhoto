@@ -28,7 +28,7 @@ import static junit.framework.Assert.assertTrue;
  * Created by ShirleyLam on 5/14/17.
  */
 
-public class JUnitTest {
+class JUnitTest {
 
     @Rule
     public ActivityTestRule<MainActivity> mainActivity = new ActivityTestRule<MainActivity>(MainActivity.class);
