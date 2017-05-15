@@ -90,14 +90,6 @@
             android:text="Time"
 
             android:buttonTint="@android:color/holo_blue_light"/>
-=======
-            android:buttonTint="@android:color/holo_blue_light"
-            android:checked="true"/>
->>>>>>> 1a0bab856707dff6954de541b5d85ccb6b7450c7
-=======
-            android:buttonTint="@android:color/holo_blue_light"
-            android:checked="true"/>
->>>>>>> 3599de2f9ecf3242f4abc9723ab7c84cd466d506
 
         <RadioButton
             android:id="@+id/day"
