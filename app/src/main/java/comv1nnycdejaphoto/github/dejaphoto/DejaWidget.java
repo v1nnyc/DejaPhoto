@@ -30,8 +30,12 @@ public class DejaWidget extends AppWidgetProvider {
     private wallpaper wp=new wallpaper();
     private SharedPreferences.Editor editor;
     SharedPreferences sharedPreferences ;
+<<<<<<< HEAD
     private Default_Gallery defaultGallery;
 
+=======
+    static Default_Gallery defaultGallery;
+>>>>>>> 1a0bab856707dff6954de541b5d85ccb6b7450c7
     /* index for the index of picture is displaying*/
     private int index;
 
@@ -64,6 +68,8 @@ public class DejaWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.karma, getPendingIntent(context, Karma));
         views.setOnClickPendingIntent(R.id.left, getPendingIntent(context, Left));
         views.setOnClickPendingIntent(R.id.right, getPendingIntent(context, Right));
+
+        Log.v("setOnClick", "setting");
     }
 
     @Override
@@ -75,6 +81,8 @@ public class DejaWidget extends AppWidgetProvider {
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
+
+        Log.v("AppWidgetMgr", "update");
     }
 
     @Override
@@ -99,7 +107,14 @@ public class DejaWidget extends AppWidgetProvider {
         /*The toast text just help for debug, make the button being clicked, will be deleted later*/
         if (Release.equals(intent.getAction())) {
             /*Call the hide function to remove from display*/
-            defaultGallery.getPictures().elementAt(index).hide();
+            if(defaultGallery.getPictures().elementAt(index).getKarma()){
+                for(int i = 0; i<defaultGallery.get_photos(); ++i){
+                    if(defaultGallery.getPictures().elementAt(index).isEqual(defaultGallery.getPictures().elementAt(i)))
+                        defaultGallery.getPictures().elementAt(index).hide();
+                }
+            }
+            else
+                defaultGallery.getPictures().elementAt(index).hide();
             Gson gson = new Gson();
             String json = gson.toJson(defaultGallery);
 
@@ -118,12 +133,12 @@ public class DejaWidget extends AppWidgetProvider {
                 /*Updated the Gallery*/
                 editor.putString("Gallery", json);
                 editor.apply();
-                defaultGallery.add(defaultGallery.getPictures().elementAt(index));
             }else
                 Toast.makeText(context, "Picture already added Karma", Toast.LENGTH_SHORT).show();
         }
 
         if (Left.equals(intent.getAction())) {
+            Log.v("LeftClicked","Widget");
             if(defaultGallery.get_photos() != 0 ) {
                 /* To indicate the wallpaper is changed*/
                 Boolean changed = false;
@@ -145,8 +160,13 @@ public class DejaWidget extends AppWidgetProvider {
                         Uri uriFromGallery = Uri.fromFile(file);
                         /*Make it becomes the wallpaper*/
                         wp.changeWallpaper(uriFromGallery, picture.getLocatio());
+<<<<<<< HEAD
                         /*Update the index*/
                         editor.putInt("Index", index - 1);
+=======
+                    /*Update the index*/
+                        editor.putInt("Index", index - 1).apply();
+>>>>>>> 1a0bab856707dff6954de541b5d85ccb6b7450c7
                         changed = true;
                         break;
                     }
@@ -162,6 +182,7 @@ public class DejaWidget extends AppWidgetProvider {
         }
 
         if (Right.equals(intent.getAction())) {
+            Log.v("RightClicked","Widget");
             if(defaultGallery.get_photos() != 0) {
                 Boolean changed = false;
                 int last = index;
@@ -188,13 +209,14 @@ public class DejaWidget extends AppWidgetProvider {
                 wp.emptyPicture();
         }
         editor.apply();
-        Log.v("Now index",Integer.toString(index));
     }
 
     /* This method will put a string into a pending Intent */
     protected PendingIntent getPendingIntent(Context context, String action) {
         Intent intent = new Intent(context, getClass());
         intent.setAction(action);
+
+        Log.v("PendingIntent", "String obtained");
         return PendingIntent.getBroadcast(context, 0, intent, 0);
     }
 
@@ -208,6 +230,8 @@ public class DejaWidget extends AppWidgetProvider {
         String json = sharedPreferences.getString("Gallery","");
         defaultGallery = gson.fromJson(json, Default_Gallery.class);
         index = sharedPreferences.getInt("Index",0);
+
+        Log.v("readPreferences", "sharedPreferences read");
     }
 }
 

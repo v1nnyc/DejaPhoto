@@ -29,16 +29,16 @@
             android:backgroundTint="@android:color/holo_blue_light"
             android:max="60" />
 
-    <TextView
-        android:id="@+id/rateView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="150dp"
-        android:layout_marginLeft="175dp"
-        android:layout_below="@+id/seekBar"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@android:color/black"
-        android:textSize="15sp"/>
+        <TextView
+            android:id="@+id/rateView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="150dp"
+            android:layout_marginLeft="175dp"
+            android:layout_below="@+id/seekBar"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@android:color/black"
+            android:textSize="15sp"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -80,7 +80,7 @@
         android:id="@+id/radioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:checkedButton="@id/time"
+
         android:layout_marginLeft="10dp">
 
         <RadioButton
@@ -88,7 +88,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Time"
+<<<<<<< HEAD
             android:buttonTint="@android:color/holo_blue_light"/>
+=======
+            android:buttonTint="@android:color/holo_blue_light"
+            android:checked="true"/>
+>>>>>>> 1a0bab856707dff6954de541b5d85ccb6b7450c7
 
         <RadioButton
             android:id="@+id/day"
@@ -106,4 +111,3 @@
     </RadioGroup>
 
 </LinearLayout>
-

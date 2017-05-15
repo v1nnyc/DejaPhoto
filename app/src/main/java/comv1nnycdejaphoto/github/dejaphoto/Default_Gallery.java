@@ -9,7 +9,9 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
+import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ImageView;
@@ -17,7 +19,14 @@ import android.widget.ImageView;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.sql.Ref;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.Vector;
@@ -40,30 +49,17 @@ public class Default_Gallery{
     SharedPreferences sharedPreferences;
     int index;
     private Vector<Picture> pictures = new Vector<Picture>();
-    private int num_photos = 0;
-
-    public void Default_Gallery(){
-    }
+    private int num_photos;
 
     public Vector<Picture> getPictures(){
         return pictures;
     }
 
     public void Load_All(Context context){
-
-       /* Future implementation of load only on first call to app???
-       load = context.getSharedPreferences("first", 0);
-       SharedPreferences.Editor editor = load.edit();
-       if( load.getBoolean("first", false) == false){
-           editor.putBoolean("first", true);
-           editor.commit();
-       }
-       else{
-           return;
-       }
-       */
+        Log.v("Loading","ALL");
 
         Geocoder decoder = new Geocoder(context);            // one time creation for location finding
+<<<<<<< HEAD
         Uri internal_storage = MediaStore.Images.Media.EXTERNAL_CONTENT_URI; // storage of all photos
         String [] data = {MediaStore.MediaColumns.DATA,                  // data to look for
                 MediaStore.Images.ImageColumns.LATITUDE,
@@ -162,6 +158,70 @@ public class Default_Gallery{
         return latitude;
     }
 
+=======
+        Uri internal_storage = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath()); // storage of all photos
+        Log.v("Path of internal_storage",internal_storage.getPath());
+        File directory = new File(internal_storage.getPath());
+        File[] files = directory.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return (name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".png"));
+            }
+        });
+        if(files != null){
+
+            for(File f : files){ // loop and print all file
+                String fileName = f.getName(); // this is file name
+                try {
+
+                    ExifInterface exifInterface = new ExifInterface(f.getAbsolutePath());
+                    String time = exifInterface.getAttribute(ExifInterface.TAG_GPS_TIMESTAMP);
+                    String date = exifInterface.getAttribute(ExifInterface.TAG_GPS_DATESTAMP);
+                    String latitude =  null;
+                    String longitude = null;
+                    String latitudeRef =  null;
+                    String longitudeRef = null;
+                    String location = "No Location";
+                    latitude= exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+                    longitude = exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+                    latitudeRef = exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
+                    longitudeRef = exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
+                    if(latitude != null && longitude != null) {
+                        double latiString = conversion(latitude,latitudeRef);
+                        double longString = conversion(longitude,longitudeRef);
+                        Log.i("Lati", Double.toString(latiString));
+                        Log.i("Long",Double.toString(longString));
+                        location = get_Location(context,latiString,longString,decoder);
+                    }
+                    Log.i("FIle name", fileName);
+                    Log.i("Location" , location);
+                    pictures.add(new Picture(f.getPath(), date, time, location));
+                    num_photos++;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public double conversion(String converThis,String ref){
+        String temp = converThis;
+        double ans = 0;
+        temp = converThis.substring(0, converThis.indexOf('/'));
+        ans = Double.parseDouble(temp);
+        converThis = converThis.substring(converThis.indexOf(','));
+        temp = converThis.substring(1, converThis.indexOf('/'));
+        ans = ans +  Double.parseDouble(temp)/60;
+        converThis = converThis.substring(1);
+        converThis = converThis.substring(converThis.indexOf(','));
+        temp = converThis.substring(1,converThis.indexOf('/'));
+        converThis = converThis.substring(converThis.indexOf('/'));
+        converThis = converThis.substring(1);
+        ans = ans + Double.parseDouble(temp)/3600 / Double.parseDouble(converThis);
+        if(ref.compareTo("S") == 0 || ref.compareTo("W") == 0)
+            ans = ans* -1;
+        return ans;
+    }
+>>>>>>> 1a0bab856707dff6954de541b5d85ccb6b7450c7
 
     public File retrieve_Photo(String Path) {
         File retrieved_image = new File(Path);  // finds image through file
@@ -183,7 +243,6 @@ public class Default_Gallery{
         List<Address> address = null;
         try { // try and get the address location from gps
             address = decoder.getFromLocation(latitude, longitude, 1);
-
         }
         catch(Exception e) {
             // ignore (bad code style) but used to fix case of adjusting all methods to throw exception
@@ -191,6 +250,8 @@ public class Default_Gallery{
 
         // using the address data type retrieved from gps
         // check various location types and outputs the most suitable name first
+        if(address == null)
+            return "No Location";
         Address add = address.get(0);
 
         //obtain address details
@@ -233,9 +294,16 @@ public class Default_Gallery{
             while ((index + 1) != last) {
                 if (index == (defaultGallery.get_photos() - 1))
                     index = -1;
+<<<<<<< HEAD
 
                 if (defaultGallery.getPictures().elementAt(index + 1).getDisplay()) {
                     Picture picture = defaultGallery.getPictures().elementAt(index + 1);
+=======
+                Log.d("# photos", "" + defaultGallery.get_photos());
+                Log.d("index" , "" + index);
+                if ( defaultGallery.getPictures().elementAt(index + 1).getDisplay()) {
+                    Picture picture = defaultGallery.getPictures().elementAt(index+1);
+>>>>>>> 1a0bab856707dff6954de541b5d85ccb6b7450c7
                     File file = new File(picture.getImage());
                     Uri uriFromGallery = Uri.fromFile(file);
                     wp.changeWallpaper(uriFromGallery, picture.getLocatio());
@@ -244,6 +312,7 @@ public class Default_Gallery{
                 }
                 index = index + 1;
             }
+            Log.v("Displaying",Integer.toString(index));
             editor.apply();
         }
         else wp.emptyPicture();
@@ -282,4 +351,194 @@ public class Default_Gallery{
         editor.putString("Gallery", json);
         editor.apply();
     }
+<<<<<<< HEAD
+=======
+
+    public void sortByTime(){
+        SimpleDateFormat simpleDateFormat =new SimpleDateFormat("hh:mm:ss");
+        readPreferences();
+        int token = 0;
+        for(int i = 0; i<defaultGallery.get_photos();++i){
+            if(defaultGallery.getPictures().elementAt(i).timeWithinBounds()) {
+                if (token == defaultGallery.get_photos() - 2) {
+                    break;
+                }
+                else{
+                    Collections.swap(defaultGallery.pictures,i,token);
+                    token++;
+                }
+            }
+        }
+        int karmaCount = 0;
+        for(int i = 0; i < token; ++i){
+            if(defaultGallery.getPictures().elementAt(i).getKarma()){
+                Collections.swap(defaultGallery.pictures,i,karmaCount);
+                karmaCount++;
+            }
+        }
+        for(int i = 0; i < karmaCount-1; ++i){
+            for(int j = 1; j <karmaCount; ++j) {
+                try {
+                    Date date1 = simpleDateFormat.parse(defaultGallery.getPictures().get(i).getTime());
+                    Date date2 = simpleDateFormat.parse(defaultGallery.getPictures().get(j).getDate());
+                    if (date1.before(date2))
+                        Collections.swap(defaultGallery.pictures, i, j);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        for(int i = karmaCount; i < (token -1); i++){
+            for(int j = karmaCount + 1; j < token ; j++) {
+                try {
+                    Date date1 = simpleDateFormat.parse(defaultGallery.getPictures().get(i).getTime());
+                    Date date2 = simpleDateFormat.parse(defaultGallery.getPictures().get(j).getDate());
+                    if (date1.before(date2))
+                        Collections.swap(defaultGallery.pictures, i, j);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        for(int i = token ; i < defaultGallery.get_photos()-1; ++i) {
+            for (int j = token + 1; j < defaultGallery.get_photos(); j++) {
+                try {
+                    Date date1 = simpleDateFormat.parse(defaultGallery.getPictures().get(i).getTime());
+                    Date date2 = simpleDateFormat.parse(defaultGallery.getPictures().get(j).getDate());
+                    if (date1.before(date2))
+                        Collections.swap(defaultGallery.pictures, i, j);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+    }
+
+    public void sortByDay(){
+        SimpleDateFormat simpleDateFormat =new SimpleDateFormat("MM:dd");
+        Date today = Calendar.getInstance().getTime();
+        today.setYear(0);
+        readPreferences();
+        int token  = 0;
+        for(int i = 0; i<defaultGallery.get_photos(); ++i){
+            try {
+                Date dateToken = simpleDateFormat.parse(defaultGallery.getPictures().get(i).getDate());
+                dateToken.setYear(0);
+                if(today.equals(dateToken)){
+                    Collections.swap(defaultGallery.pictures, i, token);
+                    token++;
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        int karmaCount = 0;
+        for(int i = 0; i < token; ++i){
+            if(defaultGallery.getPictures().elementAt(i).getKarma()){
+                Collections.swap(defaultGallery.pictures,i,karmaCount);
+                karmaCount++;
+            }
+        }
+        for(int i = 0; i < karmaCount-1; ++i){
+            for(int j = 1; j <karmaCount; ++j) {
+                try {
+                    Date date1 = simpleDateFormat.parse(defaultGallery.getPictures().get(i).getTime());
+                    Date date2 = simpleDateFormat.parse(defaultGallery.getPictures().get(j).getDate());
+                    if (date1.before(date2))
+                        Collections.swap(defaultGallery.pictures, i, j);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        for(int i = karmaCount; i < (token -1); i++){
+            for(int j = karmaCount + 1; j < token ; j++) {
+                try {
+                    Date date1 = simpleDateFormat.parse(defaultGallery.getPictures().get(i).getTime());
+                    Date date2 = simpleDateFormat.parse(defaultGallery.getPictures().get(j).getDate());
+                    if (date1.before(date2))
+                        Collections.swap(defaultGallery.pictures, i, j);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        for(int i = token ; i < defaultGallery.get_photos()-1; ++i) {
+            for (int j = token + 1; j < defaultGallery.get_photos(); j++) {
+                try {
+                    Date date1 = simpleDateFormat.parse(defaultGallery.getPictures().get(i).getTime());
+                    Date date2 = simpleDateFormat.parse(defaultGallery.getPictures().get(j).getDate());
+                    if (date1.before(date2))
+                        Collections.swap(defaultGallery.pictures, i, j);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+    }
+    public void sortByWeek(){
+        SimpleDateFormat simpleDateFormat =new SimpleDateFormat("yyyy:MM:dd");
+        Calendar today = Calendar.getInstance();
+        today.setTime(today.getTime());
+        int dayOfWeek = today.get(Calendar.DAY_OF_WEEK);
+        int token = 0;
+        for(int i = 0; i < defaultGallery.get_photos() ; ++i){
+            try {
+                Calendar weekToken = Calendar.getInstance();
+                Date took = simpleDateFormat.parse(defaultGallery.getPictures().get(i).getDate());
+                weekToken.setTime(took);
+                if(dayOfWeek == weekToken.get(Calendar.DAY_OF_WEEK)) {
+                    Collections.swap(defaultGallery.pictures, i, token);
+                    token++;
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }int karmaCount = 0;
+        for(int i = 0; i < token; ++i){
+            if(defaultGallery.getPictures().elementAt(i).getKarma()){
+                Collections.swap(defaultGallery.pictures,i,karmaCount);
+                karmaCount++;
+            }
+        }
+        for(int i = 0; i < karmaCount-1; ++i){
+            for(int j = 1; j <karmaCount; ++j) {
+                try {
+                    Date date1 = simpleDateFormat.parse(defaultGallery.getPictures().get(i).getTime());
+                    Date date2 = simpleDateFormat.parse(defaultGallery.getPictures().get(j).getDate());
+                    if (date1.before(date2))
+                        Collections.swap(defaultGallery.pictures, i, j);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        for(int i = karmaCount; i < (token -1); i++){
+            for(int j = karmaCount + 1; j < token ; j++) {
+                try {
+                    Date date1 = simpleDateFormat.parse(defaultGallery.getPictures().get(i).getTime());
+                    Date date2 = simpleDateFormat.parse(defaultGallery.getPictures().get(j).getDate());
+                    if (date1.before(date2))
+                        Collections.swap(defaultGallery.pictures, i, j);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        for(int i = token ; i < defaultGallery.get_photos()-1; ++i) {
+            for (int j = token + 1; j < defaultGallery.get_photos(); j++) {
+                try {
+                    Date date1 = simpleDateFormat.parse(defaultGallery.getPictures().get(i).getTime());
+                    Date date2 = simpleDateFormat.parse(defaultGallery.getPictures().get(j).getDate());
+                    if (date1.before(date2))
+                        Collections.swap(defaultGallery.pictures, i, j);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+>>>>>>> 1a0bab856707dff6954de541b5d85ccb6b7450c7
 }
