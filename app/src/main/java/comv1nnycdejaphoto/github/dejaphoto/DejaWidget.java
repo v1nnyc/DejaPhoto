@@ -76,102 +76,128 @@ public class DejaWidget extends AppWidgetProvider {
     }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(final Context context, Intent intent) {
         /*This line will actually call onUpdate(), to make sure everything is okay first*/
         super.onReceive(context, intent);
-        /*Update the photos*/
-        readPreferences(context);
         /*The case switch statements. It is matching the string being saved in the pending Intent*/
         /*The toast text just help for debug, make the button being clicked, will be deleted later*/
         if (Release.equals(intent.getAction())) {
-            /*Call the hide function to remove from display*/
-            if(defaultGallery.getPictures().elementAt(index).getKarma()){
-                for(int i = 0; i<defaultGallery.get_photos(); ++i){
-                    if(defaultGallery.getPictures().elementAt(index).isEqual(defaultGallery.getPictures().elementAt(i)))
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    /*Update the photos*/
+                    readPreferences(context);
+                    /*Call the hide function to remove from display*/
+                    if(defaultGallery.getPictures().elementAt(index).getKarma()){
+                        for(int i = 0; i<defaultGallery.get_photos(); ++i){
+                            if(defaultGallery.getPictures().elementAt(index).isEqual(defaultGallery.getPictures().elementAt(i)))
+                                defaultGallery.getPictures().elementAt(index).hide();
+                        }
+                    }
+                    else
                         defaultGallery.getPictures().elementAt(index).hide();
-                }
-            }
-            else
-                defaultGallery.getPictures().elementAt(index).hide();
-            Gson gson = new Gson();
-            String json = gson.toJson(defaultGallery);
+                    Gson gson = new Gson();
+                    String json = gson.toJson(defaultGallery);
             /* Updated the Gallery*/
-            editor.putString("Gallery", json);
-            Toast.makeText(context, "Release", Toast.LENGTH_SHORT).show();
+                    editor.putString("Gallery", json).apply();
+                    Toast.makeText(context, "Release", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
         if (Karma.equals(intent.getAction())) {
             /* Call the add Karma function to modify the picture*/
-            if(!defaultGallery.getPictures().elementAt(index).getKarma()) {
-                Toast.makeText(context, "Added Karma", Toast.LENGTH_SHORT).show();
-                defaultGallery.getPictures().elementAt(index).addKarma();
-                Gson gson = new Gson();
-                String json = gson.toJson(defaultGallery);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    /*Update the photos*/
+                    readPreferences(context);
+                    if(!defaultGallery.getPictures().elementAt(index).getKarma()) {
+                        Toast.makeText(context, "Added Karma", Toast.LENGTH_SHORT).show();
+                        defaultGallery.getPictures().elementAt(index).addKarma();
+                        Gson gson = new Gson();
+                        String json = gson.toJson(defaultGallery);
                 /*Updated the Gallery*/
-                editor.putString("Gallery", json);
-                editor.apply();
-            }else
-                Toast.makeText(context, "Picture already added Karma", Toast.LENGTH_SHORT).show();
+                        editor.putString("Gallery", json);
+                        editor.apply();
+                    }else
+                        Toast.makeText(context, "Picture already added Karma", Toast.LENGTH_SHORT).show();
+                }
+            }).start();
         }
         if (Left.equals(intent.getAction())) {
-            Log.v("LeftClicked","Widget");
-            if(defaultGallery.get_photos() != 0 ) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    /*Update the photos*/
+                    readPreferences(context);
+                    Log.v("LeftClicked","Widget");
+                    if(defaultGallery.get_photos() != 0 ) {
             /* To indicate the wallpaper is changed*/
-                Boolean changed = false;
+                        Boolean changed = false;
             /* To save the current displaying index*/
-                int last = index;
+                        int last = index;
             /* If it already checks for all the picture in the Gallery*/
-                while ((index - 1) != last) {
+                        while ((index - 1) != last) {
                 /* if index is 0, make the index become the last element*/
-                    if ((index) == 0)
-                        index = defaultGallery.get_photos();
+                            if ((index) == 0)
+                                index = defaultGallery.get_photos();
                 /* Check is it already released, if not, display it*/
-                    if (defaultGallery.getPictures().elementAt(index - 1).getDisplay()) {
+                            if (defaultGallery.getPictures().elementAt(index - 1).getDisplay()) {
                     /*Get the picture from the gallery*/
-                        Picture picture = defaultGallery.getPictures().elementAt(index - 1);
-                        File file = new File(picture.getImage());
-                        Uri uriFromGallery = Uri.fromFile(file);
+                                Picture picture = defaultGallery.getPictures().elementAt(index - 1);
+                                File file = new File(picture.getImage());
+                                Uri uriFromGallery = Uri.fromFile(file);
                     /*Make it becomes the wallpaper*/
-                        wp.changeWallpaper(uriFromGallery, picture.getLocatio());
+                                wp.changeWallpaper(uriFromGallery, picture.getLocatio(),context);
                     /*Update the index*/
-                        editor.putInt("Index", index - 1).apply();
-                        changed = true;
-                        break;
-                    }
-                    index = index - 1;
-                }
+                                editor.putInt("Index", index - 1).apply();
+                                changed = true;
+                                break;
+                            }
+                            index = index - 1;
+                        }
             /*if the wall paper didn't change, it means all pictures are released or empty gallery*/
-                if (!changed)
-                    Toast.makeText(context, "No picture can be displayed", Toast.LENGTH_SHORT).show();
-            }
-            else
-                wp.emptyPicture();
+                        if (!changed)
+                            Toast.makeText(context, "No picture can be displayed", Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                        wp.emptyPicture();
+                }
+            }).start();
+
         }
         if (Right.equals(intent.getAction())) {
-            Log.v("RightClicked","Widget");
-            if(defaultGallery.get_photos() != 0) {
-                Boolean changed = false;
-                int last = index;
-                while ((index + 1) != last) {
-                    if (index == (defaultGallery.get_photos() - 1))
-                        index = -1;
-                    if (defaultGallery.getPictures().elementAt(index + 1).getDisplay()) {
-                        Picture picture = defaultGallery.getPictures().elementAt(index + 1);
-                        File file = new File(picture.getImage());
-                        Uri uriFromGallery = Uri.fromFile(file);
-                        wp.changeWallpaper(uriFromGallery, picture.getLocatio());
-                        editor.putInt("Index", index + 1);
-                        changed = true;
-                        break;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    /*Update the photos*/
+                    readPreferences(context);
+                    Log.v("RightClicked","Widget");
+                    if(defaultGallery.get_photos() != 0) {
+                        Boolean changed = false;
+                        int last = index;
+                        while ((index + 1) != last) {
+                            if (index == (defaultGallery.get_photos() - 1))
+                                index = -1;
+                            if (defaultGallery.getPictures().elementAt(index + 1).getDisplay()) {
+                                Picture picture = defaultGallery.getPictures().elementAt(index + 1);
+                                File file = new File(picture.getImage());
+                                Uri uriFromGallery = Uri.fromFile(file);
+                                wp.changeWallpaper(uriFromGallery, picture.getLocatio());
+                                editor.putInt("Index", index + 1).apply();
+                                changed = true;
+                                break;
+                            }
+                            index = index + 1;
+                        }
+                        if (!changed)
+                            Toast.makeText(context, "No picture can be displayed", Toast.LENGTH_SHORT).show();
                     }
-                    index = index + 1;
+                    else
+                        wp.emptyPicture();
                 }
-                if (!changed)
-                    Toast.makeText(context, "No picture can be displayed", Toast.LENGTH_SHORT).show();
-            }
-            else
-                wp.emptyPicture();
+            }).start();
         }
-        editor.apply();
     }
 
     /* This method will put a string into a pending Intent */

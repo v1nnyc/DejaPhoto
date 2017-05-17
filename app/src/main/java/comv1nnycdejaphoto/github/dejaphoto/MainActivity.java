@@ -57,10 +57,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        /*Check is the sharedPreferences exists*/
-        //initialize();
-        /*Read the data from the shared preferences*/
-//        readPreferences();
         sContext = getApplicationContext();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_album);
@@ -109,19 +105,6 @@ public class MainActivity extends AppCompatActivity {
         startService(intent);
     }
 
-    //    private ServiceConnection serviceConection =  new ServiceConnection() {
-//        @Override
-//        public void onServiceConnected(ComponentName name, IBinder service) {
-//            BackgroundService.LocalService localService = (BackgroundService.LocalService)service;
-//            backgroundService = localService.getService();
-//            isBound = true;
-//        }
-//
-//        @Override
-//        public void onServiceDisconnected(ComponentName name) {
-//            isBound = false;
-//        }
-//    };
     /*required for other classes to be able to access MainActivity*/
     public static Context getContext() {
         return sContext;
@@ -130,10 +113,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Gson gson = new Gson();
+        sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto",MODE_PRIVATE);
+        String json = sharedPreferences.getString("Gallery", "");
+        defaultGallery.Load_All(BackgroundService.getContext());
+        defaultGallery = gson.fromJson(json, Default_Gallery.class);
         /*If user press back while picking images, exit the method */
-//        if(data == null)
-//            return;
-        //initialize();
         /*The choose button being clicked*/
         if (data != null && requestCode == PICK_CHOOSE) {
             //TODO  choose album
@@ -176,6 +161,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+        json = gson.toJson(defaultGallery);
+        sharedPreferences.edit().putString("Gallery", json).apply();
+
     }
 
     /*Get from piazza, original from codepath :
@@ -201,67 +189,4 @@ public class MainActivity extends AppCompatActivity {
             // add other cases for more permissions
         }
     }
-
-    /*This method will check the preferences value exist or not, if not, initialize them*/
-    public void initialize() {
-        sharedPreferences = getSharedPreferences("DejaPoto", MODE_PRIVATE);
-        /*Create a editor to edit*/
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        /*Check for gallery*/
-
-        /*Make a new gallery and load all the pictures*/
-        Default_Gallery defaultGallery = new Default_Gallery();
-        defaultGallery.Load_All(this);
-        /*Gson is an object that make an object into a string*/
-        Gson gson = new Gson();
-        String json = gson.toJson(defaultGallery);
-        editor.putString("Gallery", json).apply();
-        /*Save the value into shared preferences*/
-    }
 }
-//        /*Check is the preferences saved the correct thing*/
-//        if(sharedPreferences.contains("Gallery")){
-//            /* Read from the preferences and see is it empty*/
-//            Default_Gallery checkEmpty;
-//            Gson gson = new Gson();
-//            String json = sharedPreferences.getString("Gallery","");
-//            checkEmpty = gson.fromJson(json, Default_Gallery.class);
-//            /*Update it when it is empty or force it to update*/
-//            if(checkEmpty.get_photos() ==  0 || Must_Update == 1){
-//                checkEmpty.Load_All(this);
-//                json = gson.toJson(checkEmpty);
-//                editor.putString("Gallery", json);
-//                editor.apply();
-//            }
-//        }
-//        /*Check the rate that how long to change to another picture*/
-//        if(!sharedPreferences.contains("Rate")){
-//            int rate = 0;
-//            editor.putInt("Rate", rate);
-//            editor.apply();
-//        }
-//        /*Check the last picture being shown*/
-//        if(!sharedPreferences.contains("Index")){
-//            editor.putInt("Index", 0);
-//            editor.apply();
-//        }
-//    }
-//
-//    /*The method will read all the value from the shared preferences*/
-//    public void readPreferences(){
-//        /*Get the gallery data from the preferences, gson helps to turn a string into an object*/
-//        Gson gson = new Gson();
-//        String json = sharedPreferences.getString("Gallery","");
-//        defaultGallery = gson.fromJson(json, Default_Gallery.class);
-//        /*Make another gallery that loads everything in the gallery*/
-//        Default_Gallery checkUpdate = new Default_Gallery();
-//        checkUpdate.Load_All(this);
-//        /*If the number of photos are different, it means the user has more/lease images*/
-//        if(checkUpdate.get_photos() != defaultGallery.get_photos()){
-//            /* make the gallery be the new one and update it into the shared preferences*/
-//            defaultGallery = checkUpdate;
-//            initialize(UPDATE);
-//        }
-//    }
-//
-//}

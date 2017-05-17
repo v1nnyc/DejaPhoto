@@ -64,17 +64,18 @@ public class Default_Gallery{
         Uri internal_storage = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath()); // storage of all photos
         Log.v("Path of internal_storage",internal_storage.getPath());
         File directory = new File(internal_storage.getPath());
+        /* Filter to read only images*/
         File[] files = directory.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
                 return (name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".png"));
             }
         });
         if(files != null){
-
-            for(File f : files){ // loop and print all file
+            /* Loop through the  images*/
+            for(File f : files){
                 String fileName = f.getName(); // this is file name
                 try {
-
+                    /* Read the file with exifinterface*/
                     ExifInterface exifInterface = new ExifInterface(f.getAbsolutePath());
                     String time = exifInterface.getAttribute(ExifInterface.TAG_GPS_TIMESTAMP);
                     String date = exifInterface.getAttribute(ExifInterface.TAG_GPS_DATESTAMP);
@@ -83,11 +84,14 @@ public class Default_Gallery{
                     String latitudeRef =  null;
                     String longitudeRef = null;
                     String location = "No Location";
+                    /* The format will be xx/x,xx/x,xxxx/xxxx*/
                     latitude= exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
                     longitude = exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+                    /* It will be either 'W' 'E or 'N' 'S' */
                     latitudeRef = exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
                     longitudeRef = exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
-                    if(latitude != null && longitude != null) {
+                    /*If they are all not null, it means they have location infromation*/
+                    if(latitude != null && longitude != null && latitudeRef != null && longitudeRef != null) {
                         double latiString = conversion(latitude,latitudeRef);
                         double longString = conversion(longitude,longitudeRef);
                         Log.i("Lati", Double.toString(latiString));
@@ -106,17 +110,26 @@ public class Default_Gallery{
     }
 
     public double conversion(String converThis,String ref){
+        /* Format : xx/yy,aa/bb,cccc/dddd or something like this*/
         String temp = converThis;
         double ans = 0;
+        /* temp now will be xx*/
         temp = converThis.substring(0, converThis.indexOf('/'));
         ans = Double.parseDouble(temp);
+        /* converThis will be ,aa/bb,cccc/dddd*/
         converThis = converThis.substring(converThis.indexOf(','));
+        /* temp = aa*/
         temp = converThis.substring(1, converThis.indexOf('/'));
         ans = ans +  Double.parseDouble(temp)/60;
+        /*converThis = aa/bb,cccc/dddd*/
         converThis = converThis.substring(1);
+        /*converThis = ,cccc/dddd*/
         converThis = converThis.substring(converThis.indexOf(','));
+        /* temp = cccc*/
         temp = converThis.substring(1,converThis.indexOf('/'));
+        /* converThis = /dddd*/
         converThis = converThis.substring(converThis.indexOf('/'));
+        /* converThis = dddd */
         converThis = converThis.substring(1);
         ans = ans + Double.parseDouble(temp)/3600 / Double.parseDouble(converThis);
         if(ref.compareTo("S") == 0 || ref.compareTo("W") == 0)
@@ -214,35 +227,12 @@ public class Default_Gallery{
         index = sharedPreferences.getInt("Index",0);
     }
 
-    public void add(Picture picture){
-        readPreferences();
-        Random rand = new Random();
-        /*Add fewer duplicates when the gallery size is small, add more if it is larger*/
-        for(int i = 0; i < defaultGallery.get_photos()/5 || i < 3; ++i ) {
-            int randIndex = rand.nextInt(defaultGallery.get_photos());
-            /*Add the picture to the end*/
-            defaultGallery.pictures.add(picture);
-            if(picture.getKarma())
-                defaultGallery.pictures.elementAt(defaultGallery.get_photos()).addKarma();
-            /*Put that picture in a random spot*/
-            Collections.swap(defaultGallery.pictures, defaultGallery.get_photos(), randIndex);
-            defaultGallery.num_photos++;
-            save();
-        }
-    }
-
-    public void save(){
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(defaultGallery);
-        editor.putString("Gallery", json);
-        editor.apply();
-    }
 
     public void sortByTime(){
         SimpleDateFormat simpleDateFormat =new SimpleDateFormat("hh:mm:ss");
         readPreferences();
         int token = 0;
+        /* If the time is within 2 hours, move them to the front*/
         for(int i = 0; i<defaultGallery.get_photos();++i){
             if(defaultGallery.getPictures().elementAt(i).timeWithinBounds()) {
                 if (token == defaultGallery.get_photos() - 2) {
@@ -254,6 +244,7 @@ public class Default_Gallery{
                 }
             }
         }
+        /*For the photo with the same condiction, move the one with karma to the front*/
         int karmaCount = 0;
         for(int i = 0; i < token; ++i){
             if(defaultGallery.getPictures().elementAt(i).getKarma()){
@@ -261,6 +252,7 @@ public class Default_Gallery{
                 karmaCount++;
             }
         }
+        /*Compare two picture's day, move the one took earlier to the back, for non karma pictures*/
         for(int i = 0; i < karmaCount-1; ++i){
             for(int j = 1; j <karmaCount; ++j) {
                 try {
@@ -273,6 +265,7 @@ public class Default_Gallery{
                 }
             }
         }
+        /* do the same thing for karma pictures*/
         for(int i = karmaCount; i < (token -1); i++){
             for(int j = karmaCount + 1; j < token ; j++) {
                 try {
@@ -285,6 +278,7 @@ public class Default_Gallery{
                 }
             }
         }
+        /*Do the same for match mode condition*/
         for(int i = token ; i < defaultGallery.get_photos()-1; ++i) {
             for (int j = token + 1; j < defaultGallery.get_photos(); j++) {
                 try {
@@ -296,10 +290,10 @@ public class Default_Gallery{
                     e.printStackTrace();
                 }
             }
-
         }
     }
 
+    /*Same as sort By time*/
     public void sortByDay(){
         SimpleDateFormat simpleDateFormat =new SimpleDateFormat("MM:dd");
         Date today = Calendar.getInstance().getTime();
@@ -363,6 +357,7 @@ public class Default_Gallery{
 
         }
     }
+
     public void sortByWeek(){
         SimpleDateFormat simpleDateFormat =new SimpleDateFormat("yyyy:MM:dd");
         Calendar today = Calendar.getInstance();

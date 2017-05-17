@@ -54,6 +54,7 @@ public class RateActivity extends AppCompatActivity {
 
         });
 
+        /* Everytime clicked on on button, sort the pictures*/
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
             @Override
