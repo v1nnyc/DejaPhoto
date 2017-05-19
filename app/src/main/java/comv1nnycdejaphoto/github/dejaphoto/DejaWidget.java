@@ -172,7 +172,6 @@ public class DejaWidget extends AppWidgetProvider {
             /*if the wall paper didn't change, it means all pictures are released or empty gallery*/
                         if (!changed)
                             Toast.makeText(context, "No picture can be displayed", Toast.LENGTH_SHORT).show();
-=======
                     }
                     else
                         wp.emptyPicture();
