@@ -78,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
                                               startActivityForResult(intent, PICK_CHOOSE);
                                           }
                                       });
+        releasePictures();
+        setDisplayRate();
 
         //start background service
         Intent intent = new Intent(MainActivity.this, BackgroundService.class);
