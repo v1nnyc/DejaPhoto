@@ -48,8 +48,6 @@ public class MainActivity extends AppCompatActivity {
     /* This will tell the different between choose or release, 1 is for choose, 0 for release*/
     static final int PICK_CHOOSE = 1;
     static final int PICK_RELEASE = 0;
-    private final int UPDATE = 1;
-    private final int SKIP = 0;
 
     //constructor
     public MainActivity() {
