@@ -22,8 +22,10 @@ public class BackgroundService extends Service {
     Default_Gallery defaultGallery;
     String mode;
     SharedPreferences sharedPreferences;
+
     /*Index of the image that is displaying.*/
     int index;
+
     /*How fast would the image change automatically*/
     int rate;
 
@@ -34,14 +36,17 @@ public class BackgroundService extends Service {
     public IBinder onBind(Intent intent) {
         return iBinder;
     }
+  
     public static Context getContext() {
         return sContext;
     }
+  
     class LocalService extends Binder{
         public BackgroundService getService(){
             return BackgroundService.this;
         }
     }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         sContext = getApplicationContext();
@@ -53,6 +58,7 @@ public class BackgroundService extends Service {
                 android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
                 /* Read the shared preferences*/
                 readPreferences();
+
                 /*Load the next picture by calling the gallery's method*/
                     //defaultGallery.Load_All(getContext());
                 if(defaultGallery != null) {
@@ -61,6 +67,7 @@ public class BackgroundService extends Service {
                 }
             }
         };
+
         /*loop the task by delay it for rate*5000 millisecond*/
         handler.postDelayed(task, rate*5000);
         return START_STICKY;
@@ -83,11 +90,10 @@ public class BackgroundService extends Service {
         /*Save the value into shared preferences*/
         /*Index for last displayed image's index*/
         index = sharedPreferences.getInt("Index", 0);
+
         /*An User pick speed to change the image*/
         rate = sharedPreferences.getInt("Rate", 1);
         mode = sharedPreferences.getString("Mode","time");
         Log.v("mode",mode);
     }
-
-
 }

@@ -33,6 +33,7 @@ public class DejaWidget extends AppWidgetProvider {
     static Default_Gallery defaultGallery;
     /* index for the index of picture is displaying*/
     private int index;
+
     /*This 4 string will indicate which button being clicked*/
     private static final String Release = "release";
     private static final String Karma = "Karma";
@@ -43,22 +44,32 @@ public class DejaWidget extends AppWidgetProvider {
                          int appWidgetId) {
         /*Get the private Strings above*/
         CharSequence widgetText = context.getString(R.string.appwidget_text);
+
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.deja_widget);
-        /*The onClick event, first argument will be the button id, second one will be the string
-                   Assigning a String to a pending Intent, the string works like a case switch later on*/
+
+        //set all buttons onclick events
+        setOnClickEvent(context, views);
+
+        // Instruct the widget manager to update the widget
+        appWidgetManager.updateAppWidget(appWidgetId, views);
+    }
+
+    //this method set the onClick event for all buttons
+    public void setOnClickEvent(Context context, RemoteViews views) {
+    /*The onClick event, first argument will be the button id, second one will be the string
+      Assigning a String to a pending Intent, the string works like a case switch later on*/
         views.setOnClickPendingIntent(R.id.release, getPendingIntent(context, Release));
         views.setOnClickPendingIntent(R.id.karma, getPendingIntent(context, Karma));
         views.setOnClickPendingIntent(R.id.left, getPendingIntent(context, Left));
         views.setOnClickPendingIntent(R.id.right, getPendingIntent(context, Right));
-        // Instruct the widget manager to update the widget
-        appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         /*Read the Preferences*/
         readPreferences(context);
+
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId);
@@ -104,6 +115,7 @@ public class DejaWidget extends AppWidgetProvider {
                 }
             });
         }
+
         if (Karma.equals(intent.getAction())) {
             /* Call the add Karma function to modify the picture*/
             new Thread(new Runnable() {
@@ -124,6 +136,7 @@ public class DejaWidget extends AppWidgetProvider {
                 }
             }).start();
         }
+
         if (Left.equals(intent.getAction())) {
             new Thread(new Runnable() {
                 @Override
@@ -159,13 +172,14 @@ public class DejaWidget extends AppWidgetProvider {
             /*if the wall paper didn't change, it means all pictures are released or empty gallery*/
                         if (!changed)
                             Toast.makeText(context, "No picture can be displayed", Toast.LENGTH_SHORT).show();
+=======
                     }
                     else
                         wp.emptyPicture();
                 }
             }).start();
-
         }
+
         if (Right.equals(intent.getAction())) {
             new Thread(new Runnable() {
                 @Override
@@ -207,11 +221,11 @@ public class DejaWidget extends AppWidgetProvider {
         return PendingIntent.getBroadcast(context, 0, intent, 0);
     }
 
-
     public void readPreferences(Context context){
         /* Read the shared preferences*/
         sharedPreferences = context.getSharedPreferences("DejaPhoto",MODE_PRIVATE);
         editor = sharedPreferences.edit();
+
         /*gson is a way to put the object into shared preferences*/
         Gson gson = new Gson();
         String json = sharedPreferences.getString("Gallery","");

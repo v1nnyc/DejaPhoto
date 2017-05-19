@@ -4,7 +4,6 @@ package comv1nnycdejaphoto.github.dejaphoto;
  * Created by Ken on 5/11/2017.
  */
 
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -41,7 +40,6 @@ import static java.lang.Integer.MIN_VALUE;
 /**
  * Created by Ken on 5/9/2017.
  */
-
 
 /* Got basic idea of how code will be like from
 http://stackoverflow.com/questions/30777023/diplaying-all-images-from-device-inside-my-app
@@ -168,6 +166,12 @@ public class Default_Gallery{
             return "No Location";
         Address add = address.get(0);
 
+        //obtain address details
+        return getAddressDetails(add);
+    }
+
+    //this method get detail information of the address
+    public String getAddressDetails(Address add) {
         // names are made sure that they aren't entirely just numbers
         if(add.getFeatureName() != null && !add.getFeatureName().matches("[0-9]+")) {
             return add.getFeatureName();
@@ -191,12 +195,14 @@ public class Default_Gallery{
             return "No Discernible Location Name";
         }
     }
+
     public void next(){
         readPreferences();
         wallpaper wp = new wallpaper();
         if (defaultGallery.get_photos() != 0) {
             int last = index;
             SharedPreferences.Editor editor = sharedPreferences.edit();
+
             while ((index + 1) != last) {
                 if (index == (defaultGallery.get_photos() - 1))
                     index = -1;
@@ -214,9 +220,10 @@ public class Default_Gallery{
             }
             Log.v("Displaying",Integer.toString(index));
             editor.apply();
-        } else
-            wp.emptyPicture();
+        }
+        else wp.emptyPicture();
     }
+
     public void readPreferences(){
         /* Read the shared preferences*/
         sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto",MODE_PRIVATE);
@@ -226,7 +233,6 @@ public class Default_Gallery{
         defaultGallery = gson.fromJson(json, Default_Gallery.class);
         index = sharedPreferences.getInt("Index",0);
     }
-
 
     public void sortByTime(){
         SimpleDateFormat simpleDateFormat =new SimpleDateFormat("hh:mm:ss");
