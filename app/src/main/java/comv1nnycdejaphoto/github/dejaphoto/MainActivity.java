@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
               /* pass the intent with the option of choose button beign clicked*/
                                               startActivityForResult(intent, PICK_CHOOSE);
                                           }
-                                      }
+                                      });
 
         //start background service
         Intent intent = new Intent(MainActivity.this, BackgroundService.class);
