@@ -49,8 +49,8 @@ public class BackgroundService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         sContext = getApplicationContext();
+
         final Handler handler = new Handler();
         final Runnable task = new Runnable() {
             @Override
@@ -60,6 +60,7 @@ public class BackgroundService extends Service {
                 readPreferences();
 
                 /*Load the next picture by calling the gallery's method*/
+                    //defaultGallery.Load_All(getContext());
                 if(defaultGallery != null) {
                     defaultGallery.next();
                     handler.postDelayed(this, rate * 5000);
@@ -79,13 +80,14 @@ public class BackgroundService extends Service {
         Gson gson = new Gson();
         String json = sharedPreferences.getString("Gallery", "");
         defaultGallery = gson.fromJson(json, Default_Gallery.class);
-        if(defaultGallery== null) {
-            defaultGallery=new Default_Gallery();
+        if(defaultGallery == null) {
+            defaultGallery = new Default_Gallery();
             defaultGallery.Load_All(getContext());
+            Log.v("Number of photo beinng loaded", Integer.toString(defaultGallery.get_photos()));
             json = gson.toJson(defaultGallery);
             sharedPreferences.edit().putString("Gallery", json).apply();
-            /*Save the value into shared preferences*/
         }
+        /*Save the value into shared preferences*/
         /*Index for last displayed image's index*/
         index = sharedPreferences.getInt("Index", 0);
 
@@ -93,10 +95,5 @@ public class BackgroundService extends Service {
         rate = sharedPreferences.getInt("Rate", 1);
         mode = sharedPreferences.getString("Mode","time");
         Log.v("mode",mode);
-//        Log.v("Total.number",Integer.toString(defaultGallery.get_photos()));
-//        for(int i = 0; i<defaultGallery.get_photos();++i)
-//            if(defaultGallery.getPictures().elementAt(i).getKarma())
-//                Log.v(Integer.toString(i),"Karmared");
     }
-
 }
