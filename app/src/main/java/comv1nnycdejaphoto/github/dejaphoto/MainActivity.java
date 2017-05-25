@@ -5,39 +5,24 @@ package comv1nnycdejaphoto.github.dejaphoto;
         * Obtained the library from https://github.com/google/gson.
         */
 import android.Manifest;
-import android.app.WallpaperManager;
 import android.content.ClipData;
-import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Path;
 import android.net.Uri;
-import android.os.IBinder;
-import android.provider.ContactsContract;
+import android.os.Bundle;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.content.ServiceConnection;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -128,6 +113,16 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+        /* link to the sign in page for users to sign in */
+        ImageButton signIn = (ImageButton) findViewById(R.id.signin);
+        signIn.setOnClickListener(new View.OnClickListener() {
+            /* onClick Event */
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getBaseContext(), GoogleSignInActivity.class);
+                startActivity(intent);
+            }
+        });
 
         Intent intent = new Intent(MainActivity.this, BackgroundService.class);
         startService(intent);

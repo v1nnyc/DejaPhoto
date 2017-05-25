@@ -174,4 +174,14 @@
             android:id="@+id/imageView3" />
     </RelativeLayout>
 
+    <ImageButton
+        android:id="@+id/signin"
+        android:layout_width="90dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="300dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/googleicon"
+        android:elevation="8dp" />
+
 </LinearLayout>
