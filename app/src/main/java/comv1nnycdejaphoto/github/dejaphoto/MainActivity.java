@@ -1,3 +1,4 @@
+
 package comv1nnycdejaphoto.github.dejaphoto;
 
  /* This class used third party library Gson made by google.
@@ -27,6 +28,7 @@ import android.content.ServiceConnection;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -46,81 +48,93 @@ public class MainActivity extends AppCompatActivity {
     private BackgroundService backgroundService;
     private Boolean isBound;
     /* This will tell the different between choose or release, 1 is for choose, 0 for release*/
-    static final int PICK_CHOOSE = 1 ;
-    static final int PICK_RELEASE = 0 ;
-    private final int UPDATE = 1;
-    private final int SKIP = 0;
+    final int CAPTURE_PICTURE = 2;
+    static final int PICK_CHOOSE = 1;
+    static final int PICK_RELEASE = 0;
+
+
     //constructor
     public MainActivity() {
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        /*Check is the sharedPreferences exists*/
-        initialize(SKIP);
-        /*Read the data from the shared preferences*/
-        readPreferences();
         sContext = getApplicationContext();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_album);
                 /*Ask the permission to read the images*/
         ActivityCompat.requestPermissions(MainActivity.this,
-                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},1);
+                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
         setContentView(R.layout.start_screen);
         /*Button that links to the Choose*/
         Button load_image = (Button) findViewById(R.id.choose);
         /*onClick Event*/
         load_image.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
+                                          @Override
+                                          public void onClick(View v) {
            /*Ask user to pick a image and save its uri, make the result become intent*/
-              Intent intent =new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                              Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
               /* pass the intent with the option of choose button beign clicked*/
-              startActivityForResult(intent, PICK_CHOOSE);
-           }
-        }
+                                              startActivityForResult(intent, PICK_CHOOSE);
+                                          }
+                                      }
 
         );
          /* Same thing but for the release button*/
         Button release_image = (Button) findViewById(R.id.release);
-        release_image.setOnClickListener(new View.OnClickListener(){
+        release_image.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent,"Select Picture"), PICK_RELEASE);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_RELEASE);
             }
         });
-        /* link to the setting page for users to set display rate */
-        Button setting = (Button) findViewById(R.id.setting);
-        setting.setOnClickListener(new View.OnClickListener(){
+        /* link to the add friend page for users to send friend request */
+        ImageButton addFrd = (ImageButton) findViewById(R.id.addFrd);
+        addFrd.setOnClickListener(new View.OnClickListener() {
             /* onClick Event */
             @Override
-            public void onClick(View view){
-                /* setContentView(R.layout.rate); */
-                Intent intent = new Intent(getBaseContext(),RateActivity.class);
+            public void onClick(View view) {
+                Intent intent = new Intent(getBaseContext(), AddFrd.class);
                 startActivity(intent);
             }
         });
+
+        /* link to the setting page for users to set display rate */
+        ImageButton setting = (ImageButton) findViewById(R.id.setting);
+        setting.setOnClickListener(new View.OnClickListener() {
+            /* onClick Event */
+            @Override
+            public void onClick(View view) {
+                /* setContentView(R.layout.rate); */
+                Intent intent = new Intent(getBaseContext(), Setting.class);
+                startActivity(intent);
+            }
+        });
+
+        /* link to the camera for users to take pictures */
+        ImageButton camera = (ImageButton) findViewById(R.id.camera);
+        camera.setOnClickListener(new View.OnClickListener() {
+            /* onClick Event */
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                takePicture();
+            }
+
+
+        });
+
+
         Intent intent = new Intent(MainActivity.this, BackgroundService.class);
         startService(intent);
+
+
     }
 
-    private ServiceConnection serviceConection =  new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            BackgroundService.LocalService localService = (BackgroundService.LocalService)service;
-            backgroundService = localService.getService();
-            isBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            isBound = false;
-        }
-    };
     /*required for other classes to be able to access MainActivity*/
     public static Context getContext() {
         return sContext;
@@ -129,42 +143,33 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Gson gson = new Gson();
+        sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto",MODE_PRIVATE);
+        String json = sharedPreferences.getString("Gallery", "");
+        defaultGallery = new Default_Gallery();
+        defaultGallery.Load_All(BackgroundService.getContext());
+        defaultGallery = gson.fromJson(json, Default_Gallery.class);
         /*If user press back while picking images, exit the method */
-        if(data == null)
-            return;
-
         /*The choose button being clicked*/
-        if(data != null && requestCode == PICK_CHOOSE) {
+        if (data != null && requestCode == PICK_CHOOSE) {
             //TODO  choose album
             /*Get the data as type of Uri*/
-                Uri uri = data.getData();
-                wallpaper wp = new wallpaper();
+            Uri uri = data.getData();
+            Log.v("Choosed Path", uri.getPath());
         }
         /* Release button being clicked*/
-        if(requestCode == PICK_RELEASE){
+        if (requestCode == PICK_RELEASE) {
             /*Only one picture is selected*/
-            if(data.getData()!=null){
+            if (data.getData() != null) {
                 Uri uri = data.getData();
-                for(int i = 0; i < defaultGallery.get_photos() ; ++i) {
+                for (int i = 0; i < defaultGallery.get_photos(); ++i) {
                     Picture picture = defaultGallery.getPictures().elementAt(i);
-                    File file = new File(picture.getImage());
-                        /*Turn the picture into uri*/
-                    Uri uriFromGallery = Uri.fromFile(file);
-                        /* Make the user selected picture and gallery picture into bitmap*/
-                    Bitmap bitmapUser = null;
-                    try {
-                        bitmapUser = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-                        Bitmap bitmapGallery = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uriFromGallery);
-                            /*If they are same, hide the picture in Gallery*/
-                        if (bitmapUser.sameAs(bitmapGallery))
-                            defaultGallery.getPictures().elementAt(i).hide();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    //if (picture.isEqual(uri))
+                      //  defaultGallery.getPictures().elementAt(i).hide();
                 }
             }
             /*Multiple pictures were selected*/
-            else if(data.getClipData() != null) {
+            else if (data.getClipData() != null) {
                 /*ClipData is like Clipboard but with data instead of text,
                                 Copying the intent data to clipdata because the data is only one data */
                 ClipData mClipData = data.getClipData();
@@ -178,27 +183,20 @@ public class MainActivity extends AppCompatActivity {
                 /*Log is for debuging purpose*/
                 /*To get the real path, uriList.get(i).getPath(); will do the job*/
                 for (int i = 0; i < uriList.size(); ++i) {
-                    for(int j = 0; j < defaultGallery.get_photos() ; ++j){
-                        /*load the picture fromt the gallery*/
+                    for (int j = 0; j < defaultGallery.get_photos(); ++j) {
+                        /*load the picture from the gallery*/
                         Picture picture = defaultGallery.getPictures().elementAt(j);
-                        File file = new File(picture.getImage());
-                        /*Turn the picture into uri*/
-                        Uri uriFromGallery = Uri.fromFile(file);
-                        try {
-                            /* Make the user selected picture and gallery picture into bitmap*/
-                            Bitmap bitmapUser = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uriList.get(i));
-                            Bitmap bitmapGallery = MediaStore.Images.Media.getBitmap(this.getContentResolver(),uriFromGallery);
-                            /*If they are same, hide the picture in Gallery*/
-                            if(bitmapUser.sameAs(bitmapGallery))
-                                defaultGallery.getPictures().elementAt(j).hide();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        //if (picture.isEqual(uriList.get(i)))
+                          //  defaultGallery.getPictures().elementAt(j).hide();
                     }
                 }
             }
         }
+        json = gson.toJson(defaultGallery);
+        sharedPreferences.edit().putString("Gallery", json).apply();
+
     }
+
     /*Get from piazza, original from codepath :
         https://guides.codepath.com/android/Managing-Runtime-Permissions-with-PermissionsDispatcher */
     @Override
@@ -222,66 +220,11 @@ public class MainActivity extends AppCompatActivity {
             // add other cases for more permissions
         }
     }
-    /*This method will check the preferences value exist or not, if not, initialize them*/
-    public void initialize(int Must_Update){
-        sharedPreferences = getSharedPreferences("DejaPhoto",MODE_PRIVATE);
-        /*Create a editor to edit*/
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        /*Check for gallery*/
-        if(!sharedPreferences.contains("Gallery")){
-            /*Make a new gallery and load all the pictures*/
-            Default_Gallery defaultGallery=new Default_Gallery();
-            defaultGallery.Load_All(this);
-            /*Gson is an object that make an object into a string*/
-            Gson gson = new Gson();
-            String json = gson.toJson(defaultGallery);
-            editor.putString("Gallery", json);
-            /*Save the value into shared preferences*/
-            editor.apply();
-        }
-        /*Check is the preferences saved the correct thing*/
-        if(sharedPreferences.contains("Gallery")){
-            /* Read from the preferences and see is it empty*/
-            Default_Gallery checkEmpty;
-            Gson gson = new Gson();
-            String json = sharedPreferences.getString("Gallery","");
-            checkEmpty = gson.fromJson(json, Default_Gallery.class);
-            /*Update it when it is empty or force it to update*/
-            if(checkEmpty.get_photos() ==  0 || Must_Update == 1){
-                checkEmpty.Load_All(this);
-                json = gson.toJson(checkEmpty);
-                editor.putString("Gallery", json);
-                editor.apply();
-            }
-        }
-        /*Check the rate that how long to change to another picture*/
-        if(!sharedPreferences.contains("Rate")){
-            int rate = 0;
-            editor.putInt("Rate", rate);
-            editor.apply();
-        }
-        /*Check the last picture being shown*/
-        if(!sharedPreferences.contains("Index")){
-            editor.putInt("Index", 0);
-            editor.apply();
+
+    private void takePicture(){
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(intent, CAPTURE_PICTURE);
         }
     }
-
-    /*The method will read all the value from the shared preferences*/
-    public void readPreferences(){
-        /*Get the gallery data from the preferences, gson helps to turn a string into an object*/
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString("Gallery","");
-        defaultGallery = gson.fromJson(json, Default_Gallery.class);
-        /*Make another gallery that loads everything in the gallery*/
-        Default_Gallery checkUpdate = new Default_Gallery();
-        checkUpdate.Load_All(this);
-        /*If the number of photos are different, it means the user has more/lease images*/
-        if(checkUpdate.get_photos() != defaultGallery.get_photos()){
-            /* make the gallery be the new one and update it into the shared preferences*/
-            defaultGallery = checkUpdate;
-            initialize(UPDATE);
-        }
-    }
-
 }
