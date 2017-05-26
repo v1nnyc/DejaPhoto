@@ -12,10 +12,17 @@ import android.widget.Button;
 
 import java.util.ArrayList;
 
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.RuntimePermissions;
+
+import static android.provider.ContactsContract.CommonDataKinds;
+import static android.provider.ContactsContract.Contacts;
+
 /**
  * Created by ShirleyLam on 5/24/17.
  */
 
+@RuntimePermissions
 public class AddFrd extends AppCompatActivity {
     private final int PICK_CONTACT=1;
     @Override
@@ -25,9 +32,11 @@ public class AddFrd extends AppCompatActivity {
 
         Button connect = (Button)findViewById(R.id.connect);
         connect.setOnClickListener(new View.OnClickListener() {
+
             @Override
+            @NeedsPermission(android.Manifest.permission.READ_CONTACTS)
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                Intent intent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
 
                 startActivityForResult(intent, PICK_CONTACT);
 
@@ -37,7 +46,7 @@ public class AddFrd extends AppCompatActivity {
 
 
     }
-
+    @NeedsPermission(android.Manifest.permission.READ_CONTACTS)
     @Override
     public void onActivityResult(int reqCode, int resultCode, Intent data){
         super.onActivityResult(reqCode, resultCode, data);
@@ -46,14 +55,14 @@ public class AddFrd extends AppCompatActivity {
         ContentResolver resolver = getContentResolver();
         Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
         while (cursor.moveToNext()) {
-            String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+            String id = cursor.getString(cursor.getColumnIndex(Contacts._ID));
             Cursor emailCursor = resolver.query(
-                    ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
-                    ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
+                    CommonDataKinds.Email.CONTENT_URI, null,
+                    CommonDataKinds.Email.CONTACT_ID + " = ?",
                     new String[]{id}, null);
 
             while (emailCursor.moveToNext()) {
-                String email = emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+                String email = emailCursor.getString(emailCursor.getColumnIndex(CommonDataKinds.Email.DATA));
 
                 Log.v("getEmail", email);
 
@@ -73,4 +82,8 @@ public class AddFrd extends AppCompatActivity {
         finish();
     }
 
+
+
 }
+
+

@@ -25,6 +25,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
+
 public class MainActivity extends AppCompatActivity {
 
     SharedPreferences sharedPreferences;
@@ -211,6 +212,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
                 }
                 return;
+
             }
             // add other cases for more permissions
         }
