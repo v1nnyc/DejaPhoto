@@ -33,11 +33,11 @@ public class MainActivity extends AppCompatActivity {
     private static Context sContext;
     private BackgroundService backgroundService;
     private Boolean isBound;
+
     /* This will tell the different between choose or release, 1 is for choose, 0 for release*/
     final int CAPTURE_PICTURE = 2;
     static final int PICK_CHOOSE = 1;
     static final int PICK_RELEASE = 0;
-
 
     //constructor
     public MainActivity() {
@@ -48,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
         sContext = getApplicationContext();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_album);
-                /*Ask the permission to read the images*/
+
+        /*Ask the permission to read the images*/
         ActivityCompat.requestPermissions(MainActivity.this,
                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
         setContentView(R.layout.start_screen);
@@ -69,6 +70,37 @@ public class MainActivity extends AppCompatActivity {
          /* Same thing but for the release button*/
         Button release_image = (Button) findViewById(R.id.release);
         release_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+                                      });
+        releasePictures();
+        setDisplayRate();
+
+        //start background service
+        Intent intent = new Intent(MainActivity.this, BackgroundService.class);
+        startService(intent);
+    }
+
+    //this method let users select the duration of each picture being displayed
+    public void setDisplayRate() {
+    /* link to the setting page for users to set display rate */
+        Button setting = (Button) findViewById(R.id.setting);
+        setting.setOnClickListener(new View.OnClickListener(){
+            /* onClick Event */
+            @Override
+            public void onClick(View view){
+                /* setContentView(R.layout.rate); */
+                Intent intent = new Intent(getBaseContext(),RateActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    //this method is for users release pictures
+    public void releasePictures() {
+    /* Same thing but for the release button*/
+        Button release_image = (Button) findViewById(R.id.release);
+        release_image.setOnClickListener(new View.OnClickListener() {
+          
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent();
@@ -127,10 +159,7 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = new Intent(MainActivity.this, BackgroundService.class);
         startService(intent);
-
-
     }
-
     /*required for other classes to be able to access MainActivity*/
     public static Context getContext() {
         return sContext;
@@ -153,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
             Uri uri = data.getData();
             Log.v("Choosed Path", uri.getPath());
         }
+
         /* Release button being clicked*/
         if (requestCode == PICK_RELEASE) {
             /*Only one picture is selected*/
@@ -164,11 +194,13 @@ public class MainActivity extends AppCompatActivity {
                       //  defaultGallery.getPictures().elementAt(i).hide();
                 }
             }
+
             /*Multiple pictures were selected*/
             else if (data.getClipData() != null) {
                 /*ClipData is like Clipboard but with data instead of text,
-                                Copying the intent data to clipdata because the data is only one data */
+                  Copying the intent data to clipdata because the data is only one data */
                 ClipData mClipData = data.getClipData();
+
                 /*Make an array to store all the uri (Path of Images select by user)*/
                 ArrayList<Uri> uriList = new ArrayList<Uri>();
                 for (int i = 0; i < mClipData.getItemCount(); ++i) {
@@ -176,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
                     Uri uri = item.getUri();
                     uriList.add(uri);
                 }
+
                 /*Log is for debuging purpose*/
                 /*To get the real path, uriList.get(i).getPath(); will do the job*/
                 for (int i = 0; i < uriList.size(); ++i) {
@@ -194,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /*Get from piazza, original from codepath :
-        https://guides.codepath.com/android/Managing-Runtime-Permissions-with-PermissionsDispatcher */
+      https://guides.codepath.com/android/Managing-Runtime-Permissions-with-PermissionsDispatcher */
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -205,12 +238,13 @@ public class MainActivity extends AppCompatActivity {
                     // permission granted and now can proceed
                     //mymethod(); //a sample method called
 
-                } else {
-
+                }
+                else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                     Toast.makeText(MainActivity.this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
                 }
+
                 return;
 
             }

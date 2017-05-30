@@ -29,16 +29,16 @@
             android:backgroundTint="@android:color/holo_blue_light"
             android:max="60" />
 
-    <TextView
-        android:id="@+id/rateView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="150dp"
-        android:layout_marginLeft="175dp"
-        android:layout_below="@+id/seekBar"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@android:color/black"
-        android:textSize="15sp"/>
+        <TextView
+            android:id="@+id/rateView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="150dp"
+            android:layout_marginLeft="175dp"
+            android:layout_below="@+id/seekBar"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@android:color/black"
+            android:textSize="15sp"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -107,4 +107,3 @@
     </RadioGroup>
 
 </LinearLayout>
-

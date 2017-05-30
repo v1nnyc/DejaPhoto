@@ -10,10 +10,17 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 public class RateActivity extends AppCompatActivity {
+    Default_Gallery defaultGallery;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-
+    private SeekBar seekBar;
+    private RadioGroup radioGroup;
+    private TextView textView;
+    int progress;
+    String mode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -21,17 +28,10 @@ public class RateActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("DejaPhoto", MODE_PRIVATE);
         editor = sharedPreferences.edit();
         setContentView(R.layout.rate);
+        readLastReference();
+        initialize();
 
-        final SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar);
-        final RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
-        final TextView textView = (TextView) findViewById(R.id.rateView);
-        int progress = sharedPreferences.getInt("Rate", 0);
-        seekBar.setProgress(progress);
-        seekBar.setMax(11);
-
-        textView.setText("Display Rate: " + (seekBar.getProgress() + 1) * 5);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
             /* display the value according to the seekbar */
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -54,23 +54,41 @@ public class RateActivity extends AppCompatActivity {
 
         });
 
+        /* Everytime clicked on on button, sort the pictures*/
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checked) {
                 if (checked == R.id.time) {
+                    if(mode != "time"){
+                        Gson gson = new Gson();
+                        defaultGallery.sortByTime();
+                        String json = gson.toJson(defaultGallery);
+                        sharedPreferences.edit().putString("Gallery", json);
+                    }
                     editor.putString("Mode","time");
                     Toast.makeText(getApplicationContext(), "Set mode: Time", Toast.LENGTH_SHORT).show();
                 } else if (checked == R.id.day) {
+                    if(mode != "day"){
+                        Gson gson = new Gson();
+                        defaultGallery.sortByTime();
+                        String json = gson.toJson(defaultGallery);
+                        sharedPreferences.edit().putString("Gallery", json);
+                    }
                     editor.putString("Mode","day");
                     Toast.makeText(getApplicationContext(), "Set mode: Day", Toast.LENGTH_SHORT).show();
                 } else {
+                    if(mode != "week"){
+                        Gson gson = new Gson();
+                        defaultGallery.sortByTime();
+                        String json = gson.toJson(defaultGallery);
+                        sharedPreferences.edit().putString("Gallery", json);
+                    }
                     editor.putString("Mode","week");
                     Toast.makeText(getApplicationContext(), "Set mode: Week", Toast.LENGTH_SHORT).show();
                 }
                 editor.apply();
             }
-
         });
     }
 
@@ -83,7 +101,28 @@ public class RateActivity extends AppCompatActivity {
         startActivity(new Intent(this, Setting.class));
         finish();
     }
+    /* Read the value from shared preference*/
+    private void readLastReference(){
+        progress = sharedPreferences.getInt("Rate", 0);
+        mode = sharedPreferences.getString("Mode","time");
 
-
-
+    }
+    /*Initialize the page*/
+    private void initialize(){
+        textView = (TextView) findViewById(R.id.rateView);
+        seekBar = (SeekBar) findViewById(R.id.seekBar);
+        radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+        seekBar.setProgress(progress);
+        seekBar.setMax(11);
+        textView.setText("Display Rate: " + (seekBar.getProgress() + 1) * 5);
+        if(mode.equals("time"))
+            radioGroup.check(R.id.time);
+        if(mode.equals("day"))
+            radioGroup.check(R.id.day);
+        if(mode.equals("week"))
+            radioGroup.check(R.id.week);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("Gallery", "");
+        defaultGallery = gson.fromJson(json, Default_Gallery.class);
+    }
 }
