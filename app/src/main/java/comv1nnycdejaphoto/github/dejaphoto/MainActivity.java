@@ -71,7 +71,13 @@ public class MainActivity extends AppCompatActivity {
         Button release_image = (Button) findViewById(R.id.release);
         release_image.setOnClickListener(new View.OnClickListener() {
             @Override
-                                      });
+            public void onClick(View v) {
+           /*Ask user to pick a image and save its uri, make the result become intent*/
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+              /* pass the intent with the option of choose button beign clicked*/
+                startActivityForResult(intent, PICK_CHOOSE);
+            }
+        });
         releasePictures();
         setDisplayRate();
 
@@ -83,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
     //this method let users select the duration of each picture being displayed
     public void setDisplayRate() {
     /* link to the setting page for users to set display rate */
-        Button setting = (Button) findViewById(R.id.setting);
+        ImageButton setting = (ImageButton) findViewById(R.id.setting);
         setting.setOnClickListener(new View.OnClickListener(){
             /* onClick Event */
             @Override
