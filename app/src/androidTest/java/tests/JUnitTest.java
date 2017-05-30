@@ -49,6 +49,7 @@ class JUnitTest {
         Button button = (Button) mainActivity.getActivity().findViewById(R.id.release);
         button.callOnClick();
     }
+    
 
     /* test on the start screen Setting button */
     @Test
