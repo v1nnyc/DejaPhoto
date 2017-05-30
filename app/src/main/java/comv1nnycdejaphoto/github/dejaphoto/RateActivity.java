@@ -98,7 +98,7 @@ public class RateActivity extends AppCompatActivity {
     public void onBackPressed()
     {
         super.onBackPressed();
-        startActivity(new Intent(this, MainActivity.class));
+        startActivity(new Intent(this, Setting.class));
         finish();
     }
     /* Read the value from shared preference*/
