@@ -23,12 +23,20 @@ public class User implements Friend {
     }
 
     @Override
+    //use the email of a user to find them on firebase and send a request
     public void add(String Id) {
     }
 
     @Override
+    //use the email of a user to remove from our friendsList
+    //do nothing if the user does not exist
     public void remove(String Id) {
-
+        int i = 0;
+        while(i < friendsList.size()){
+            if(friendsList[i] == Id)
+                friendsList.remove(i);
+            i++;
+        }
     }
 
     @Override
