@@ -19,7 +19,7 @@ public class User implements Friend {
         //but this should be the email we sign in with
         Id = "test";
         name = "whatever";
-        
+
     }
 
     @Override

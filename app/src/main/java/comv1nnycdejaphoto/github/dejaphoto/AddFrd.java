@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -34,6 +36,8 @@ public class AddFrd extends AppCompatActivity {
         setContentView(R.layout.add_friends);
 
         Button connect = (Button)findViewById(R.id.connect);
+        Button request = (Button)findViewById(R.id.request);
+        final EditText email = (EditText)findViewById(R.id.email);
         connect.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -45,6 +49,13 @@ public class AddFrd extends AppCompatActivity {
 
             }
 
+        });
+
+        request.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                user.add(email.getText().toString());
+            }
         });
 
 
