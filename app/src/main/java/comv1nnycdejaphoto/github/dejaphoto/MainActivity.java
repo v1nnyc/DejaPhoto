@@ -28,6 +28,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    User user = new User();
+
     SharedPreferences sharedPreferences;
     private Default_Gallery defaultGallery;
     private static Context sContext;
