@@ -24,6 +24,9 @@ import static android.provider.ContactsContract.Contacts;
 
 @RuntimePermissions
 public class AddFrd extends AppCompatActivity {
+
+    User user = new User();
+
     private final int PICK_CONTACT=1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
