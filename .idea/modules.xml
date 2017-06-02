@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/DejaPhoto.iml" filepath="$PROJECT_DIR$/DejaPhoto.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dejaphoto.iml" filepath="$PROJECT_DIR$/dejaphoto.iml" />
     </modules>
   </component>
 </project>
