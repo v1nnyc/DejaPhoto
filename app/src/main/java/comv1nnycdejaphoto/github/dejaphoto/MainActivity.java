@@ -293,11 +293,6 @@ public class MainActivity extends AppCompatActivity {
             Log.v("Create Directory Photos","Failed");
         else
             Log.v("Create Directory Photos","Success");
-        photo_path = new File(path + "/Myself");
-        if(photo_path.mkdir())
-            Log.v("Create Directory Myself","Failed");
-        else
-            Log.v("Create Directory Myself","Success");
         photo_path = new File(path + "/MyFriends");
         if(photo_path.mkdir())
             Log.v("Create Directory MyFriends","Failed");
