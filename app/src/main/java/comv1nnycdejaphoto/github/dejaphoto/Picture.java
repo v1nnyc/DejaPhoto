@@ -48,6 +48,7 @@ public class Picture {
     public void addKarma(){
         karma = true;
     }
+    /* Increase the number of "Karma"*/
     public void addLikes() { likes++; }
     public void hide(){ display = false;}
 
