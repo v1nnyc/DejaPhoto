@@ -11,53 +11,177 @@
     android:gravity="center_vertical"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_weight="0.84"
-        android:ems="10"
-        android:gravity="center"
-        android:background="@drawable/logo" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-    <Button
-        android:id="@+id/choose"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_weight="0.62"
-        android:gravity="center_horizontal"
-        android:text="Choose Album"
-        android:layout_marginTop="50dp"
-        android:width="200dp"
-        android:height="40dp"/>
+        <ImageButton
+            android:id="@+id/addFrd"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/friends"
+            android:elevation="8dp" />
 
-    <Button
-        android:id="@+id/release"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_gravity="center_horizontal"
-        android:text="Release Photos"
-        android:layout_marginTop="50dp"
-        android:width="200dp"
-        android:height="40dp"/>
-    
-    <Button
-        android:id="@+id/setting"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="50dp"
-        android:layout_weight="1"
-        android:width="200dp"
-        android:height="40dp"
-        android:text="Setting" />
+        <ImageButton
+            android:id="@+id/setting"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/set"
+            android:elevation="8dp" />
+
+        <ImageView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginLeft="85dp"
+            android:layout_marginRight="85dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="0.84"
+            android:background="@drawable/logo"
+            android:ems="10"
+            android:gravity="center" />
+
+        <ImageButton
+            android:id="@+id/notice"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/notice"
+            android:elevation="8dp"
+            android:layout_alignTop="@+id/title"
+            android:layout_toLeftOf="@+id/camera"
+            android:layout_toStartOf="@+id/camera"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp" />
+
+        <ImageButton
+            android:id="@+id/camera"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/photocamera"
+            android:elevation="8dp"
+            android:layout_marginRight="11dp"
+            android:layout_marginEnd="11dp"
+            android:layout_alignTop="@+id/notice"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="370dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="50dp">
+
+        <Button
+            android:id="@+id/choose"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="40dp"
+            android:width="370dp"
+            android:height="100dp"
+            android:background="@null"
+            android:fontFamily="cursive"
+            android:text="Deja Photo"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:layout_marginStart="40dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignLeft="@+id/imageView"
+            android:layout_alignStart="@+id/imageView" />
+
+        <ImageView
+            android:layout_width="95dp"
+            android:layout_height="100dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:background="@drawable/album"
+            android:scaleType="fitXY"
+            android:id="@+id/imageView" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="370dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="30dp">
+
+        <Button
+            android:id="@+id/picker"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="47dp"
+            android:width="370dp"
+            android:height="100dp"
+            android:background="@null"
+            android:fontFamily="cursive"
+            android:text="Photos Picker"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:layout_marginStart="47dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignLeft="@+id/imageView2"
+            android:layout_alignStart="@+id/imageView2" />
+
+        <ImageView
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:background="@drawable/picker"
+            android:scaleType="fitXY"
+            android:id="@+id/imageView2" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="370dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="30dp">
+
+        <Button
+            android:id="@+id/release"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="35dp"
+            android:width="370dp"
+            android:height="100dp"
+            android:background="@null"
+            android:fontFamily="cursive"
+            android:text="Release"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:layout_alignParentTop="true"
+            android:layout_alignLeft="@+id/imageView3"
+            android:layout_alignStart="@+id/imageView3"
+            android:layout_marginStart="35dp" />
+
+        <ImageView
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:background="@drawable/delete"
+            android:scaleType="fitXY"
+            android:id="@+id/imageView3" />
+    </RelativeLayout>
+
+    <ImageButton
+        android:id="@+id/signin"
+        android:layout_width="90dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="300dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/googleicon"
+        android:elevation="8dp" />
+
 </LinearLayout>

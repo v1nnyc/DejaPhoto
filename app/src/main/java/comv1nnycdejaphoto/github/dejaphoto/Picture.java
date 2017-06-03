@@ -56,6 +56,7 @@ public class Picture {
         String TimeAfter = simpleDateFormat.format(calendar.get(Calendar.HOUR_OF_DAY)-2);
         if(TimeBefore.compareTo(timeTaken) >= 0 && TimeAfter.compareTo(timeTaken) <=0 )
             return true;
+
         return false;
     }
 

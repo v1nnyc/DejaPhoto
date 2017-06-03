@@ -89,7 +89,6 @@ public class RateActivity extends AppCompatActivity {
                 }
                 editor.apply();
             }
-
         });
     }
 
@@ -99,10 +98,9 @@ public class RateActivity extends AppCompatActivity {
     public void onBackPressed()
     {
         super.onBackPressed();
-        startActivity(new Intent(this, MainActivity.class));
+        startActivity(new Intent(this, Setting.class));
         finish();
     }
-
     /* Read the value from shared preference*/
     private void readLastReference(){
         progress = sharedPreferences.getInt("Rate", 0);
@@ -127,5 +125,4 @@ public class RateActivity extends AppCompatActivity {
         String json = sharedPreferences.getString("Gallery", "");
         defaultGallery = gson.fromJson(json, Default_Gallery.class);
     }
-
 }

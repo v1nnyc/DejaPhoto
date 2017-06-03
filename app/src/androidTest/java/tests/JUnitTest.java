@@ -28,6 +28,7 @@ import static junit.framework.Assert.assertTrue;
  * Created by ShirleyLam on 5/14/17.
  */
 
+
 class JUnitTest {
 
     @Rule
@@ -48,6 +49,7 @@ class JUnitTest {
         Button button = (Button) mainActivity.getActivity().findViewById(R.id.release);
         button.callOnClick();
     }
+    
 
     /* test on the start screen Setting button */
     @Test
@@ -91,7 +93,7 @@ class JUnitTest {
 
     /* test whether the TextView defined in the layout has Display Mode */
     @Test
-    public void test6() {
+    public void test6(){
         TextView textView = (TextView) RateActivity.getActivity().findViewById(R.id.mode);
         String value = textView.getText().toString();
         assertEquals("Display Mode", value);
