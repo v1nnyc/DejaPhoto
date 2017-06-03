@@ -212,7 +212,7 @@ public class Default_Gallery{
                     Picture picture = defaultGallery.getPictures().elementAt(index+1);
                     File file = new File(picture.getImage());
                     Uri uriFromGallery = Uri.fromFile(file);
-                    wp.changeWallpaper(uriFromGallery, picture.getLocatio());
+                    wp.changeWallpaper(uriFromGallery, picture.getLocatio(),picture.getLikes());
                     editor.putInt("Index", index + 1);
                     break;
                 }

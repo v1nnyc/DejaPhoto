@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import java.io.File;
 import java.util.ArrayList;
 
 
@@ -49,6 +50,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         sContext = getApplicationContext();
         super.onCreate(savedInstanceState);
+        /* Check is the photo directory exist, if not, create them*/
+        if(checkFolderExist(sContext))
+            Log.v("File:","Exist");
+        else {
+            Log.v("File", "Does Not Exist, Have to Create them");
+            createDirectory(sContext);
+        }
         setContentView(R.layout.select_album);
 
         /*Ask the permission to read the images*/
@@ -265,5 +273,40 @@ public class MainActivity extends AppCompatActivity {
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(intent, CAPTURE_PICTURE);
         }
+    }
+
+    /*Check is the photo directory within app exists, return true if exist*/
+    public boolean checkFolderExist(Context context){
+        String path = context.getPackageCodePath() + "/Photos";
+        File photo_path = new File(path);
+        if(photo_path.exists())
+            return true;
+        else
+            return false;
+    }
+
+    /*Called if directories does not exists, create them*/
+    public void createDirectory(Context context){
+        String path = context.getPackageCodePath() + "/Photos";
+        File photo_path = new File(path);
+        if(photo_path.mkdir())
+            Log.v("Create Directory Photos","Failed");
+        else
+            Log.v("Create Directory Photos","Success");
+        photo_path = new File(path + "/Myself");
+        if(photo_path.mkdir())
+            Log.v("Create Directory Myself","Failed");
+        else
+            Log.v("Create Directory Myself","Success");
+        photo_path = new File(path + "/MyFriends");
+        if(photo_path.mkdir())
+            Log.v("Create Directory MyFriends","Failed");
+        else
+            Log.v("Create Directory MyFriends","Success");
+        photo_path = new File(path + "/MyFriendsAndMe");
+        if(photo_path.mkdir())
+            Log.v("Create Directory MyFriendsAndMe","Failed");
+        else
+            Log.v("Create Directory MyFriendsAndMe","Success");
     }
 }

@@ -22,6 +22,7 @@ public class Picture {
     private String location;
     private boolean karma;
     private boolean display;
+    private int likes;
 
     /**
      * Constructor for a Picture
@@ -37,6 +38,7 @@ public class Picture {
         location = loc;
         karma = false;
         display = true;
+        likes = 0;
     }
 
     /**
@@ -46,7 +48,7 @@ public class Picture {
     public void addKarma(){
         karma = true;
     }
-
+    public void addLikes() { likes++; }
     public void hide(){ display = false;}
 
     public boolean timeWithinBounds(){
@@ -73,6 +75,7 @@ public class Picture {
     public boolean getDisplay(){return display;}
     public String getTime(){return timeTaken;}
     public String getDate(){return dateTaken;}
+    public int getLikes() { return likes;}
 
     public boolean isEqual(Picture other){
         /*If other is null, it must be different then an exist object*/
