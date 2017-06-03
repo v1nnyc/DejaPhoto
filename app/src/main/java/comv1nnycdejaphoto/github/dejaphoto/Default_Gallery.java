@@ -46,7 +46,9 @@ http://stackoverflow.com/questions/30777023/diplaying-all-images-from-device-ins
 */
 public class Default_Gallery{
     Default_Gallery defaultGallery;
+    boolean no_show = false;
     SharedPreferences sharedPreferences;
+
     int index;
     private Vector<Picture> pictures = new Vector<Picture>();
     private int num_photos;
@@ -228,10 +230,47 @@ public class Default_Gallery{
         /* Read the shared preferences*/
         sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto",MODE_PRIVATE);
         /*gson is a way to put the object into shared preferences*/
+
+        /*
         Gson gson = new Gson();
         String json = sharedPreferences.getString("Gallery","");
         defaultGallery = gson.fromJson(json, Default_Gallery.class);
+        */
+        defaultGallery = Default_Gallery.Choose_Gallery(BackgroundService.getContext());
+
         index = sharedPreferences.getInt("Index",0);
+    }
+
+    /* Used to choose one of 3 galleries we store in shared preferences */
+    public static Default_Gallery Choose_Gallery(Context context){
+        boolean friend = false;
+        boolean user = true;
+        Gson gson = new Gson();
+        SharedPreferences sharedPreference = context.getSharedPreferences("DejaPhoto",MODE_PRIVATE);
+        String json;
+        Default_Gallery gall = null;
+        //  SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        if(friend && user){
+            json = sharedPreference.getString("All", "");
+            gall = gson.fromJson(json, Default_Gallery.class);
+            Log.v("Uploaded Both friends and user galleries", "ALL");
+        }
+        else if(user){
+            json = sharedPreference.getString("Gallery","");
+            gall = gson.fromJson(json, Default_Gallery.class);
+            Log.v("Uploaded just user gallery", "User");
+        }
+        else if(friend) {
+            json = sharedPreference.getString("Friends", "");
+            gall = gson.fromJson(json, Default_Gallery.class);
+            Log.v("Uploaded just friend gallery", "Friend");
+        }
+        else{
+            Log.v("Uploaded no gallery", "None");
+        }
+        return gall;
+
     }
 
     public void sortByTime(){

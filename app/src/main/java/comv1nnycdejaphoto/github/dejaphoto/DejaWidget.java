@@ -226,9 +226,13 @@ public class DejaWidget extends AppWidgetProvider {
         editor = sharedPreferences.edit();
 
         /*gson is a way to put the object into shared preferences*/
+        /*
         Gson gson = new Gson();
         String json = sharedPreferences.getString("Gallery","");
         defaultGallery = gson.fromJson(json, Default_Gallery.class);
+         */
+        defaultGallery = Default_Gallery.Choose_Gallery(context);
+
         index = sharedPreferences.getInt("Index",0);
     }
 }
