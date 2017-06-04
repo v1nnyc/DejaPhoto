@@ -247,28 +247,35 @@ public class Default_Gallery{
         boolean user = true;
         Gson gson = new Gson();
         SharedPreferences sharedPreference = context.getSharedPreferences("DejaPhoto",MODE_PRIVATE);
+        SharedPreferences sharedPref_View = context.getSharedPreferences("ViewShareOption",MODE_PRIVATE);
         String json;
         Default_Gallery gall = null;
+
+        //Log.v("Check Box Values", sharedPref_View.getString("Frd", "null") + " " + sharedPref_View.getString("View","null"));
+        friend = sharedPref_View.getString("Frd","").equals("frd");
+        user = sharedPref_View.getString("View","").equals("self");
         //  SharedPreferences.Editor editor = sharedPreferences.edit();
 
         if(friend && user){
-            json = sharedPreference.getString("All", "");
-            gall = gson.fromJson(json, Default_Gallery.class);
+            //json = sharedPreference.getString("All", "");       // change names of galleries if need to
+            //gall = gson.fromJson(json, Default_Gallery.class);
             Log.v("Uploaded Both friends and user galleries", "ALL");
         }
         else if(user){
-            json = sharedPreference.getString("Gallery","");
-            gall = gson.fromJson(json, Default_Gallery.class);
+            //json = sharedPreference.getString("Gallery","");
+            //gall = gson.fromJson(json, Default_Gallery.class);
             Log.v("Uploaded just user gallery", "User");
         }
         else if(friend) {
-            json = sharedPreference.getString("Friends", "");
-            gall = gson.fromJson(json, Default_Gallery.class);
+            //json = sharedPreference.getString("Friends", "");
+            //gall = gson.fromJson(json, Default_Gallery.class);
             Log.v("Uploaded just friend gallery", "Friend");
         }
         else{
             Log.v("Uploaded no gallery", "None");
         }
+        json = sharedPreference.getString("Gallery","");
+        gall = gson.fromJson(json, Default_Gallery.class);
         return gall;
 
     }
