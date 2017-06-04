@@ -29,9 +29,6 @@ public class ViewShareOption extends AppCompatActivity {
         final CheckBox frd = (CheckBox)findViewById(R.id.viewFrds);
         final CheckBox share = (CheckBox)findViewById(R.id.share);
 
-        mine.setChecked(true);
-        frd.setChecked(false);
-        share.setChecked(false);
         if(sharedPreferences.getString("View","self").equals("null")){
             mine.setChecked(false);
         }
@@ -50,11 +47,9 @@ public class ViewShareOption extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     editor.putString("View", "self");
-                    mine.setChecked(true);
                 }
                 else{
                     editor.putString("View", "null");
-                    mine.setChecked(false);
                 }
                 editor.apply();
                 Log.v("User Check Box Value", sharedPreferences.getString("View",""));
@@ -66,11 +61,9 @@ public class ViewShareOption extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     editor.putString("Frd", "frd");
-                    frd.setChecked(true);
                 }
                 else {
                     editor.putString("Frd", "null");
-                    frd.setChecked(false);
                 }
                 editor.apply();
                 Log.v("Friend Check Box Value", sharedPreferences.getString("Frd",""));
@@ -81,11 +74,9 @@ public class ViewShareOption extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     editor.putString("Share", "yes");
-                    share.setChecked(true);
                 }
                 else {
                     editor.putString("Share", "null");
-                    share.setChecked(false);
                 }
                 editor.apply();
                 Log.v("Share Check Box Value", sharedPreferences.getString("Share",""));
