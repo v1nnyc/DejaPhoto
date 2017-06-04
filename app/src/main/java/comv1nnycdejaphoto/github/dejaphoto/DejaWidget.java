@@ -124,6 +124,7 @@ public class DejaWidget extends AppWidgetProvider {
                     /*Update the photos*/
                     readPreferences(context);
                     if(!defaultGallery.getPictures().elementAt(index).getKarma()) {
+                        defaultGallery.getPictures().elementAt(index).addLikes();
                         Toast.makeText(context, "Added Karma", Toast.LENGTH_SHORT).show();
                         defaultGallery.getPictures().elementAt(index).addKarma();
                         Gson gson = new Gson();
@@ -138,12 +139,12 @@ public class DejaWidget extends AppWidgetProvider {
         }
 
         if (Left.equals(intent.getAction())) {
+            Log.v("Widget Button Clicked", "Left");
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     /*Update the photos*/
                     readPreferences(context);
-                    Log.v("LeftClicked","Widget");
                     if(defaultGallery.get_photos() != 0 ) {
             /* To indicate the wallpaper is changed*/
                         Boolean changed = false;
@@ -161,7 +162,7 @@ public class DejaWidget extends AppWidgetProvider {
                                 File file = new File(picture.getImage());
                                 Uri uriFromGallery = Uri.fromFile(file);
                     /*Make it becomes the wallpaper*/
-                                wp.changeWallpaper(uriFromGallery, picture.getLocatio(),context);
+                                wp.changeWallpaper(uriFromGallery, picture.getLocatio(),context,picture.getLikes());
                     /*Update the index*/
                                 editor.putInt("Index", index - 1).apply();
                                 changed = true;
@@ -180,12 +181,12 @@ public class DejaWidget extends AppWidgetProvider {
         }
 
         if (Right.equals(intent.getAction())) {
+            Log.v("Widget Button Clicked", "Right");
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     /*Update the photos*/
                     readPreferences(context);
-                    Log.v("RightClicked","Widget");
                     if(defaultGallery.get_photos() != 0) {
                         Boolean changed = false;
                         int last = index;
@@ -196,7 +197,7 @@ public class DejaWidget extends AppWidgetProvider {
                                 Picture picture = defaultGallery.getPictures().elementAt(index + 1);
                                 File file = new File(picture.getImage());
                                 Uri uriFromGallery = Uri.fromFile(file);
-                                wp.changeWallpaper(uriFromGallery, picture.getLocatio());
+                                wp.changeWallpaper(uriFromGallery, picture.getLocatio(),picture.getLikes());
                                 editor.putInt("Index", index + 1).apply();
                                 changed = true;
                                 break;
