@@ -54,7 +54,7 @@ public class AddFrd extends AppCompatActivity {
         request.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                user.add(email.getText().toString());
+                user.sendRequest(email.getText().toString());
             }
         });
 
