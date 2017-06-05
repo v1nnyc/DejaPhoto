@@ -33,7 +33,7 @@ public class wallpaper extends Activity {
         picture.
      */
 
-    public void changeWallpaper(Uri uri, String location){
+    public void changeWallpaper(Uri uri, String location, int likes){
         Context main = BackgroundService.getContext();
         try {
             /*Bitmap is one type of image, open the uri with bitmap*/
@@ -47,9 +47,11 @@ public class wallpaper extends Activity {
 
             /*Sert the text color be black*/
             paint.setColor(Color.rgb(0, 0, 0));
-            paint.setTextSize(bitmap.getHeight()/10);
+            paint.setTextSize(bitmap.getHeight()/15);
             /*Draw on the bitmap*/
             canvas.drawText(location, 10, bitmap.getHeight() - bitmap.getHeight()/5, paint);
+            paint.setTextSize(bitmap.getHeight()/20);
+            canvas.drawText("Likes: " + Integer.toString(likes), location.length()*(bitmap.getHeight()/20) , bitmap.getHeight() - bitmap.getHeight()/5, paint);
 
             /*Change the wallpaper to the loaded bitmap*/
             WallpaperManager wallpaperManager = WallpaperManager.getInstance(ma.getContext());
@@ -59,7 +61,7 @@ public class wallpaper extends Activity {
         }
     }
 
-    public void changeWallpaper(Uri uri, String location,Context context){
+    public void changeWallpaper(Uri uri, String location,Context context,int likes){
         try {
             /*Bitmap is one type of image, open the uri with bitmap*/
             Log.i("Wallpaper Uri",uri.getPath());
@@ -73,6 +75,8 @@ public class wallpaper extends Activity {
             paint.setTextSize(bitmap.getHeight()/10);
             /*Draw on the bitmap*/
             canvas.drawText(location, 10, bitmap.getHeight() - bitmap.getHeight()/5, paint);
+            paint.setTextSize(bitmap.getHeight()/25);
+            canvas.drawText("Likes: " + Integer.toString(likes), location.length()*(bitmap.getHeight()/20), bitmap.getHeight() - bitmap.getHeight()/5, paint);
             /*Change the wallpaper to the loaded bitmap*/
             WallpaperManager wallpaperManager = WallpaperManager.getInstance(context);
             wallpaperManager.setBitmap(bitmap);
