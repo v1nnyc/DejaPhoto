@@ -11,7 +11,7 @@ public class User {
     fireBaseHandler handler = new fireBaseHandler();
     String myID = null;
     String name = null;
-    ArrayList<Friend> friendsList;
+    ArrayList<String> friendsList;
 
     public User(){
 
@@ -49,7 +49,7 @@ public class User {
     public void remove(String Id) {
         int i = 0;
         while(i < friendsList.size()){
-            if(friendsList.get(i).getId() == myID)
+            if(friendsList.get(i)== myID)
                 friendsList.remove(i);
             i++;
         }
@@ -59,7 +59,7 @@ public class User {
         return false;
     }
 
-    public ArrayList<Friend> getFriendsList() {
+    public ArrayList<String> getFriendsList() {
         return this.friendsList;
     }
 }
