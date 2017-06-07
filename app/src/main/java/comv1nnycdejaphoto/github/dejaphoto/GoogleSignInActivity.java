@@ -112,9 +112,14 @@ public class GoogleSignInActivity extends BaseActivity implements
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
+                Toast.makeText(GoogleSignInActivity.this, "google sign in good.",
+                        Toast.LENGTH_SHORT).show();
                 firebaseAuthWithGoogle(account);
+                //
             } else {
                 // Google Sign In failed, update UI appropriately
+                Toast.makeText(GoogleSignInActivity.this, "google sign in failed.",
+                        Toast.LENGTH_SHORT).show();
                 // [START_EXCLUDE]
                 updateUI(null);
                 // [END_EXCLUDE]
@@ -139,11 +144,13 @@ public class GoogleSignInActivity extends BaseActivity implements
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            Toast.makeText(GoogleSignInActivity.this, "Firebase Authentication worked.",
+                                    Toast.LENGTH_SHORT).show();
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(GoogleSignInActivity.this, "Authentication failed.",
+                            Toast.makeText(GoogleSignInActivity.this, "Firebase Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                             updateUI(null);
                         }
