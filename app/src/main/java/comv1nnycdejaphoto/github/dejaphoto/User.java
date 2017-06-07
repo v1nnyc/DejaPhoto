@@ -9,9 +9,9 @@ import java.util.ArrayList;
 
 public class User {
     fireBaseHandler handler = new fireBaseHandler();
-    String myID = null;
-    String name = null;
-    ArrayList<String> friendsList;
+    private String myID = null;
+    private String name = null;
+    private ArrayList<String> friendsList;
 
     public User(){
 
@@ -20,6 +20,23 @@ public class User {
         myID = "test";
         name = "whatever";
 
+    }
+
+    /** getters and setters **/
+    public void setMyID(String n){
+        myID = n;
+    }
+    public void setMyName(String n){
+        name = n;
+    }
+    public String getMyID(){
+        return myID;
+    }
+    public String getName(){
+        return name;
+    }
+    public ArrayList<String> getFriendsList(){
+        return friendsList;
     }
 
     /** use the id of a user to find them on firebase and send a request
@@ -59,7 +76,4 @@ public class User {
         return false;
     }
 
-    public ArrayList<String> getFriendsList() {
-        return this.friendsList;
-    }
 }
