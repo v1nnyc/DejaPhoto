@@ -125,7 +125,7 @@ public class DejaWidget extends AppWidgetProvider {
                     readPreferences(context);
                     if(!defaultGallery.getPictures().elementAt(index).getKarma()) {
                         defaultGallery.getPictures().elementAt(index).addLikes();
-                        Toast.makeText(context, "Added Karma", Toast.LENGTH_SHORT).show();
+                        Log.v("Added Karma", "Success");
                         defaultGallery.getPictures().elementAt(index).addKarma();
                         Gson gson = new Gson();
                         String json = gson.toJson(defaultGallery);
