@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private static Context sContext;
     private BackgroundService backgroundService;
     private Boolean isBound;
+    private boolean mReturningWithResult = false;
 
     String mCurrentPhotoPath;
     static final int REQUEST_TAKE_PHOTO = 1;
@@ -92,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
                                               Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
               /* pass the intent with the option of choose button beign clicked*/
                                               startActivityForResult(intent, PICK_CHOOSE);
+                                              finish();
+                                              return;
                                           }
                                       }
 
@@ -226,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
                         //fo = new FileOutputStream(new File(Environment.getExternalStorageDirectory() + "/storage/1E02-141E/Android/data/comv1nnycdejaphoto/files/Pictures"));
 
                 }
+                break;
             case PICK_CHOOSE:
                 if(data != null) {
                     //TODO  choose album
@@ -234,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
                     Uri uri = data.getData();
                     Log.v("Choosed Path", uri.getPath());
                 }
+                break;
             case PICK_RELEASE:
                 /*Only one picture is selected*/
                 if (data.getData() != null) {
@@ -270,19 +275,42 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 }
+                break;
 
         }
-        json = gson.toJson(defaultGallery);
-        sharedPreferences.edit().putString("Gallery", json).apply();
+        /*json = gson.toJson(defaultGallery);
+        sharedPreferences.edit().putString("Gallery", json).apply();*/
+
+        mReturningWithResult = true;
+        onPostResume();
 
 
 
     }
 
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        if (mReturningWithResult) {
+            setIntents();
+            // Commit your transactions here.
+        }
+        // Reset the boolean flag back to false for next time.
+        mReturningWithResult = false;
+    }
+
+    private void setIntents(){
+        Intent searchConstaints=new Intent();
+        searchConstaints.putExtra("min",20);
+        searchConstaints.putExtra("max",80);
+        setResult(101,searchConstaints);
+        finish();
+    }
+
     public void Savefile(Bitmap bm) {
         String root = Environment.getExternalStorageDirectory().toString();
         Toast.makeText(sContext, ""+root, Toast.LENGTH_SHORT).show();
-        File myDir = new File(root + "/DCIM/Camera");
+        File myDir = new File(root + "/images/media");
         myDir.mkdirs();
         Random generator = new Random();
         int n = 10000;
