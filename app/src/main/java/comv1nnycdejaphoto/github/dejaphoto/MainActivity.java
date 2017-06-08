@@ -102,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
               /* pass the intent with the option of choose button beign clicked*/
                 startActivityForResult(intent, PICK_CHOOSE);
-                finish();
             }
         });
          /* Same thing but for the release button*/
@@ -151,28 +150,35 @@ public class MainActivity extends AppCompatActivity {
         defaultGallery = new Default_Gallery();
         defaultGallery.Load_All(BackgroundService.getContext());
         defaultGallery = gson.fromJson(json, Default_Gallery.class);
+        if(data == null){
+            return;
+        }
         /*If user press back while picking images, exit the method */
         /*The choose button being clicked*/
 
         switch(requestCode) {
-            case CAPTURE_PICTURE:
+            case CAPTURE_PICTURE: {
                 if (resultCode == Activity.RESULT_OK) {
                     Bitmap bmp = (Bitmap) data.getExtras().get("data");
                     Savefile(bmp);
-                    //fo = new FileOutputStream(new File(Environment.getExternalStorageDirectory() + "/storage/1E02-141E/Android/data/comv1nnycdejaphoto/files/Pictures"));
-
                 }
+                Intent intent = new Intent(sContext, MainActivity.class);
+                startActivity(intent);
                 break;
-            case PICK_CHOOSE:
-                if(data != null) {
+            }
+            case PICK_CHOOSE: {
+                if (data != null) {
                     //TODO  choose album
                     /*https://stackoverflow.com/questions/5309190/android-pick-images-from-gallery*/
             /*Get the data as type of Uri*/
                     Uri uri = data.getData();
                     Log.v("Choosed Path", uri.getPath());
                 }
+                Intent intent = new Intent(sContext, MainActivity.class);
+                startActivity(intent);
                 break;
-            case PICK_RELEASE:
+            }
+            case PICK_RELEASE: {
                 /*Only one picture is selected*/
                 if (data.getData() != null) {
                     Uri uri = data.getData();
@@ -208,14 +214,16 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 }
+                Intent intent = new Intent(sContext, MainActivity.class);
+                startActivity(intent);
                 break;
+            }
 
         }
         /*json = gson.toJson(defaultGallery);
         sharedPreferences.edit().putString("Gallery", json).apply();*/
 
         mReturningWithResult = true;
-        //onPostResume();
 
     }
 
