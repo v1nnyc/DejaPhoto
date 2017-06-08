@@ -17,9 +17,6 @@ public class User {
 
         //IDK how to use googleSigninActivity
         //but this should be the email we sign in with
-        myID = "test";
-        name = "whatever";
-
     }
 
     /** getters and setters **/
