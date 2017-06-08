@@ -193,9 +193,24 @@ public class MainActivity extends AppCompatActivity {
             case PICKER:
                 if(data.getData() != null){
                     Uri uri = data.getData();
-                    File dir = new File (getContext().getPackageCodePath() + "/Photos/Myself");
+                    String filename=uri.getPath().substring(uri.getPath().lastIndexOf("/")+1);
+                    Log.v("The file name is", filename);
                     File image = new File(uri.getPath());
-                    
+                    File dir = new File (getContext().getPackageCodePath() + "/Photos/Myself/"+filename);
+                    try {
+                        FileChannel src = new FileInputStream(image).getChannel();
+                        FileChannel dst = new FileOutputStream(dir).getChannel();
+                        dst.transferFrom(src, 0, src.size());
+                        src.close();
+                        dst.close();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if(dir.exists())
+                        Log.v("File copy", "YES!!!");
+
 
                 }
 
