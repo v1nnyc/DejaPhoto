@@ -11,35 +11,29 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.media.Image;
+import android.graphics.Matrix;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Random;
 
 
@@ -53,9 +47,6 @@ public class MainActivity extends AppCompatActivity {
     private BackgroundService backgroundService;
     private Boolean isBound;
     private boolean mReturningWithResult = false;
-
-    String mCurrentPhotoPath;
-    static final int REQUEST_TAKE_PHOTO = 1;
 
     /* This will tell the different between choose or release, 1 is for choose, 0 for release*/
     final int CAPTURE_PICTURE = 2;
@@ -82,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.select_album);
 
         /** get info for user if already created **/
-        Bundle bundle = getIntent().getExtras();
+        /*Bundle bundle = getIntent().getExtras();
         if(bundle != null) {
             String uid = bundle.getString("uid");
             Toast.makeText(MainActivity.this, "uid we got is:" + uid,
@@ -104,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
               /* pass the intent with the option of choose button beign clicked*/
                 startActivityForResult(intent, PICK_CHOOSE);
-                finish();
             }
         });
          /* Same thing but for the release button*/
@@ -169,20 +159,27 @@ public class MainActivity extends AppCompatActivity {
         defaultGallery = new Default_Gallery();
         defaultGallery.Load_All(BackgroundService.getContext());
         defaultGallery = gson.fromJson(json, Default_Gallery.class);
+        if(data == null){
+            return;
+        }
         /*If user press back while picking images, exit the method */
         /*The choose button being clicked*/
 
         switch(requestCode) {
-            case CAPTURE_PICTURE:
+            case CAPTURE_PICTURE: {
                 if (resultCode == Activity.RESULT_OK) {
                     Bitmap bmp = (Bitmap) data.getExtras().get("data");
-                    Savefile(bmp);
-                    //fo = new FileOutputStream(new File(Environment.getExternalStorageDirectory() + "/storage/1E02-141E/Android/data/comv1nnycdejaphoto/files/Pictures"));
-
+                    Savefile(getResizedBitmap(bmp));
+                    defaultGallery = new Default_Gallery();
+                    defaultGallery.Load_All(getContext());
+                    Log.v("Number of photo beinng loaded", Integer.toString(defaultGallery.get_photos()));
+                    json = gson.toJson(defaultGallery);
+                    sharedPreferences.edit().putString("Gallery", json).apply();
                 }
-                break;
-            case PICK_CHOOSE:
-                if(data != null) {
+                return;
+            }
+            case PICK_CHOOSE: {
+                if (data != null) {
                     //TODO  choose album
                     /*https://stackoverflow.com/questions/5309190/android-pick-images-from-gallery*/
             /*Get the data as type of Uri*/
@@ -216,6 +213,9 @@ public class MainActivity extends AppCompatActivity {
 
                 break;
             case PICK_RELEASE:
+                return;
+            }
+            case PICK_RELEASE: {
                 /*Only one picture is selected*/
                 if (data.getData() != null) {
                     Uri uri = data.getData();
@@ -251,31 +251,18 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 }
-                break;
+                return;
+            }
 
         }
         /*json = gson.toJson(defaultGallery);
         sharedPreferences.edit().putString("Gallery", json).apply();*/
 
         mReturningWithResult = true;
-        //onPostResume();
 
     }
 
-    //this method let users select the duration of each picture being displayed
-    public void setDisplayRate() {
-    /* link to the setting page for users to set display rate */
-        ImageButton setting = (ImageButton) findViewById(R.id.setting);
-        setting.setOnClickListener(new View.OnClickListener(){
-            /* onClick Event */
-            @Override
-            public void onClick(View view){
-                /* setContentView(R.layout.rate); */
-                Intent intent = new Intent(getBaseContext(),RateActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
+
 
     //this method is for users release pictures
     public void releasePictures() {
@@ -335,16 +322,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void Savefile(Bitmap bm) {
-        String root = Environment.getExternalStorageDirectory().toString();
+        Uri internal_storage = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath());
+        String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
         Toast.makeText(sContext, ""+root, Toast.LENGTH_SHORT).show();
-        File myDir = new File(root + "/images/media");
+        //File myDir = new File(root + "/DejaPhoto");
+        File myDir = new File(root);
         myDir.mkdirs();
         Random generator = new Random();
         int n = 10000;
         n = generator.nextInt(n);
         String fname = "Image-" + n + ".jpg";
         File file = new File(myDir, fname);
-        Log.i("what", "" + file);
+        Log.i("saved", "" + file);
         if (file.exists())
             file.delete();
         try {
@@ -391,6 +380,31 @@ public class MainActivity extends AppCompatActivity {
             return true;
         else
             return false;
+    }
+
+    public Bitmap getResizedBitmap(Bitmap bm) {
+        WindowManager windowManager = (WindowManager) MainActivity.getContext().getSystemService(Context.WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+
+        /* get size of the screen */
+        Point size = new Point();
+        display.getSize(size);
+        int newWidth = size.x;
+        int newHeight = size.y;
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // CREATE A MATRIX FOR THE MANIPULATION
+        Matrix matrix = new Matrix();
+        // RESIZE THE BIT MAP
+        matrix.postScale(scaleWidth, scaleHeight);
+
+        // "RECREATE" THE NEW BITMAP
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                bm, 0, 0, width, height, matrix, false);
+        bm.recycle();
+        return resizedBitmap;
     }
 
     /*Called if directories does not exists, create them*/
