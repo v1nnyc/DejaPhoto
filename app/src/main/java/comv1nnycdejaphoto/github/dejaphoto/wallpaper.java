@@ -46,12 +46,11 @@ public class wallpaper extends Activity {
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
             /*Sert the text color be black*/
-            paint.setColor(Color.rgb(0, 0, 0));
-            paint.setTextSize(bitmap.getHeight()/15);
+            paint.setColor(Color.rgb(255, 255, 0));
+            paint.setTextSize(55);
             /*Draw on the bitmap*/
-            canvas.drawText(location, 10, bitmap.getHeight() - bitmap.getHeight()/5, paint);
-            paint.setTextSize(bitmap.getHeight()/20);
-            canvas.drawText("Likes: " + Integer.toString(likes), location.length()*(bitmap.getHeight()/20) , bitmap.getHeight() - bitmap.getHeight()/5, paint);
+            canvas.drawText(location, 10, (bitmap.getHeight() - bitmap.getHeight()/5)-55, paint);
+            canvas.drawText("Likes: " + Integer.toString(likes), 10, (bitmap.getHeight() - bitmap.getHeight()/5), paint);
 
             /*Change the wallpaper to the loaded bitmap*/
             WallpaperManager wallpaperManager = WallpaperManager.getInstance(ma.getContext());
@@ -71,12 +70,11 @@ public class wallpaper extends Activity {
             Canvas canvas = new Canvas(bitmap);
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
             /*Sert the text color be black*/
-            paint.setColor(Color.rgb(0, 0, 0));
-            paint.setTextSize(bitmap.getHeight()/10);
+            paint.setColor(Color.rgb(255, 255, 0));
+            paint.setTextSize(55);
             /*Draw on the bitmap*/
-            canvas.drawText(location, 10, bitmap.getHeight() - bitmap.getHeight()/5, paint);
-            paint.setTextSize(bitmap.getHeight()/25);
-            canvas.drawText("Likes: " + Integer.toString(likes), location.length()*(bitmap.getHeight()/20), bitmap.getHeight() - bitmap.getHeight()/5, paint);
+            canvas.drawText(location, 10, (bitmap.getHeight() - bitmap.getHeight()/5)-55, paint);
+            canvas.drawText("Likes: " + Integer.toString(likes), 10, (bitmap.getHeight() - bitmap.getHeight()/5), paint);
             /*Change the wallpaper to the loaded bitmap*/
             WallpaperManager wallpaperManager = WallpaperManager.getInstance(context);
             wallpaperManager.setBitmap(bitmap);

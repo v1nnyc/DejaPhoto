@@ -78,6 +78,10 @@ public class Picture {
     public String getDate(){return dateTaken;}
     public int getLikes() { return likes;}
 
+    public void setLocation(String newLocation){
+        location = newLocation;
+    }
+
     public boolean isEqual(Picture other){
         /*If other is null, it must be different then an exist object*/
         if(other == null)

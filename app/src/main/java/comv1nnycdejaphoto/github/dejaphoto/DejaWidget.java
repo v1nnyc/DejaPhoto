@@ -132,8 +132,8 @@ public class DejaWidget extends AppWidgetProvider {
                 /*Updated the Gallery*/
                         editor.putString("Gallery", json);
                         editor.apply();
-                    }else
-                        Toast.makeText(context, "Picture already added Karma", Toast.LENGTH_SHORT).show();
+                    }
+//                        Toast.makeText(context, "Picture already added Karma", Toast.LENGTH_SHORT).show();
                 }
             }).start();
         }

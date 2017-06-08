@@ -75,22 +75,19 @@ public class BackgroundService extends Service {
 
     public void readPreferences() {
         sharedPreferences = getContext().getSharedPreferences("DejaPhoto", MODE_PRIVATE);
-        //sharedPreferences.edit().clear().apply();
-
-
+        if(sharedPreferences.getBoolean("First",false) == false) {
+            sharedPreferences.edit().clear().apply();
+            sharedPreferences.edit().putBoolean("First",true).apply();
+        }
         /*gson is a way to put the object into shared preferences*/
-
         Gson gson = new Gson();
-        /*
         String json = sharedPreferences.getString("Gallery", "");
         defaultGallery = gson.fromJson(json, Default_Gallery.class);
-        */
-        defaultGallery = Default_Gallery.Choose_Gallery(getContext());
         if(defaultGallery == null) {
             defaultGallery = new Default_Gallery();
             defaultGallery.Load_All(getContext());
             Log.v("Number of photo beinng loaded", Integer.toString(defaultGallery.get_photos()));
-            String json = gson.toJson(defaultGallery);
+            json = gson.toJson(defaultGallery);
             sharedPreferences.edit().putString("Gallery", json).apply();
         }
         /*Save the value into shared preferences*/
