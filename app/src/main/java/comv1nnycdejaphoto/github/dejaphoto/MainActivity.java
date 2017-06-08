@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     static final int PICK_CHOOSE = 1;
     static final int PICK_RELEASE = 0;
     static final int MY_REQUEST_CODE = 3;
+    static final int PICKER = 4;
 
     //constructor
     public MainActivity() {
@@ -139,10 +141,26 @@ public class MainActivity extends AppCompatActivity {
         });
         releasePictures();
         setDisplayRate();
+        photoPicker();
 
         //start background service
         Intent intent = new Intent(MainActivity.this, BackgroundService.class);
         startService(intent);
+    }
+    public void photoPicker(){
+        Button picker = (Button) findViewById(R.id.picker);
+        picker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*Ask user to pick a image and save its uri, make the result become intent*/
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+              /* pass the intent with the option of choose button beign clicked*/
+                startActivityForResult(intent, PICKER);
+            }
+        });
+
+
+
     }
 
     //this method let users select the duration of each picture being displayed
@@ -246,6 +264,16 @@ public class MainActivity extends AppCompatActivity {
                     Uri uri = data.getData();
                     Log.v("Choosed Path", uri.getPath());
                 }
+                break;
+            case PICKER:
+                if(data.getData() != null){
+                    Uri uri = data.getData();
+                    File dir = new File (getContext().getPackageCodePath() + "/Photos/Myself");
+                    File image = new File(uri.getPath());
+                    
+
+                }
+
                 break;
             case PICK_RELEASE:
                 /*Only one picture is selected*/
@@ -392,5 +420,11 @@ public class MainActivity extends AppCompatActivity {
             Log.v("Create Directory MyFriendsAndMe","Failed");
         else
             Log.v("Create Directory MyFriendsAndMe","Success");
+        photo_path = new File(path + "/Myself");
+        if(photo_path.mkdir())
+            Log.v("Create Directory Myself","Failed");
+        else
+            Log.v("Create Directory Myself","Success");
     }
 }
+
