@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.net.Uri;
@@ -31,7 +32,11 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -52,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     static final int PICK_CHOOSE = 1;
     static final int PICK_RELEASE = 0;
     static final int MY_REQUEST_CODE = 3;
+    static final int PICKER = 4;
 
     //constructor
     public MainActivity() {
@@ -125,11 +131,26 @@ public class MainActivity extends AppCompatActivity {
 
         });
         releasePictures();
-
+        photoPicker();
 
         //start background service
         Intent intent = new Intent(MainActivity.this, BackgroundService.class);
         startService(intent);
+    }
+    public void photoPicker(){
+        Button picker = (Button) findViewById(R.id.picker);
+        picker.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICKER);
+            }
+        });
+
     }
 
     @Override
@@ -167,9 +188,40 @@ public class MainActivity extends AppCompatActivity {
             /*Get the data as type of Uri*/
                     Uri uri = data.getData();
                     Log.v("Choosed Path", uri.getPath());
+                    return;
                 }
-                return;
+                break;
             }
+            case PICKER:
+                if(data.getData() != null){
+                    Uri uri = data.getData();
+                    String filename=uri.getPath().substring(uri.getPath().lastIndexOf("/")+1);
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                        Savefile(bitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+               }else if (data.getClipData() != null) {
+                    ClipData mClipData = data.getClipData();
+
+                    for (int i = 0; i < mClipData.getItemCount(); ++i) {
+                        ClipData.Item item = mClipData.getItemAt(i);
+                        Uri uri = item.getUri();
+                        Bitmap bitmap = null;
+                        try {
+                            bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Savefile(bitmap);
+                    }
+                }
+
+                break;
+//            case PICK_RELEASE:
+//                return;
+//            }
             case PICK_RELEASE: {
                 /*Only one picture is selected*/
                 if (data.getData() != null) {
@@ -380,5 +432,11 @@ public class MainActivity extends AppCompatActivity {
             Log.v("Create Directory MyFriendsAndMe","Failed");
         else
             Log.v("Create Directory MyFriendsAndMe","Success");
+        photo_path = new File(path + "/Myself");
+        if(photo_path.mkdir())
+            Log.v("Create Directory Myself","Failed");
+        else
+            Log.v("Create Directory Myself","Success");
     }
 }
+
