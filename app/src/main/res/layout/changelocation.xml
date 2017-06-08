@@ -30,17 +30,11 @@
             android:id="@+id/applychange"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:background="@drawable/save"
+            android:background="@drawable/savebutton"
             android:layout_marginTop="30dp"
             android:layout_marginLeft="320dp"/>
 
     </RelativeLayout>
 
-    <ImageButton
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:background="@drawable/cancel"
-        android:layout_marginLeft="320dp"
-        android:layout_marginTop="10dp"/>
 
 </LinearLayout>

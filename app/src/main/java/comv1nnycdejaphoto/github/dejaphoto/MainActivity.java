@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -19,9 +18,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
@@ -33,16 +30,9 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Random;
 
 
@@ -135,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
         });
         releasePictures();
-        setDisplayRate();
+
 
         //start background service
         Intent intent = new Intent(MainActivity.this, BackgroundService.class);
@@ -227,20 +217,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //this method let users select the duration of each picture being displayed
-    public void setDisplayRate() {
-    /* link to the setting page for users to set display rate */
-        ImageButton setting = (ImageButton) findViewById(R.id.setting);
-        setting.setOnClickListener(new View.OnClickListener(){
-            /* onClick Event */
-            @Override
-            public void onClick(View view){
-                /* setContentView(R.layout.rate); */
-                Intent intent = new Intent(getBaseContext(),RateActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
+
 
     //this method is for users release pictures
     public void releasePictures() {
