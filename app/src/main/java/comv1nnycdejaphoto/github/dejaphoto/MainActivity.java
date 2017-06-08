@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
             String uid = bundle.getString("uid");
             Toast.makeText(MainActivity.this, "uid we got is:" + uid,
                     Toast.LENGTH_SHORT).show();
+            user.setMyID(uid);
         }
 
         /*Ask the permission to read the images*/
@@ -104,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
               /* pass the intent with the option of choose button beign clicked*/
                                               startActivityForResult(intent, PICK_CHOOSE);
                                               finish();
-                                              return;
                                           }
                                       }
 
@@ -115,9 +115,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
            /*Ask user to pick a image and save its uri, make the result become intent*/
-                Intent camera = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
               /* pass the intent with the option of choose button beign clicked*/
-                startActivityForResult(camera, PICK_CHOOSE);
+                startActivityForResult(intent, PICK_CHOOSE);
             }
         });
         /* link to the camera for users to take pictures */
