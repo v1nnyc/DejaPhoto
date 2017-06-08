@@ -19,6 +19,7 @@
         android:layout_height="wrap_content">
 
         <EditText
+            android:id="@+id/location"
             android:layout_width="280dp"
             android:layout_height="40dp"
             android:layout_marginLeft="15dp"
@@ -26,6 +27,7 @@
             android:background="@drawable/edittextstyle" />
 
         <ImageButton
+            android:id="@+id/applychange"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:background="@drawable/save"
