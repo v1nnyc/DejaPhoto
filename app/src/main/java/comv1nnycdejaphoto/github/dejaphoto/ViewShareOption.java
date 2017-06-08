@@ -32,7 +32,9 @@ public class ViewShareOption extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked)
-                    editor.putString("View","self");
+                    editor.putBoolean("ViewMySelf",true);
+                else
+                    editor.putBoolean("ViewMySelf",false);
                 editor.apply();
             }
         });
@@ -40,7 +42,9 @@ public class ViewShareOption extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked)
-                    editor.putString("View","frd");
+                    editor.putBoolean("ViewFriend",true);
+                else
+                    editor.putBoolean("ViewFriend",false);
                 editor.apply();
             }
         });
@@ -48,7 +52,9 @@ public class ViewShareOption extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked)
-                    editor.putString("Share","yes");
+                    editor.putBoolean("Share",true);
+                else
+                    editor.putBoolean("Share",false);
                 editor.apply();
             }
 
