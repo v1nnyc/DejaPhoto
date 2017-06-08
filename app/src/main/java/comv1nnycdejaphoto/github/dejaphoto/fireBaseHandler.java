@@ -1,15 +1,32 @@
 package comv1nnycdejaphoto.github.dejaphoto;
 
+import com.google.firebase.iid.FirebaseInstanceIdService;
+
 /**
  * Created by VINCENT on 5/31/17.
  */
 
-public class fireBaseHandler {
-    public void search(String Id){
+public class fireBaseHandler extends FirebaseInstanceIdService{
+
+    /** search for id using firebase
+     * @param id - id to search for
+     * @return whether or not the id exists
+     */
+    public boolean search(String id){
+        return true;
+    }
+
+    /** sends request from user to specified id
+     * @param fromID - user's id
+     * @param toID - id of user to send friend request to
+     */
+    public void sendRequest(String fromID, String toID){
 
     }
 
-    public void updateFriends(){
+
+    public void acceptRequest(String ID1, String ID2){
 
     }
+
 }

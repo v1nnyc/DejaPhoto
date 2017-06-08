@@ -5,15 +5,21 @@ package comv1nnycdejaphoto.github.dejaphoto;
         * Obtained the library from https://github.com/google/gson.
         */
 import android.Manifest;
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -23,8 +29,17 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -36,11 +51,16 @@ public class MainActivity extends AppCompatActivity {
     private static Context sContext;
     private BackgroundService backgroundService;
     private Boolean isBound;
+    private boolean mReturningWithResult = false;
+
+    String mCurrentPhotoPath;
+    static final int REQUEST_TAKE_PHOTO = 1;
 
     /* This will tell the different between choose or release, 1 is for choose, 0 for release*/
     final int CAPTURE_PICTURE = 2;
     static final int PICK_CHOOSE = 1;
     static final int PICK_RELEASE = 0;
+    static final int MY_REQUEST_CODE = 3;
 
     //constructor
     public MainActivity() {
@@ -59,6 +79,15 @@ public class MainActivity extends AppCompatActivity {
         }
         setContentView(R.layout.select_album);
 
+        /** get info for user if already created **/
+        /*Bundle bundle = getIntent().getExtras();
+        if(bundle != null) {
+            String uid = bundle.getString("uid");
+            Toast.makeText(MainActivity.this, "uid we got is:" + uid,
+                    Toast.LENGTH_SHORT).show();
+            user.setMyID(uid);
+        }
+
         /*Ask the permission to read the images*/
         ActivityCompat.requestPermissions(MainActivity.this,
                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
@@ -67,16 +96,15 @@ public class MainActivity extends AppCompatActivity {
         Button load_image = (Button) findViewById(R.id.choose);
         /*onClick Event*/
         load_image.setOnClickListener(new View.OnClickListener() {
-                                          @Override
-                                          public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
            /*Ask user to pick a image and save its uri, make the result become intent*/
-                                              Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
               /* pass the intent with the option of choose button beign clicked*/
-                                              startActivityForResult(intent, PICK_CHOOSE);
-                                          }
-                                      }
-
-        );
+                startActivityForResult(intent, PICK_CHOOSE);
+                finish();
+            }
+        });
          /* Same thing but for the release button*/
         Button release_image = (Button) findViewById(R.id.release);
         release_image.setOnClickListener(new View.OnClickListener() {
@@ -88,12 +116,107 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, PICK_CHOOSE);
             }
         });
+        /* link to the camera for users to take pictures */
+        ImageButton camera = (ImageButton) findViewById(R.id.camera);
+        camera.setOnClickListener(new View.OnClickListener() {
+            /* onClick Event */
+            @Override
+            public void onClick(View view) {
+                Intent camera = new Intent(
+                        android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                if (checkSelfPermission(Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.CAMERA},
+                            MY_REQUEST_CODE);
+                }
+                startActivityForResult(camera, CAPTURE_PICTURE);
+            }
+
+
+        });
         releasePictures();
         setDisplayRate();
 
         //start background service
         Intent intent = new Intent(MainActivity.this, BackgroundService.class);
         startService(intent);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Gson gson = new Gson();
+        sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto",MODE_PRIVATE);
+        String json = sharedPreferences.getString("Gallery", "");
+        defaultGallery = new Default_Gallery();
+        defaultGallery.Load_All(BackgroundService.getContext());
+        defaultGallery = gson.fromJson(json, Default_Gallery.class);
+        /*If user press back while picking images, exit the method */
+        /*The choose button being clicked*/
+
+        switch(requestCode) {
+            case CAPTURE_PICTURE:
+                if (resultCode == Activity.RESULT_OK) {
+                    Bitmap bmp = (Bitmap) data.getExtras().get("data");
+                    Savefile(bmp);
+                    //fo = new FileOutputStream(new File(Environment.getExternalStorageDirectory() + "/storage/1E02-141E/Android/data/comv1nnycdejaphoto/files/Pictures"));
+
+                }
+                break;
+            case PICK_CHOOSE:
+                if(data != null) {
+                    //TODO  choose album
+                    /*https://stackoverflow.com/questions/5309190/android-pick-images-from-gallery*/
+            /*Get the data as type of Uri*/
+                    Uri uri = data.getData();
+                    Log.v("Choosed Path", uri.getPath());
+                }
+                break;
+            case PICK_RELEASE:
+                /*Only one picture is selected*/
+                if (data.getData() != null) {
+                    Uri uri = data.getData();
+                    for (int i = 0; i < defaultGallery.get_photos(); ++i) {
+                        Picture picture = defaultGallery.getPictures().elementAt(i);
+                        //if (picture.isEqual(uri))
+                        //  defaultGallery.getPictures().elementAt(i).hide();
+                    }
+                }
+
+            /*Multiple pictures were selected*/
+                else if (data.getClipData() != null) {
+                /*ClipData is like Clipboard but with data instead of text,
+                  Copying the intent data to clipdata because the data is only one data */
+                    ClipData mClipData = data.getClipData();
+
+                /*Make an array to store all the uri (Path of Images select by user)*/
+                    ArrayList<Uri> uriList = new ArrayList<Uri>();
+                    for (int i = 0; i < mClipData.getItemCount(); ++i) {
+                        ClipData.Item item = mClipData.getItemAt(i);
+                        Uri uri = item.getUri();
+                        uriList.add(uri);
+                    }
+
+                /*Log is for debuging purpose*/
+                /*To get the real path, uriList.get(i).getPath(); will do the job*/
+                    for (int i = 0; i < uriList.size(); ++i) {
+                        for (int j = 0; j < defaultGallery.get_photos(); ++j) {
+                        /*load the picture from the gallery*/
+                            Picture picture = defaultGallery.getPictures().elementAt(j);
+                            //if (picture.isEqual(uriList.get(i)))
+                            //  defaultGallery.getPictures().elementAt(j).hide();
+                        }
+                    }
+                }
+                break;
+
+        }
+        /*json = gson.toJson(defaultGallery);
+        sharedPreferences.edit().putString("Gallery", json).apply();*/
+
+        mReturningWithResult = true;
+        //onPostResume();
+
     }
 
     //this method let users select the duration of each picture being displayed
@@ -116,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
     /* Same thing but for the release button*/
         Button release_image = (Button) findViewById(R.id.release);
         release_image.setOnClickListener(new View.OnClickListener() {
-          
+
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent();
@@ -149,19 +272,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /* link to the camera for users to take pictures */
-        ImageButton camera = (ImageButton) findViewById(R.id.camera);
-        camera.setOnClickListener(new View.OnClickListener() {
-            /* onClick Event */
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-                takePicture();
-            }
-
-
-        });
-
         /* link to the sign in page for users to sign in */
         ImageButton signIn = (ImageButton) findViewById(R.id.signin);
         signIn.setOnClickListener(new View.OnClickListener() {
@@ -181,65 +291,27 @@ public class MainActivity extends AppCompatActivity {
         return sContext;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Gson gson = new Gson();
-        sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto",MODE_PRIVATE);
-        String json = sharedPreferences.getString("Gallery", "");
-        defaultGallery = new Default_Gallery();
-        defaultGallery.Load_All(BackgroundService.getContext());
-        defaultGallery = gson.fromJson(json, Default_Gallery.class);
-        /*If user press back while picking images, exit the method */
-        /*The choose button being clicked*/
-        if (data != null && requestCode == PICK_CHOOSE) {
-            //TODO  choose album
-            /*Get the data as type of Uri*/
-            Uri uri = data.getData();
-            Log.v("Choosed Path", uri.getPath());
+    public void Savefile(Bitmap bm) {
+        String root = Environment.getExternalStorageDirectory().toString();
+        Toast.makeText(sContext, ""+root, Toast.LENGTH_SHORT).show();
+        File myDir = new File(root + "/images/media");
+        myDir.mkdirs();
+        Random generator = new Random();
+        int n = 10000;
+        n = generator.nextInt(n);
+        String fname = "Image-" + n + ".jpg";
+        File file = new File(myDir, fname);
+        Log.i("what", "" + file);
+        if (file.exists())
+            file.delete();
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            bm.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        /* Release button being clicked*/
-        if (requestCode == PICK_RELEASE) {
-            /*Only one picture is selected*/
-            if (data.getData() != null) {
-                Uri uri = data.getData();
-                for (int i = 0; i < defaultGallery.get_photos(); ++i) {
-                    Picture picture = defaultGallery.getPictures().elementAt(i);
-                    //if (picture.isEqual(uri))
-                      //  defaultGallery.getPictures().elementAt(i).hide();
-                }
-            }
-
-            /*Multiple pictures were selected*/
-            else if (data.getClipData() != null) {
-                /*ClipData is like Clipboard but with data instead of text,
-                  Copying the intent data to clipdata because the data is only one data */
-                ClipData mClipData = data.getClipData();
-
-                /*Make an array to store all the uri (Path of Images select by user)*/
-                ArrayList<Uri> uriList = new ArrayList<Uri>();
-                for (int i = 0; i < mClipData.getItemCount(); ++i) {
-                    ClipData.Item item = mClipData.getItemAt(i);
-                    Uri uri = item.getUri();
-                    uriList.add(uri);
-                }
-
-                /*Log is for debuging purpose*/
-                /*To get the real path, uriList.get(i).getPath(); will do the job*/
-                for (int i = 0; i < uriList.size(); ++i) {
-                    for (int j = 0; j < defaultGallery.get_photos(); ++j) {
-                        /*load the picture from the gallery*/
-                        Picture picture = defaultGallery.getPictures().elementAt(j);
-                        //if (picture.isEqual(uriList.get(i)))
-                          //  defaultGallery.getPictures().elementAt(j).hide();
-                    }
-                }
-            }
-        }
-        json = gson.toJson(defaultGallery);
-        sharedPreferences.edit().putString("Gallery", json).apply();
-
     }
 
     /*Get from piazza, original from codepath :
@@ -265,13 +337,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
             // add other cases for more permissions
-        }
-    }
-
-    private void takePicture(){
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(intent, CAPTURE_PICTURE);
         }
     }
 

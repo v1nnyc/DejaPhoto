@@ -86,6 +86,8 @@ public class GoogleSignInActivity extends BaseActivity implements
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
+        mGoogleApiClient.connect();
+
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
         // [END initialize_auth]
@@ -113,8 +115,11 @@ public class GoogleSignInActivity extends BaseActivity implements
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
+                //
             } else {
                 // Google Sign In failed, update UI appropriately
+                Toast.makeText(GoogleSignInActivity.this, "google sign in failed.",
+                        Toast.LENGTH_SHORT).show();
                 // [START_EXCLUDE]
                 updateUI(null);
                 // [END_EXCLUDE]
@@ -143,7 +148,7 @@ public class GoogleSignInActivity extends BaseActivity implements
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(GoogleSignInActivity.this, "Authentication failed.",
+                            Toast.makeText(GoogleSignInActivity.this, "Firebase Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                             updateUI(null);
                         }
@@ -199,6 +204,12 @@ public class GoogleSignInActivity extends BaseActivity implements
 
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
+
+            /** passing the info for user back to main activity **/
+            /*Intent intent = new Intent(GoogleSignInActivity.this, MainActivity.class);
+            intent.putExtra("idval", user.getUid());
+            startActivity(intent);*/
+
         } else {
             mStatusTextView.setText(R.string.signed_out);
             mDetailTextView.setText(null);
