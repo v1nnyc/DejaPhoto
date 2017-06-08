@@ -79,14 +79,6 @@ public class MainActivity extends AppCompatActivity {
         }
         setContentView(R.layout.select_album);
 
-        /** get info for user if already created **/
-        /*Bundle bundle = getIntent().getExtras();
-        if(bundle != null) {
-            String uid = bundle.getString("uid");
-            Toast.makeText(MainActivity.this, "uid we got is:" + uid,
-                    Toast.LENGTH_SHORT).show();
-            user.setMyID(uid);
-        }
 
         /*Ask the permission to read the images*/
         ActivityCompat.requestPermissions(MainActivity.this,
