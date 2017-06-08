@@ -331,7 +331,6 @@ public class MainActivity extends AppCompatActivity {
     public void Savefile(Bitmap bm) {
         Uri internal_storage = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath());
         String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
-        Toast.makeText(sContext, ""+root, Toast.LENGTH_SHORT).show();
         //File myDir = new File(root + "/DejaPhoto");
         File myDir = new File(root);
         myDir.mkdirs();
