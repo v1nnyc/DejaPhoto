@@ -1,10 +1,12 @@
 package comv1nnycdejaphoto.github.dejaphoto;
 
+import com.google.firebase.iid.FirebaseInstanceIdService;
+
 /**
  * Created by VINCENT on 5/31/17.
  */
 
-public class fireBaseHandler {
+public class fireBaseHandler extends FirebaseInstanceIdService{
 
     /** search for id using firebase
      * @param id - id to search for

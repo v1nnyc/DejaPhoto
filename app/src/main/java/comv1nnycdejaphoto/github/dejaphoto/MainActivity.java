@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
             String uid = bundle.getString("uid");
             Toast.makeText(MainActivity.this, "uid we got is:" + uid,
                     Toast.LENGTH_SHORT).show();
+            user.setMyID(uid);
         }
 
         /*Ask the permission to read the images*/

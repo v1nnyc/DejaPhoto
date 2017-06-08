@@ -103,6 +103,13 @@
             android:enabled="true"
             android:exported="true"></service>
 
+        <service
+            android:name=".fireBaseHandler">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.example.android.fileprovider"
