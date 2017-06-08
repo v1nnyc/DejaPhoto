@@ -53,9 +53,6 @@ public class MainActivity extends AppCompatActivity {
     private Boolean isBound;
     private boolean mReturningWithResult = false;
 
-    String mCurrentPhotoPath;
-    static final int REQUEST_TAKE_PHOTO = 1;
-
     /* This will tell the different between choose or release, 1 is for choose, 0 for release*/
     final int CAPTURE_PICTURE = 2;
     static final int PICK_CHOOSE = 1;
@@ -161,10 +158,13 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == Activity.RESULT_OK) {
                     Bitmap bmp = (Bitmap) data.getExtras().get("data");
                     Savefile(bmp);
+                    defaultGallery = new Default_Gallery();
+                    defaultGallery.Load_All(getContext());
+                    Log.v("Number of photo beinng loaded", Integer.toString(defaultGallery.get_photos()));
+                    json = gson.toJson(defaultGallery);
+                    sharedPreferences.edit().putString("Gallery", json).apply();
                 }
-                Intent intent = new Intent(sContext, MainActivity.class);
-                startActivity(intent);
-                break;
+                return;
             }
             case PICK_CHOOSE: {
                 if (data != null) {
@@ -174,9 +174,7 @@ public class MainActivity extends AppCompatActivity {
                     Uri uri = data.getData();
                     Log.v("Choosed Path", uri.getPath());
                 }
-                Intent intent = new Intent(sContext, MainActivity.class);
-                startActivity(intent);
-                break;
+                return;
             }
             case PICK_RELEASE: {
                 /*Only one picture is selected*/
@@ -214,9 +212,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 }
-                Intent intent = new Intent(sContext, MainActivity.class);
-                startActivity(intent);
-                break;
+                return;
             }
 
         }
@@ -300,9 +296,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void Savefile(Bitmap bm) {
-        String root = Environment.getExternalStorageDirectory().toString();
+        Uri internal_storage = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath());
+        String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
         Toast.makeText(sContext, ""+root, Toast.LENGTH_SHORT).show();
-        File myDir = new File(root + "/images/media");
+        //File myDir = new File(root + "/DejaPhoto");
+        File myDir = new File(root);
         myDir.mkdirs();
         Random generator = new Random();
         int n = 10000;
