@@ -87,17 +87,15 @@ public class MainActivity extends AppCompatActivity {
         Button load_image = (Button) findViewById(R.id.choose);
         /*onClick Event*/
         load_image.setOnClickListener(new View.OnClickListener() {
-                                          @Override
-                                          public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
            /*Ask user to pick a image and save its uri, make the result become intent*/
-                                              Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
               /* pass the intent with the option of choose button beign clicked*/
-                                              startActivityForResult(intent, PICK_CHOOSE);
-                                              finish();
-                                          }
-                                      }
-
-        );
+                startActivityForResult(intent, PICK_CHOOSE);
+                finish();
+            }
+        });
          /* Same thing but for the release button*/
         Button release_image = (Button) findViewById(R.id.release);
         release_image.setOnClickListener(new View.OnClickListener() {
@@ -119,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
                         android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 if (checkSelfPermission(Manifest.permission.CAMERA)
                         != PackageManager.PERMISSION_GRANTED) {
-
                     requestPermissions(new String[]{Manifest.permission.CAMERA},
                             MY_REQUEST_CODE);
                 }
@@ -134,78 +131,6 @@ public class MainActivity extends AppCompatActivity {
         //start background service
         Intent intent = new Intent(MainActivity.this, BackgroundService.class);
         startService(intent);
-    }
-
-    //this method let users select the duration of each picture being displayed
-    public void setDisplayRate() {
-    /* link to the setting page for users to set display rate */
-        ImageButton setting = (ImageButton) findViewById(R.id.setting);
-        setting.setOnClickListener(new View.OnClickListener(){
-            /* onClick Event */
-            @Override
-            public void onClick(View view){
-                /* setContentView(R.layout.rate); */
-                Intent intent = new Intent(getBaseContext(),RateActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
-
-    //this method is for users release pictures
-    public void releasePictures() {
-    /* Same thing but for the release button*/
-        Button release_image = (Button) findViewById(R.id.release);
-        release_image.setOnClickListener(new View.OnClickListener() {
-          
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_RELEASE);
-            }
-        });
-        /* link to the add friend page for users to send friend request */
-        ImageButton addFrd = (ImageButton) findViewById(R.id.addFrd);
-        addFrd.setOnClickListener(new View.OnClickListener() {
-            /* onClick Event */
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getBaseContext(), AddFrd.class);
-                startActivity(intent);
-            }
-        });
-
-        /* link to the setting page for users to set display rate */
-        ImageButton setting = (ImageButton) findViewById(R.id.setting);
-        setting.setOnClickListener(new View.OnClickListener() {
-            /* onClick Event */
-            @Override
-            public void onClick(View view) {
-                /* setContentView(R.layout.rate); */
-                Intent intent = new Intent(getBaseContext(), Setting.class);
-                startActivity(intent);
-            }
-        });
-
-        /* link to the sign in page for users to sign in */
-        ImageButton signIn = (ImageButton) findViewById(R.id.signin);
-        signIn.setOnClickListener(new View.OnClickListener() {
-            /* onClick Event */
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getBaseContext(), GoogleSignInActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        Intent intent = new Intent(MainActivity.this, BackgroundService.class);
-        startService(intent);
-    }
-    /*required for other classes to be able to access MainActivity*/
-    public static Context getContext() {
-        return sContext;
     }
 
     @Override
@@ -225,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == Activity.RESULT_OK) {
                     Bitmap bmp = (Bitmap) data.getExtras().get("data");
                     Savefile(bmp);
-                        //fo = new FileOutputStream(new File(Environment.getExternalStorageDirectory() + "/storage/1E02-141E/Android/data/comv1nnycdejaphoto/files/Pictures"));
+                    //fo = new FileOutputStream(new File(Environment.getExternalStorageDirectory() + "/storage/1E02-141E/Android/data/comv1nnycdejaphoto/files/Pictures"));
 
                 }
                 break;
@@ -281,29 +206,80 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences.edit().putString("Gallery", json).apply();*/
 
         mReturningWithResult = true;
-        onPostResume();
-
-
+        //onPostResume();
 
     }
 
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        if (mReturningWithResult) {
-            setIntents();
-            // Commit your transactions here.
-        }
-        // Reset the boolean flag back to false for next time.
-        mReturningWithResult = false;
+    //this method let users select the duration of each picture being displayed
+    public void setDisplayRate() {
+    /* link to the setting page for users to set display rate */
+        ImageButton setting = (ImageButton) findViewById(R.id.setting);
+        setting.setOnClickListener(new View.OnClickListener(){
+            /* onClick Event */
+            @Override
+            public void onClick(View view){
+                /* setContentView(R.layout.rate); */
+                Intent intent = new Intent(getBaseContext(),RateActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
-    private void setIntents(){
-        Intent searchConstaints=new Intent();
-        searchConstaints.putExtra("min",20);
-        searchConstaints.putExtra("max",80);
-        setResult(101,searchConstaints);
-        finish();
+    //this method is for users release pictures
+    public void releasePictures() {
+    /* Same thing but for the release button*/
+        Button release_image = (Button) findViewById(R.id.release);
+        release_image.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_RELEASE);
+            }
+        });
+        /* link to the add friend page for users to send friend request */
+        ImageButton addFrd = (ImageButton) findViewById(R.id.addFrd);
+        addFrd.setOnClickListener(new View.OnClickListener() {
+            /* onClick Event */
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getBaseContext(), AddFrd.class);
+                startActivity(intent);
+            }
+        });
+
+        /* link to the setting page for users to set display rate */
+        ImageButton setting = (ImageButton) findViewById(R.id.setting);
+        setting.setOnClickListener(new View.OnClickListener() {
+            /* onClick Event */
+            @Override
+            public void onClick(View view) {
+                /* setContentView(R.layout.rate); */
+                Intent intent = new Intent(getBaseContext(), Setting.class);
+                startActivity(intent);
+            }
+        });
+
+        /* link to the sign in page for users to sign in */
+        ImageButton signIn = (ImageButton) findViewById(R.id.signin);
+        signIn.setOnClickListener(new View.OnClickListener() {
+            /* onClick Event */
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getBaseContext(), GoogleSignInActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Intent intent = new Intent(MainActivity.this, BackgroundService.class);
+        startService(intent);
+    }
+    /*required for other classes to be able to access MainActivity*/
+    public static Context getContext() {
+        return sContext;
     }
 
     public void Savefile(Bitmap bm) {
