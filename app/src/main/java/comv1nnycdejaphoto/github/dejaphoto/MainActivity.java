@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.select_album);
 
         /** get info for user if already created **/
-        Bundle bundle = getIntent().getExtras();
+        /*Bundle bundle = getIntent().getExtras();
         if(bundle != null) {
             String uid = bundle.getString("uid");
             Toast.makeText(MainActivity.this, "uid we got is:" + uid,
