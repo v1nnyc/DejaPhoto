@@ -32,7 +32,11 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -127,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
 
         });
         releasePictures();
-        setDisplayRate();
         photoPicker();
 
         //start background service
@@ -137,16 +140,16 @@ public class MainActivity extends AppCompatActivity {
     public void photoPicker(){
         Button picker = (Button) findViewById(R.id.picker);
         picker.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(View v) {
-                /*Ask user to pick a image and save its uri, make the result become intent*/
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-              /* pass the intent with the option of choose button beign clicked*/
-                startActivityForResult(intent, PICKER);
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICKER);
             }
         });
-
-
 
     }
 
@@ -185,36 +188,40 @@ public class MainActivity extends AppCompatActivity {
             /*Get the data as type of Uri*/
                     Uri uri = data.getData();
                     Log.v("Choosed Path", uri.getPath());
+                    return;
                 }
                 break;
+            }
             case PICKER:
                 if(data.getData() != null){
                     Uri uri = data.getData();
                     String filename=uri.getPath().substring(uri.getPath().lastIndexOf("/")+1);
-                    Log.v("The file name is", filename);
-                    File image = new File(uri.getPath());
-                    File dir = new File (getContext().getPackageCodePath() + "/Photos/Myself/"+filename);
                     try {
-                        FileChannel src = new FileInputStream(image).getChannel();
-                        FileChannel dst = new FileOutputStream(dir).getChannel();
-                        dst.transferFrom(src, 0, src.size());
-                        src.close();
-                        dst.close();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                        Savefile(bitmap);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    if(dir.exists())
-                        Log.v("File copy", "YES!!!");
+               }else if (data.getClipData() != null) {
+                    ClipData mClipData = data.getClipData();
 
-
+                    for (int i = 0; i < mClipData.getItemCount(); ++i) {
+                        ClipData.Item item = mClipData.getItemAt(i);
+                        Uri uri = item.getUri();
+                        Bitmap bitmap = null;
+                        try {
+                            bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Savefile(bitmap);
+                    }
                 }
 
                 break;
-            case PICK_RELEASE:
-                return;
-            }
+//            case PICK_RELEASE:
+//                return;
+//            }
             case PICK_RELEASE: {
                 /*Only one picture is selected*/
                 if (data.getData() != null) {
