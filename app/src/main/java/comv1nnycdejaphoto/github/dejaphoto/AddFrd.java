@@ -1,7 +1,9 @@
 package comv1nnycdejaphoto.github.dejaphoto;
 
+import android.*;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -44,7 +46,11 @@ public class AddFrd extends AppCompatActivity {
             @NeedsPermission(android.Manifest.permission.READ_CONTACTS)
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
-
+                if (checkSelfPermission(android.Manifest.permission.READ_CONTACTS)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{android.Manifest.permission.READ_CONTACTS},
+                            PICK_CONTACT);
+                }
                 startActivityForResult(intent, PICK_CONTACT);
 
             }

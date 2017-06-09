@@ -6,6 +6,8 @@ package comv1nnycdejaphoto.github.dejaphoto;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
@@ -51,16 +53,46 @@ public class Default_Gallery{
     private Vector<Picture> pictures = new Vector<Picture>();
     private int num_photos;
 
+    public Default_Gallery(){};
+
     public Vector<Picture> getPictures(){
         return pictures;
     }
 
+
     public void Load_All(Context context){
         Log.v("Loading","ALL");
+        load(context, "USER");
+    }
 
+    public void Load_Friend(Context context){
+        Log.v("Loading", "Friend");
+        load(context,"Friend");
+    }
+    public void load(Context context,String path){
         Geocoder decoder = new Geocoder(context);            // one time creation for location finding
-        Uri internal_storage = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath()); // storage of all photos
-        Log.v("Path of internal_storage",internal_storage.getPath());
+        Uri internal_storage = null;
+        if(path == "USER") {
+            internal_storage = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath()); // storage of all photos\
+            Log.v("Path of user", ""+internal_storage.getPath());
+        }
+        if(path == "Friend"){
+            PackageManager m = context.getPackageManager();
+            String dir = context.getPackageName();
+            PackageInfo p = null;
+            try {
+                p = m.getPackageInfo(dir, 0);
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            dir = p.applicationInfo.dataDir;
+            dir = dir + "/Photos/DejaPhotoFriends";
+            internal_storage = Uri.parse(dir);
+            Log.v("Path of friend", ""+internal_storage.getPath());
+        }
+        if(internal_storage == null){
+            Log.d("Loading Error", "Null path");
+        }
         File directory = new File(internal_storage.getPath());
         /* Filter to read only images*/
         File[] files = directory.listFiles(new FilenameFilter() {
@@ -106,6 +138,12 @@ public class Default_Gallery{
             }
         }
     }
+//    public void load(Context context, String path){
+//        Log.v("Loading","ALL");
+//
+
+//
+//    }
 
     public double conversion(String converThis,String ref){
         /* Format : xx/yy,aa/bb,cccc/dddd or something like this*/
@@ -227,9 +265,12 @@ public class Default_Gallery{
     public void readPreferences(){
         /* Read the shared preferences*/
         sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto",MODE_PRIVATE);
+        //sharedPreferences.edit().clear().apply();
         /*gson is a way to put the object into shared preferences*/
         Gson gson = new Gson();
         String json = sharedPreferences.getString("Gallery","");
+        //defaultGallery = new Default_Gallery();
+        //defaultGallery.Load_All(BackgroundService.getContext());
         defaultGallery = gson.fromJson(json, Default_Gallery.class);
         index = sharedPreferences.getInt("Index",0);
     }
