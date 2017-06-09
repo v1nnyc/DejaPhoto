@@ -7,23 +7,42 @@ package comv1nnycdejaphoto.github.dejaphoto;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.media.ExifInterface;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.google.gson.Gson;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.provider.FirebaseInitProvider;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.sql.Ref;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -36,6 +55,7 @@ import comv1nnycdejaphoto.github.dejaphoto.Picture;
 import static android.content.Context.MODE_PRIVATE;
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Integer.MIN_VALUE;
+import static java.lang.Integer.decode;
 
 /**
  * Created by Ken on 5/9/2017.
@@ -47,14 +67,196 @@ http://stackoverflow.com/questions/30777023/diplaying-all-images-from-device-ins
 public class Default_Gallery{
     Default_Gallery defaultGallery;
     boolean no_show = false;
-    SharedPreferences sharedPreferences;
+   // SharedPreferences sharedPreferences = null;
 
     int index;
     private Vector<Picture> pictures = new Vector<Picture>();
     private int num_photos;
 
+
     public Vector<Picture> getPictures(){
         return pictures;
+    }
+
+    // download each friend's array of photos then populates the friend array
+    public Default_Gallery download_Friends(User user, Context context, FirebaseDatabase data){
+        pictures = new Vector<Picture>();
+        num_photos = 0;
+        ArrayList<String> friends = user.getFriendsList(); // get the friends
+        int size = friends.size();
+
+        SharedPreferences sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto",MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        // empties out friends
+        editor.putString("Friends","" );
+        // for every friend
+        for(int i =0; i < size; i++){
+
+            // get the friend name and store it temporary
+
+            editor.putString("Temp", friends.get(i));
+
+            editor.apply();
+
+            // get database location of the friend
+            data = FirebaseDatabase.getInstance();
+            DatabaseReference ref = data.getReference(friends.get(i) + "/gallery/");
+            Query query = ref.child("");
+
+            Log.v("Starting this", "Hi");
+
+            // gets data at creation of listener and only once
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // get the json gallery
+                    String val = (String) dataSnapshot.getValue();
+                    SharedPreferences sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto",MODE_PRIVATE);
+
+                    // get the friends
+                    String friend = sharedPreferences.getString("Temp","");
+
+                    // get the array from the json gallery
+                    Gson gson = new Gson();
+                    Database_Picture[]  data_val = gson.fromJson(val, Database_Picture[].class);
+                    Log.v("Gallery of Pictures", val);
+
+                    // builds a gallery based on the json gallery (array of database photos
+                    defaultGallery = Populate_Gallery(data_val, friend);
+
+                    SharedPreferences.Editor edit = sharedPreferences.edit();
+                    if(sharedPreferences.getString("Friends", "") != ""){
+                        // create function to merge galleries
+                    }
+
+                        // converts current gallery to json to store as sharedPreference
+                    String json = gson.toJson(defaultGallery);
+                    Log.v("Gallery inputted is", json);
+                    edit.putString("Friends", json);
+                    Log.v("Finished Uploading Friends Gallery", "" + defaultGallery.get_photos());
+                    edit.apply();
+
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });/*
+            String json = sharedPreferences.getString("Temp", "");
+            Log.v("Temp what", json + "Hello");
+
+            Gson gson = new Gson();
+            Database_Picture[]  data_val = gson.fromJson(json, Database_Picture[].class);
+
+            Populate_Gallery(data_val, friends.get(i));*/
+        }
+
+        return this;
+    }
+
+    // Given an array of photos from database, stores them in a directory and puts them in current Gallery
+    public Default_Gallery Populate_Gallery(Database_Picture[] imgs, String friend){
+
+        // Placed Photos in a DCIM directory, can be changed
+        String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
+        File mydir = new File(root + "/MyFriends/");
+
+        mydir.mkdirs();
+
+        // for every database photo
+        for(int i = 0; i < imgs.length; i++){
+            // decodes the Bitmap
+            Bitmap image = decode64(imgs[i].getImage());
+
+            // Gets the directory and picture ready
+            File file = new File(mydir, friend + i);
+            Database_Picture pic = imgs[i];
+
+            if (file.exists())
+                file.delete();
+            try {
+                // puts file in directory
+                FileOutputStream out = new FileOutputStream(file);
+                image.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                out.flush();
+                out.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // basically creates new picture with the path used and copies the data
+            pictures.add(num_photos, new Picture(mydir + "/" + friend + i, pic.getDate(), pic.getTime(), pic.getLocatio()));
+            num_photos++;
+        }
+        Log.v("Populated some photos from 1 friend", "" +num_photos);
+        return this;
+    }
+
+    // encodes a bitmap in a string
+    public static String encode64(Bitmap image, Bitmap.CompressFormat compressFormat){
+        int quality = 0; // how good the picture is encoded (more blocky at lower value) goes from 0 to 100
+        ByteArrayOutputStream byteOS = new ByteArrayOutputStream();
+        image.compress(compressFormat, quality, byteOS);
+        return Base64.encodeToString(byteOS.toByteArray(), Base64.DEFAULT);
+    }
+
+    // Decodes an encoded Bitmap string back to its original format
+    public static Bitmap decode64(String compressed_bitmap){
+        byte[] Bytes = Base64.decode(compressed_bitmap, 0); // 0 is just start place/offset in array
+        return BitmapFactory.decodeByteArray(Bytes, 0, Bytes.length);
+    }
+
+
+    // Uploads user default gallery to share
+    public FirebaseDatabase upload_Gallery(User user, Context context, FirebaseDatabase data){
+        SharedPreferences sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto",MODE_PRIVATE);
+
+        // counts all the non-removed photos in album
+        int not_removed = 0;
+        for(int i = 0; i < num_photos; i++){
+            if(pictures.elementAt(i).getDisplay() == false){
+                continue;
+            }
+            not_removed++;
+        }
+
+        // only adds upto the amount of non-removed photos
+        int added = 0;
+
+        String files [] = new String[not_removed];
+        Database_Picture imgs [] = new Database_Picture[not_removed];
+        for(int i = 0; i < num_photos; i++){
+            //File file = new File(pictures.elementAt(i).getImage());
+            //files[i] = file;
+            if(pictures.elementAt(i).getDisplay() == false){
+                continue;
+            }
+
+            Bitmap image = BitmapFactory.decodeFile(pictures.elementAt(i).getImage());
+            String file = encode64(image, Bitmap.CompressFormat.JPEG );
+            files[i] = file;
+            imgs[i] = new Database_Picture(file, pictures.elementAt(i));
+            added++;
+        }
+
+        data = FirebaseDatabase.getInstance();
+        DatabaseReference ref = data.getReference(user.getName());
+        DatabaseReference temp = ref.child("/gallery");
+        String json = "";
+        Gson gson = new Gson();
+
+        json = gson.toJson(imgs, Database_Picture[].class);
+        temp.setValue(json);
+
+        temp = ref.child("/user_info");
+        ref.setValue("Update All Others");
+
+
+
+        Log.v("loaded an image", " Hello");
+        //ref.setValue(json);
+        return data;
     }
 
     public void Load_All(Context context){
@@ -203,6 +405,7 @@ public class Default_Gallery{
         wallpaper wp = new wallpaper();
         if (defaultGallery.get_photos() != 0) {
             int last = index;
+            SharedPreferences sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto",MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
 
             while ((index + 1) != last) {
@@ -228,7 +431,7 @@ public class Default_Gallery{
 
     public void readPreferences(){
         /* Read the shared preferences*/
-        sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto",MODE_PRIVATE);
+        SharedPreferences sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto",MODE_PRIVATE);
         /*gson is a way to put the object into shared preferences*/
 
         /*
@@ -236,9 +439,9 @@ public class Default_Gallery{
         String json = sharedPreferences.getString("Gallery","");
         defaultGallery = gson.fromJson(json, Default_Gallery.class);
         */
-        defaultGallery = Default_Gallery.Choose_Gallery(BackgroundService.getContext());
+        defaultGallery = Choose_Gallery(BackgroundService.getContext());
 
-        index = sharedPreferences.getInt("Index",0);
+        index = sharedPreferences.getInt("Index",1);
     }
 
     /* Used to choose one of 3 galleries we store in shared preferences */
@@ -246,15 +449,18 @@ public class Default_Gallery{
         boolean friend = false;
         boolean user = true;
         Gson gson = new Gson();
+       // Gson gson = new GsonBuilder().registerTypeAdapter(SharedPreferences.class, new InterfaceAdapter<SharedPreferences>()).create();
         SharedPreferences sharedPreference = context.getSharedPreferences("DejaPhoto",MODE_PRIVATE);
         SharedPreferences sharedPref_View = context.getSharedPreferences("ViewShareOption",MODE_PRIVATE);
         String json;
         Default_Gallery gall = null;
 
         //Log.v("Check Box Values", sharedPref_View.getString("Frd", "null") + " " + sharedPref_View.getString("View","null"));
-        friend = sharedPref_View.getString("Frd","").equals("frd");
-        user = sharedPref_View.getString("View","").equals("self");
+        friend = sharedPref_View.getBoolean("ViewFriend",false);
+        user = sharedPref_View.getBoolean("ViewMySelf",true);
         //  SharedPreferences.Editor editor = sharedPreferences.edit();
+        json = sharedPreference.getString("Gallery","");
+        gall = gson.fromJson(json, Default_Gallery.class);
 
         if(friend && user){
             //json = sharedPreference.getString("All", "");       // change names of galleries if need to
@@ -267,15 +473,18 @@ public class Default_Gallery{
             Log.v("Uploaded just user gallery", "User");
         }
         else if(friend) {
-            //json = sharedPreference.getString("Friends", "");
-            //gall = gson.fromJson(json, Default_Gallery.class);
-            Log.v("Uploaded just friend gallery", "Friend");
+            json = sharedPreference.getString("Friends", "");
+
+            gall = gson.fromJson(json, Default_Gallery.class);
+
+            Log.v("Uploaded just friend gallery", json + gall.get_photos());
         }
         else{
             Log.v("Uploaded no gallery", "None");
         }
-        json = sharedPreference.getString("Gallery","");
-        gall = gson.fromJson(json, Default_Gallery.class);
+        //json = sharedPreference.getString("Gallery","");
+        //gall = gson.fromJson(json, Default_Gallery.class);
+
         return gall;
 
     }
