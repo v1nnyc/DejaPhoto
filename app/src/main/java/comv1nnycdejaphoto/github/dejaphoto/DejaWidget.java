@@ -19,7 +19,7 @@ import java.io.File;
 import java.util.Random;
 
 import static android.content.Context.MODE_PRIVATE;
-import static comv1nnycdejaphoto.github.dejaphoto.Default_Gallery.Choose_Gallery;
+
 
 /**
  * Implementation of App Widget functionality.
@@ -228,12 +228,12 @@ public class DejaWidget extends AppWidgetProvider {
         editor = sharedPreferences.edit();
 
         /*gson is a way to put the object into shared preferences*/
-/*
+
         Gson gson = new Gson();
         String json = sharedPreferences.getString("Gallery","");
         defaultGallery = gson.fromJson(json, Default_Gallery.class);
-*/
-        defaultGallery = Choose_Gallery(context);
+
+        //defaultGallery = Choose_Gallery(context);
 
         index = sharedPreferences.getInt("Index",0);
     }

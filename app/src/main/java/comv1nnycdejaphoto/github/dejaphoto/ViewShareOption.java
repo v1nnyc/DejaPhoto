@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 /**
  * Created by ShirleyLam on 5/24/17.
@@ -34,23 +37,40 @@ public class ViewShareOption extends AppCompatActivity {
         CheckBox share = (CheckBox)findViewById(R.id.share);
         share.setChecked(sharedPreferences.getBoolean("Share", false));
 
+
         mine.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked)
-                    editor.putBoolean("ViewMySelf",true);
-                else
-                    editor.putBoolean("ViewMySelf",false);
+                if (isChecked) {
+                    if(sharedPreferences.getBoolean("ViewFriend",false))
+                        loadBoth();
+                    else
+                        loadMyself();
+                    editor.putBoolean("ViewMySelf", true);
+                }
+                else {
+                    if(sharedPreferences.getBoolean("ViewFriend",false))
+                        loadFriend();
+                    editor.putBoolean("ViewMySelf", false);
+                }
                 editor.apply();
             }
         });
         frd.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked)
-                    editor.putBoolean("ViewFriend",true);
-                else
-                    editor.putBoolean("ViewFriend",false);
+                if (isChecked) {
+                    if(sharedPreferences.getBoolean("ViewMySelf",false))
+                        loadBoth();
+                    else
+                        loadFriend();
+                    editor.putBoolean("ViewFriend", true);
+                }
+                else {
+                    if (sharedPreferences.getBoolean("ViewMySelf", false))
+                        loadMyself();
+                    editor.putBoolean("ViewFriend", false);
+                }
                 editor.apply();
             }
         });
@@ -75,14 +95,41 @@ public class ViewShareOption extends AppCompatActivity {
         finish();
     }
 
+
     @Override
     protected void onDestroy(){
         sharedPreferences = getSharedPreferences("ViewShareOption", MODE_PRIVATE);
         if(sharedPreferences.getBoolean("Share", false)){
+            loadMyself();
             upload_Gallery_Thread thread = new upload_Gallery_Thread();
             thread.start();
         }
         super.onDestroy();
     }
+
+    public void loadMyself(){
+        Gson gson = new Gson();
+        Default_Gallery defaultGallery= new Default_Gallery();
+        defaultGallery.Load_All(BackgroundService.getContext());
+        String json = gson.toJson(defaultGallery);
+        sharedPreferences.edit().putString("Gallery", json).apply();
+    }
+    public void loadFriend(){
+        Gson gson = new Gson();
+        Default_Gallery defaultGallery= new Default_Gallery();
+        defaultGallery.Load_Friend(BackgroundService.getContext());
+        String json = gson.toJson(defaultGallery);
+        sharedPreferences.edit().putString("Gallery", json).apply();
+    }
+    public void loadBoth(){
+        Gson gson = new Gson();
+        Default_Gallery defaultGallery= new Default_Gallery();
+        defaultGallery.Load_Friend(BackgroundService.getContext());
+        defaultGallery.Load_All(BackgroundService.getContext());
+        String json = gson.toJson(defaultGallery);
+        sharedPreferences.edit().putString("Gallery", json).apply();
+    }
+
+
 }
 

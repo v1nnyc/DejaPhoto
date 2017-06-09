@@ -61,7 +61,7 @@ public class BackgroundService extends Service {
 
                 /*Load the next picture by calling the gallery's method*/
                     //defaultGallery.Load_All(getContext());
-                if(defaultGallery != null) {
+                if(defaultGallery.get_photos() != 0) {
                     defaultGallery.next();
                     handler.postDelayed(this, rate * 5000);
                 }
@@ -75,6 +75,7 @@ public class BackgroundService extends Service {
 
     public void readPreferences() {
         sharedPreferences = getContext().getSharedPreferences("DejaPhoto", MODE_PRIVATE);
+        //sharedPreferences.edit().clear().apply();
         if(sharedPreferences.getBoolean("First",false) == false) {
             sharedPreferences.edit().clear().apply();
             sharedPreferences.edit().putBoolean("First",true).apply();

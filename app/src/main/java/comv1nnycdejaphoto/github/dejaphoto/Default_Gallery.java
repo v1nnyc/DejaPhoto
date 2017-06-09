@@ -6,6 +6,8 @@ package comv1nnycdejaphoto.github.dejaphoto;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -74,9 +76,13 @@ public class Default_Gallery{
     private int num_photos;
 
 
+    public Default_Gallery(){};
+
+
     public Vector<Picture> getPictures(){
         return pictures;
     }
+
 
     // download each friend's array of photos then populates the friend array
     public Default_Gallery download_Friends(User user, Context context, FirebaseDatabase data){
@@ -88,7 +94,7 @@ public class Default_Gallery{
         SharedPreferences sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto",MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         // empties out friends
-        editor.putString("Friends","" );
+        editor.putString("Gallery","" );
         // for every friend
         for(int i =0; i < size; i++){
 
@@ -125,14 +131,14 @@ public class Default_Gallery{
                     defaultGallery = Populate_Gallery(data_val, friend);
 
                     SharedPreferences.Editor edit = sharedPreferences.edit();
-                    if(sharedPreferences.getString("Friends", "") != ""){
+                    if(sharedPreferences.getString("Gallery", "") != ""){
                         // create function to merge galleries
                     }
 
                         // converts current gallery to json to store as sharedPreference
                     String json = gson.toJson(defaultGallery);
                     Log.v("Gallery inputted is", json);
-                    edit.putString("Friends", json);
+                    edit.putString("Gallery", json);
                     Log.v("Finished Uploading Friends Gallery", "" + defaultGallery.get_photos());
                     edit.apply();
 
@@ -259,12 +265,40 @@ public class Default_Gallery{
         return data;
     }
 
+
     public void Load_All(Context context){
         Log.v("Loading","ALL");
+        load(context, "USER");
+    }
 
+    public void Load_Friend(Context context){
+        Log.v("Loading", "Friend");
+        load(context,"Friend");
+    }
+    public void load(Context context,String path){
         Geocoder decoder = new Geocoder(context);            // one time creation for location finding
-        Uri internal_storage = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath()); // storage of all photos
-        Log.v("Path of internal_storage",internal_storage.getPath());
+        Uri internal_storage = null;
+        if(path == "USER") {
+            internal_storage = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath()); // storage of all photos\
+            Log.v("Path of user", ""+internal_storage.getPath());
+        }
+        if(path == "Friend"){
+            PackageManager m = context.getPackageManager();
+            String dir = context.getPackageName();
+            PackageInfo p = null;
+            try {
+                p = m.getPackageInfo(dir, 0);
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            dir = p.applicationInfo.dataDir;
+            dir = dir + "/Photos/DejaPhotoFriends";
+            internal_storage = Uri.parse(dir);
+            Log.v("Path of friend", ""+internal_storage.getPath());
+        }
+        if(internal_storage == null){
+            Log.d("Loading Error", "Null path");
+        }
         File directory = new File(internal_storage.getPath());
         /* Filter to read only images*/
         File[] files = directory.listFiles(new FilenameFilter() {
@@ -310,6 +344,12 @@ public class Default_Gallery{
             }
         }
     }
+//    public void load(Context context, String path){
+//        Log.v("Loading","ALL");
+//
+
+//
+//    }
 
     public double conversion(String converThis,String ref){
         /* Format : xx/yy,aa/bb,cccc/dddd or something like this*/
@@ -431,20 +471,25 @@ public class Default_Gallery{
 
     public void readPreferences(){
         /* Read the shared preferences*/
+
         SharedPreferences sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto",MODE_PRIVATE);
+        //sharedPreferences.edit().clear().apply();
+
         /*gson is a way to put the object into shared preferences*/
 
-        /*
+
         Gson gson = new Gson();
         String json = sharedPreferences.getString("Gallery","");
+        //defaultGallery = new Default_Gallery();
+        //defaultGallery.Load_All(BackgroundService.getContext());
         defaultGallery = gson.fromJson(json, Default_Gallery.class);
-        */
-        defaultGallery = Choose_Gallery(BackgroundService.getContext());
+
 
         index = sharedPreferences.getInt("Index",1);
     }
 
-    /* Used to choose one of 3 galleries we store in shared preferences */
+    /*
+    /* Used to choose one of 3 galleries we store in shared preferences
     public static Default_Gallery Choose_Gallery(Context context){
         boolean friend = false;
         boolean user = true;
@@ -487,7 +532,7 @@ public class Default_Gallery{
 
         return gall;
 
-    }
+    }*/
 
     public void sortByTime(){
         SimpleDateFormat simpleDateFormat =new SimpleDateFormat("hh:mm:ss");

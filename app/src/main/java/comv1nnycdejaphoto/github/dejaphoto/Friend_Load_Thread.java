@@ -48,7 +48,7 @@ public class Friend_Load_Thread extends Thread{
         String json = gson.toJson(gallery);
         Log.v("Full Gallery inputted is", json);
         // stores friend gallery
-        edit.putString("Friends", json);
+        edit.putString("Gallery", json);
         Log.v("Finished Uploading Friends Gallery", "" + gallery.get_photos());
 
         // need to create an all gallery that merges Friend and Default Gallery
