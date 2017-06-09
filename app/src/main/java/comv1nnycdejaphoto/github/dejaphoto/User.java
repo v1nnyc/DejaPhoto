@@ -14,12 +14,10 @@ public class User {
     private ArrayList<String> friendsList;
 
     public User(){
-
         //IDK how to use googleSigninActivity
         //but this should be the email we sign in with
-
-
     }
+
 
     /** getters and setters **/
     public void setMyID(String n){

@@ -165,9 +165,22 @@ public class Default_Gallery{
     // Given an array of photos from database, stores them in a directory and puts them in current Gallery
     public Default_Gallery Populate_Gallery(Database_Picture[] imgs, String friend){
 
+        PackageManager m = BackgroundService.getContext().getPackageManager();
+        String path = BackgroundService.getContext().getPackageName();
+        Uri uri = null;
+        PackageInfo p = null;
+        try {
+            p = m.getPackageInfo(path, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        path = p.applicationInfo.dataDir;
+        path = path + "/Photos/DejaPhotoFriends";
+        uri = Uri.parse(path);
+
         // Placed Photos in a DCIM directory, can be changed
-        String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
-        File mydir = new File(root + "/MyFriends/");
+        //String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
+        File mydir = new File(path);
 
         mydir.mkdirs();
 

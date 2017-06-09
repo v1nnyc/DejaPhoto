@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     static final int PICK_RELEASE = 0;
     static final int MY_REQUEST_CODE = 3;
     static final int PICKER = 4;
+    static final int GOOGLE_ACCOUNT = 5;
 
 
 
@@ -185,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
             }
             case PICK_CHOOSE: {
                 if (data != null) {
+
                     //TODO  choose album
                     /*https://stackoverflow.com/questions/5309190/android-pick-images-from-gallery*/
             /*Get the data as type of Uri*/

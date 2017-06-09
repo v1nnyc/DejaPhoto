@@ -18,6 +18,8 @@
 package comv1nnycdejaphoto.github.dejaphoto;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -33,6 +35,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.plus.Plus;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -40,6 +43,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.gson.Gson;
 
 /**
  * Demonstrate Firebase Authentication using a Google ID Token.
@@ -90,6 +94,13 @@ public class GoogleSignInActivity extends BaseActivity implements
 
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
+        User user = new User();
+        user.setMyName(mAuth.getCurrentUser().getDisplayName());
+        Log.i("FIREBASE display Name", ""+ mAuth.getCurrentUser().getDisplayName());
+        Gson gson = new Gson();
+        String json = gson.toJson(user);
+        SharedPreferences sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto", MODE_PRIVATE);
+        sharedPreferences.edit().putString("User",json).apply();
         // [END initialize_auth]
     }
 
