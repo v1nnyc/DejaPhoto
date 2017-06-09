@@ -28,6 +28,21 @@ public class ViewShareOption extends AppCompatActivity {
         CheckBox frd = (CheckBox)findViewById(R.id.viewFrds);
         CheckBox share = (CheckBox)findViewById(R.id.share);
 
+        if(sharedPreferences.getBoolean("ViewMyself",true) == true)
+            mine.setChecked(true);
+        else
+            mine.setChecked(false);
+
+        if(sharedPreferences.getBoolean("ViewFriend",false) == true)
+            frd.setChecked(true);
+        else
+            frd.setChecked(false);
+
+        if(sharedPreferences.getBoolean("Share",false) == true)
+            share.setChecked(true);
+        else
+            share.setChecked(false);
+
         mine.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -68,5 +83,6 @@ public class ViewShareOption extends AppCompatActivity {
         startActivity(new Intent(this, Setting.class));
         finish();
     }
+
 }
 
