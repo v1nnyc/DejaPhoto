@@ -28,7 +28,7 @@ public class ViewShareOption extends AppCompatActivity {
         CheckBox frd = (CheckBox)findViewById(R.id.viewFrds);
         CheckBox share = (CheckBox)findViewById(R.id.share);
 
-        if(sharedPreferences.getBoolean("ViewMyself",true) == true)
+        if(sharedPreferences.getBoolean("ViewMySelf",true) == true)
             mine.setChecked(true);
         else
             mine.setChecked(false);
