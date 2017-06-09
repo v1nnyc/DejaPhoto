@@ -10,6 +10,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.Image;
@@ -67,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         sContext = getApplicationContext();
         super.onCreate(savedInstanceState);
+
+
         /* Check is the photo directory exist, if not, create them*/
         if(checkFolderExist(sContext))
             Log.v("File:","Exist");
@@ -332,7 +335,18 @@ public class MainActivity extends AppCompatActivity {
         Uri internal_storage = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath());
         //String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
         //File myDir = new File(root + "/DejaPhoto");
-        String root = getContext().getPackageCodePath() + "/Photos/" + directory;
+        //String root = getContext().getPackageCodePath() + "/Photos/" + directory;
+        PackageManager m = getPackageManager();
+        String root = getPackageName();
+        PackageInfo p = null;
+        try {
+            p = m.getPackageInfo(root, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        root = p.applicationInfo.dataDir;
+        root = root + "/Photos/"+directory;
+        Log.i("Save file to",""+root);
         File myDir = new File(root);
         myDir.mkdirs();
         Random generator = new Random();
@@ -351,6 +365,8 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if(file.exists())
+            Log.i("Saved file", "Created");
     }
 
     /*Get from piazza, original from codepath :
@@ -381,8 +397,18 @@ public class MainActivity extends AppCompatActivity {
 
     /*Check is the photo directory within app exists, return true if exist*/
     public boolean checkFolderExist(Context context){
-        String path = context.getPackageCodePath() + "/Photos";
-        File photo_path = new File(path);
+        PackageManager m = getPackageManager();
+        String s = getPackageName();
+        PackageInfo p = null;
+        try {
+            p = m.getPackageInfo(s, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        s = p.applicationInfo.dataDir;
+        Log.i("App Dir",""+ s);
+        s = s +"/Photos";
+        File photo_path = new File(s);
         if(photo_path.exists())
             return true;
         else
@@ -416,7 +442,17 @@ public class MainActivity extends AppCompatActivity {
 
     /*Called if directories does not exists, create them*/
     public void createDirectory(Context context){
-        String path = context.getPackageCodePath() + "/Photos";
+        PackageManager m = getPackageManager();
+        String path = getPackageName();
+        PackageInfo p = null;
+        try {
+            p = m.getPackageInfo(path, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        path = p.applicationInfo.dataDir;
+        path = path + "/Photos";
+        //String path = context.getPackageCodePath() + "/Photos";
         File photo_path = new File(path);
         if(photo_path.mkdir())
             Log.v("Create Directory Photos","Failed");
