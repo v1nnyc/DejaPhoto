@@ -13,7 +13,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.net.Uri;
@@ -33,13 +32,11 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Random;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -59,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
     static final int PICK_RELEASE = 0;
     static final int MY_REQUEST_CODE = 3;
     static final int PICKER = 4;
+
+
 
     //constructor
     public MainActivity() {
