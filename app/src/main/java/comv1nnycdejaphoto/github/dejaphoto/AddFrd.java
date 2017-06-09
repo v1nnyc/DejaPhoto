@@ -1,5 +1,6 @@
 package comv1nnycdejaphoto.github.dejaphoto;
 
+import android.*;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
