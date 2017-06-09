@@ -4,6 +4,7 @@ package tests;
 import android.app.Instrumentation;
 import android.support.test.annotation.UiThreadTest;
 import android.support.test.rule.ActivityTestRule;
+import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -12,9 +13,12 @@ import android.widget.TextView;
 import org.junit.Rule;
 import org.junit.Test;
 
+import comv1nnycdejaphoto.github.dejaphoto.AddFrd;
+import comv1nnycdejaphoto.github.dejaphoto.GoogleSignInActivity;
 import comv1nnycdejaphoto.github.dejaphoto.MainActivity;
 import comv1nnycdejaphoto.github.dejaphoto.R;
 import comv1nnycdejaphoto.github.dejaphoto.RateActivity;
+import comv1nnycdejaphoto.github.dejaphoto.ViewShareOption;
 
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
@@ -29,12 +33,19 @@ import static junit.framework.Assert.assertTrue;
  */
 
 
-class JUnitTest {
+public class JUnitTest {
 
     @Rule
-    public ActivityTestRule<MainActivity> mainActivity = new ActivityTestRule<MainActivity>(MainActivity.class);
+    public ActivityTestRule<MainActivity> mainActivity = new ActivityTestRule<>(MainActivity.class);
     @Rule
-    public ActivityTestRule<RateActivity> RateActivity = new ActivityTestRule<RateActivity>(RateActivity.class);
+    public ActivityTestRule<RateActivity> RateActivity = new ActivityTestRule<>(RateActivity.class);
+    @Rule
+    public ActivityTestRule<ViewShareOption> viewShareOption = new ActivityTestRule<>(ViewShareOption.class);
+    @Rule
+    public ActivityTestRule<AddFrd> addFrd = new ActivityTestRule<>(AddFrd.class);
+    @Rule
+    public ActivityTestRule<GoogleSignInActivity> signIn = new ActivityTestRule<>(GoogleSignInActivity.class);
+
 
     /* test on the start screen Choose Album button */
     @Test
@@ -190,5 +201,82 @@ class JUnitTest {
         });
         String value = radioButton.getText().toString();
         assertEquals("Week", value);
+    }
+
+    @Test
+    public void testViewMyselfButton() {
+        Button button = (Button) viewShareOption.getActivity().findViewById(R.id.viewMine);
+        String value = button.getText().toString();
+        assertEquals("ViewMySelf", value);
+    }
+
+    @Test
+    public void testViewFrdButton() {
+        Button button = (Button) viewShareOption.getActivity().findViewById(R.id.viewFrds);
+        String value = button.getText().toString();
+        assertEquals("ViewFrd", value);
+    }
+
+    @Test
+    public void testShareButton() {
+        Button button = (Button) viewShareOption.getActivity().findViewById(R.id.share);
+        String value = button.getText().toString();
+        assertEquals("Share", value);
+    }
+
+    @Test
+    public void testPhotoPickerButton() {
+        Button button = (Button) mainActivity.getActivity().findViewById(R.id.picker);
+        button.performClick();
+        String value = button.getText().toString();
+        assertEquals("Photos Picker", value);
+    }
+
+    @Test
+    public void testAddFriendButton() throws Throwable {
+        // register next activity that need to be monitored.
+        Instrumentation.ActivityMonitor activityMonitor = getInstrumentation().addMonitor
+                (AddFrd.class.getName(), null, false);
+
+        // open current activity.
+        final Button button = (Button) mainActivity.getActivity().findViewById(R.id.addFrd);
+        mainActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // click button and open next activity.
+                button.performClick();
+            }
+        });
+
+        //Watch for the timeout
+        AddFrd add = (AddFrd) getInstrumentation().waitForMonitorWithTimeout(activityMonitor, 5000);
+
+        // next activity is opened and captured.
+        assertNotNull(add);
+        add.finish();
+    }
+
+    @Test
+    public void testSignInButton() throws Throwable {
+        // register next activity that need to be monitored.
+        Instrumentation.ActivityMonitor activityMonitor = getInstrumentation().addMonitor
+                (GoogleSignInActivity.class.getName(), null, false);
+
+        // open current activity.
+        final Button button = (Button) mainActivity.getActivity().findViewById(R.id.signin);
+        mainActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // click button and open next activity.
+                button.performClick();
+            }
+        });
+
+        //Watch for the timeout
+        GoogleSignInActivity googleSignIn = (GoogleSignInActivity) getInstrumentation().waitForMonitorWithTimeout(activityMonitor, 5000);
+
+        // next activity is opened and captured.
+        assertNotNull(googleSignIn);
+        googleSignIn.finish();
     }
 }
