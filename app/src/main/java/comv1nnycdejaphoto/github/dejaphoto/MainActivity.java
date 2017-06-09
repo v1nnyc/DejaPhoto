@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
             case CAPTURE_PICTURE: {
                 if (resultCode == Activity.RESULT_OK) {
                     Bitmap bmp = (Bitmap) data.getExtras().get("data");
-                    Savefile(getResizedBitmap(bmp));
+                    Savefile(getResizedBitmap(bmp), "DejaPhoto");
                     defaultGallery = new Default_Gallery();
                     defaultGallery.Load_All(getContext());
                     Log.v("Number of photo beinng loaded", Integer.toString(defaultGallery.get_photos()));
@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                     String filename=uri.getPath().substring(uri.getPath().lastIndexOf("/")+1);
                     try {
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-                        Savefile(bitmap);
+                        Savefile(bitmap, "DejaPhotoCopied");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        Savefile(bitmap);
+                        Savefile(bitmap, "DejaPhotoCopied");
                     }
                 }
 
@@ -328,10 +328,11 @@ public class MainActivity extends AppCompatActivity {
         return sContext;
     }
 
-    public void Savefile(Bitmap bm) {
+    public void Savefile(Bitmap bm, String directory) {
         Uri internal_storage = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath());
-        String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
+        //String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
         //File myDir = new File(root + "/DejaPhoto");
+        String root = getContext().getPackageCodePath() + "/Photos/" + directory;
         File myDir = new File(root);
         myDir.mkdirs();
         Random generator = new Random();
@@ -421,21 +422,21 @@ public class MainActivity extends AppCompatActivity {
             Log.v("Create Directory Photos","Failed");
         else
             Log.v("Create Directory Photos","Success");
-        photo_path = new File(path + "/MyFriends");
+        photo_path = new File(path + "/DejaPhotoCopied");
         if(photo_path.mkdir())
-            Log.v("Create Directory MyFriends","Failed");
+            Log.v("Create Directory DejaPhotoCopied","Failed");
         else
-            Log.v("Create Directory MyFriends","Success");
-        photo_path = new File(path + "/MyFriendsAndMe");
+            Log.v("Create Directory DejaPhotoCopied","Success");
+        photo_path = new File(path + "/DejaPhotoFriends");
         if(photo_path.mkdir())
-            Log.v("Create Directory MyFriendsAndMe","Failed");
+            Log.v("Create Directory DejaPhotoFriends","Failed");
         else
-            Log.v("Create Directory MyFriendsAndMe","Success");
-        photo_path = new File(path + "/Myself");
+            Log.v("Create Directory DejaPhotoFriends","Success");
+        photo_path = new File(path + "/DejaPhoto");
         if(photo_path.mkdir())
-            Log.v("Create Directory Myself","Failed");
+            Log.v("Create Directory DejaPhoto","Failed");
         else
-            Log.v("Create Directory Myself","Success");
+            Log.v("Create Directory DejaPhoto","Success");
     }
 }
 
