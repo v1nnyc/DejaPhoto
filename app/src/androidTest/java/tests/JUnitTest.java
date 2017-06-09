@@ -33,18 +33,18 @@ import static junit.framework.Assert.assertTrue;
  */
 
 
-class JUnitTest {
+public class JUnitTest {
 
     @Rule
-    public ActivityTestRule<MainActivity> mainActivity = new ActivityTestRule<MainActivity>(MainActivity.class);
+    public ActivityTestRule<MainActivity> mainActivity = new ActivityTestRule<>(MainActivity.class);
     @Rule
-    public ActivityTestRule<RateActivity> RateActivity = new ActivityTestRule<RateActivity>(RateActivity.class);
+    public ActivityTestRule<RateActivity> RateActivity = new ActivityTestRule<>(RateActivity.class);
     @Rule
-    public ActivityTestRule<ViewShareOption> viewShareOption = new ActivityTestRule<ViewShareOption>(ViewShareOption.class);
+    public ActivityTestRule<ViewShareOption> viewShareOption = new ActivityTestRule<>(ViewShareOption.class);
     @Rule
-    public ActivityTestRule<AddFrd> addFrd = new ActivityTestRule<AddFrd>(AddFrd.class);
+    public ActivityTestRule<AddFrd> addFrd = new ActivityTestRule<>(AddFrd.class);
     @Rule
-    public ActivityTestRule<GoogleSignInActivity> signIn = new ActivityTestRule<GoogleSignInActivity>(GoogleSignInActivity.class);
+    public ActivityTestRule<GoogleSignInActivity> signIn = new ActivityTestRule<>(GoogleSignInActivity.class);
 
 
     /* test on the start screen Choose Album button */
@@ -204,12 +204,6 @@ class JUnitTest {
     }
 
     @Test
-    public void testCameraButton() {
-        Button button = (Button) mainActivity.getActivity().findViewById(R.id.camera);
-        button.callOnClick();
-    }
-
-    @Test
     public void testViewMyselfButton() {
         Button button = (Button) viewShareOption.getActivity().findViewById(R.id.viewMine);
         String value = button.getText().toString();
@@ -233,6 +227,7 @@ class JUnitTest {
     @Test
     public void testPhotoPickerButton() {
         Button button = (Button) mainActivity.getActivity().findViewById(R.id.picker);
+        button.performClick();
         String value = button.getText().toString();
         assertEquals("Photos Picker", value);
     }
