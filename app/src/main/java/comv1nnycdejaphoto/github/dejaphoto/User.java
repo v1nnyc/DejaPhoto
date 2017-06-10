@@ -1,12 +1,17 @@
 package comv1nnycdejaphoto.github.dejaphoto;
 
 
+
 import android.content.SharedPreferences;
 import android.util.Log;
+import com.google.gson.Gson;
 
+import android.support.v7.app.AppCompatActivity;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.gson.Gson;
+import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,6 +21,7 @@ import static android.content.Context.MODE_PRIVATE;
 /**
  * Created by VINCENT on 5/31/17.
  */
+
 
 public class User {
     private String myID = null;
@@ -48,7 +54,7 @@ public class User {
 
     /** use the id of a user to find them on firebase and send a request
      * does not add user to list of friends until they accept
-     * @param id - id of user to send request to
+     * @param email - id of user to send request to
      * @return whether the id was found on firebase
      */
     public void sendRequest(String id) {
@@ -80,6 +86,7 @@ public class User {
         Gson gson = new Gson();
         galleryJson = gson.toJson(gallery);
         myGallery = gallery;
+
     }
 
     /** receives friend request and accepts

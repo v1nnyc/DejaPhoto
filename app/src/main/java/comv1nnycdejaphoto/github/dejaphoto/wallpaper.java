@@ -20,7 +20,7 @@ import android.view.Display;
 import android.view.WindowManager;
 
 
-public class wallpaper extends Activity {
+public class wallpaper extends Activity implements Iwallpaper{
 
     private BackgroundService ma = new BackgroundService();
 
