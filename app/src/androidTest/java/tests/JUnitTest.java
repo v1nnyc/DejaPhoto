@@ -52,7 +52,7 @@ public class JUnitTest {
 
     /* test on the start screen Choose Album button */
     @Test
-    public void test1() throws Throwable {
+    public void testChooseButton() throws Throwable {
         final Button button = (Button) mainActivity.getActivity().findViewById(R.id.choose);
 
         mainActivity.runOnUiThread(new Runnable() {
@@ -67,7 +67,7 @@ public class JUnitTest {
 
     /* test on the start screen Realse button */
     @Test
-    public void test2() throws Throwable {
+    public void testReleaseButton() throws Throwable {
         final Button button = (Button) mainActivity.getActivity().findViewById(R.id.release);
 
         mainActivity.runOnUiThread(new Runnable() {
@@ -79,11 +79,11 @@ public class JUnitTest {
 
         assertEquals(button.callOnClick(), true);
     }
-    
+
 
     /* test on the start screen Setting button */
     @Test
-    public void test3() throws Throwable {
+    public void testSettingButton() throws Throwable {
         final ImageButton button = (ImageButton) mainActivity.getActivity().findViewById(R.id.setting);
 
         mainActivity.runOnUiThread(new Runnable() {
@@ -98,7 +98,7 @@ public class JUnitTest {
 
     /* test if clicking the setting button is going to the correct activity */
     @Test
-    public void test4() throws Throwable {
+    public void testSettingButtonActivity() throws Throwable {
         // register next activity that need to be monitored.
         Instrumentation.ActivityMonitor activityMonitor = getInstrumentation().addMonitor
                 (RateActivity.class.getName(), null, false);
@@ -113,17 +113,12 @@ public class JUnitTest {
             }
         });
 
-        //Watch for the timeout
-        RateActivity rateActivity = (RateActivity) getInstrumentation().waitForMonitorWithTimeout(activityMonitor, 5000);
-
-        // next activity is opened and captured.
-        assertNotNull(rateActivity);
-        rateActivity.finish();
+        assertEquals(button.callOnClick(), true);
     }
 
     /* test whether the TextView defined in the layout has Display Rate */
     @Test
-    public void test5() {
+    public void testDisplayRate() {
         TextView textView = (TextView) RateActivity.getActivity().findViewById(R.id.textView);
         String value = textView.getText().toString();
         assertEquals("Display Rate", value);
@@ -131,7 +126,7 @@ public class JUnitTest {
 
     /* test whether the TextView defined in the layout has Display Mode */
     @Test
-    public void test6(){
+    public void testDisplayMode(){
         TextView textView = (TextView) RateActivity.getActivity().findViewById(R.id.mode);
         String value = textView.getText().toString();
         assertEquals("Display Mode", value);
@@ -139,7 +134,7 @@ public class JUnitTest {
 
     /* test whether the TextView defined in the layout has 5 sec */
     @Test
-    public void test7() {
+    public void testDisplayDurationMin() {
         TextView textView = (TextView) RateActivity.getActivity().findViewById(R.id.min);
         String value = textView.getText().toString();
         assertEquals("5 sec", value);
@@ -147,27 +142,15 @@ public class JUnitTest {
 
     /* test whether the TextView defined in the layout has 1 min */
     @Test
-    public void test8() {
+    public void testDisplayDurationMax() {
         TextView textView = (TextView) RateActivity.getActivity().findViewById(R.id.max);
         String value = textView.getText().toString();
         assertEquals("1 min", value);
     }
 
-    /* test if the first radio button is checked */
-    @Test
-    public void test9() throws Exception {
-        RadioButton radioButton = (RadioButton) RateActivity.getActivity().findViewById(R.id.time);
-        //assertTrue("The first radio button should be checked", radioButton.isChecked());
-        assertEquals(radioButton.callOnClick(), true);
-
-        RadioGroup radioGroup = (RadioGroup) RateActivity.getActivity().findViewById(R.id.radioGroup);
-        assertEquals("The first radio button should be checked", R.id.time,
-                radioGroup.getCheckedRadioButtonId());
-    }
-
     /* test if the second radio button is checked */
     @Test
-    public void test10() throws Throwable {
+    public void testDayCheckbox() throws Throwable {
         final RadioButton radioButton = (RadioButton) RateActivity.getActivity().findViewById(R.id.day);
         RateActivity.runOnUiThread(new Runnable() {
             @Override
@@ -181,7 +164,7 @@ public class JUnitTest {
 
     /* test if the third radio button is checked */
     @Test
-    public void test11() throws Throwable {
+    public void testWeekCheckbox() throws Throwable {
         final RadioButton radioButton = (RadioButton) RateActivity.getActivity().findViewById(R.id.week);
         RateActivity.runOnUiThread(new Runnable() {
             @Override
@@ -195,7 +178,7 @@ public class JUnitTest {
 
     /* check if the radio button option is correct for the first button */
     @Test
-    public void test12() {
+    public void testTimeButton() {
         RadioButton radioButton = (RadioButton) RateActivity.getActivity().findViewById(R.id.time);
         String value = radioButton.getText().toString();
         assertEquals("Time", value);
@@ -203,7 +186,7 @@ public class JUnitTest {
 
     /* check if the radio button option is correct for the second button */
     @Test
-    public void test13() throws Throwable{
+    public void testDayButton() throws Throwable{
         final RadioButton radioButton = (RadioButton) RateActivity.getActivity().findViewById(R.id.day);
         RateActivity.runOnUiThread(new Runnable() {
             @Override
@@ -218,7 +201,7 @@ public class JUnitTest {
 
     /* check if the radio button option is correct for the third button */
     @Test
-    public void test14() throws Throwable {
+    public void testWeekButton() throws Throwable {
         final RadioButton radioButton = (RadioButton) RateActivity.getActivity().findViewById(R.id.week);
         RateActivity.runOnUiThread(new Runnable() {
             @Override
@@ -256,10 +239,10 @@ public class JUnitTest {
     public void testPhotoPickerButton() throws Throwable {
         final Button button = (Button) mainActivity.getActivity().findViewById(R.id.picker);
         mainActivity.runOnUiThread(new Runnable() {
-               @Override
-               public void run() {
-                   button.performClick();
-               }
+            @Override
+            public void run() {
+                button.performClick();
+            }
         });
 
         String value = button.getText().toString();
