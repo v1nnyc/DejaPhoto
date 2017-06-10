@@ -3,6 +3,7 @@ package comv1nnycdejaphoto.github.dejaphoto;
 import android.*;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -28,6 +31,7 @@ import static android.provider.ContactsContract.Contacts;
 @RuntimePermissions
 public class AddFrd extends AppCompatActivity {
 
+    SharedPreferences sharedPreferences;
     User user = new User();
 
     private final int PICK_CONTACT=1;
@@ -39,6 +43,8 @@ public class AddFrd extends AppCompatActivity {
         Button connect = (Button)findViewById(R.id.connect);
         Button request = (Button)findViewById(R.id.request);
         final EditText email = (EditText)findViewById(R.id.email);
+
+        readPreferences();
         connect.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -51,7 +57,6 @@ public class AddFrd extends AppCompatActivity {
                             PICK_CONTACT);
                 }
                 startActivityForResult(intent, PICK_CONTACT);
-
             }
 
         });
@@ -59,7 +64,10 @@ public class AddFrd extends AppCompatActivity {
         request.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                user.sendRequest(email.getText().toString());
+                if(sharedPreferences.getString("User","") != ""){
+                    Log.v("Add freind", "Going to send Request");
+                    user.sendRequest(email.getText().toString());
+                }
             }
         });
 
@@ -99,6 +107,21 @@ public class AddFrd extends AppCompatActivity {
         super.onBackPressed();
         startActivity(new Intent(this, MainActivity.class));
         finish();
+    }
+
+    public void readPreferences() {
+        Gson gson = new Gson();
+        sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto", MODE_PRIVATE);
+        String json = sharedPreferences.getString("User","");
+        if(json == ""){
+            Log.d("Json fro user in add friend ", "Not found");
+            return;
+        }
+        else{
+            user = gson.fromJson(json, User.class);
+        }
+
+
     }
 
 
