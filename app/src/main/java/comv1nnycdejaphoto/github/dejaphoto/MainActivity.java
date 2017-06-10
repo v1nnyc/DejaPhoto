@@ -10,8 +10,8 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -19,9 +19,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
@@ -33,17 +31,12 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Random;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -62,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
     static final int PICK_CHOOSE = 1;
     static final int PICK_RELEASE = 0;
     static final int MY_REQUEST_CODE = 3;
+    static final int PICKER = 4;
+
+
 
     //constructor
     public MainActivity() {
@@ -71,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         sContext = getApplicationContext();
         super.onCreate(savedInstanceState);
+
+
         /* Check is the photo directory exist, if not, create them*/
         if(checkFolderExist(sContext))
             Log.v("File:","Exist");
@@ -127,11 +125,26 @@ public class MainActivity extends AppCompatActivity {
 
         });
         releasePictures();
-        setDisplayRate();
+        photoPicker();
 
         //start background service
         Intent intent = new Intent(MainActivity.this, BackgroundService.class);
         startService(intent);
+    }
+    public void photoPicker(){
+        Button picker = (Button) findViewById(R.id.picker);
+        picker.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICKER);
+            }
+        });
+
     }
 
     @Override
@@ -153,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
             case CAPTURE_PICTURE: {
                 if (resultCode == Activity.RESULT_OK) {
                     Bitmap bmp = (Bitmap) data.getExtras().get("data");
-                    Savefile(getResizedBitmap(bmp));
+                    Savefile(getResizedBitmap(bmp), "DejaPhoto");
                     defaultGallery = new Default_Gallery();
                     defaultGallery.Load_All(getContext());
                     Log.v("Number of photo beinng loaded", Integer.toString(defaultGallery.get_photos()));
@@ -169,9 +182,40 @@ public class MainActivity extends AppCompatActivity {
             /*Get the data as type of Uri*/
                     Uri uri = data.getData();
                     Log.v("Choosed Path", uri.getPath());
+                    return;
                 }
-                return;
+                break;
             }
+            case PICKER:
+                if(data.getData() != null){
+                    Uri uri = data.getData();
+                    String filename=uri.getPath().substring(uri.getPath().lastIndexOf("/")+1);
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                        Savefile(bitmap, "DejaPhotoCopied");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+               }else if (data.getClipData() != null) {
+                    ClipData mClipData = data.getClipData();
+
+                    for (int i = 0; i < mClipData.getItemCount(); ++i) {
+                        ClipData.Item item = mClipData.getItemAt(i);
+                        Uri uri = item.getUri();
+                        Bitmap bitmap = null;
+                        try {
+                            bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Savefile(bitmap, "DejaPhotoCopied");
+                    }
+                }
+
+                break;
+//            case PICK_RELEASE:
+//                return;
+//            }
             case PICK_RELEASE: {
                 /*Only one picture is selected*/
                 if (data.getData() != null) {
@@ -219,20 +263,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //this method let users select the duration of each picture being displayed
-    public void setDisplayRate() {
-    /* link to the setting page for users to set display rate */
-        ImageButton setting = (ImageButton) findViewById(R.id.setting);
-        setting.setOnClickListener(new View.OnClickListener(){
-            /* onClick Event */
-            @Override
-            public void onClick(View view){
-                /* setContentView(R.layout.rate); */
-                Intent intent = new Intent(getBaseContext(),RateActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
+
 
     //this method is for users release pictures
     public void releasePictures() {
@@ -291,11 +322,22 @@ public class MainActivity extends AppCompatActivity {
         return sContext;
     }
 
-    public void Savefile(Bitmap bm) {
+    public void Savefile(Bitmap bm, String directory) {
         Uri internal_storage = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath());
-        String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
-        Toast.makeText(sContext, ""+root, Toast.LENGTH_SHORT).show();
+        //String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
         //File myDir = new File(root + "/DejaPhoto");
+        //String root = getContext().getPackageCodePath() + "/Photos/" + directory;
+        PackageManager m = getPackageManager();
+        String root = getPackageName();
+        PackageInfo p = null;
+        try {
+            p = m.getPackageInfo(root, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        root = p.applicationInfo.dataDir;
+        root = root + "/Photos/"+directory;
+        Log.i("Save file to",""+root);
         File myDir = new File(root);
         myDir.mkdirs();
         Random generator = new Random();
@@ -314,6 +356,8 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if(file.exists())
+            Log.i("Saved file", "Created");
     }
 
     /*Get from piazza, original from codepath :
@@ -344,8 +388,18 @@ public class MainActivity extends AppCompatActivity {
 
     /*Check is the photo directory within app exists, return true if exist*/
     public boolean checkFolderExist(Context context){
-        String path = context.getPackageCodePath() + "/Photos";
-        File photo_path = new File(path);
+        PackageManager m = getPackageManager();
+        String s = getPackageName();
+        PackageInfo p = null;
+        try {
+            p = m.getPackageInfo(s, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        s = p.applicationInfo.dataDir;
+        Log.i("App Dir",""+ s);
+        s = s +"/Photos";
+        File photo_path = new File(s);
         if(photo_path.exists())
             return true;
         else
@@ -379,21 +433,37 @@ public class MainActivity extends AppCompatActivity {
 
     /*Called if directories does not exists, create them*/
     public void createDirectory(Context context){
-        String path = context.getPackageCodePath() + "/Photos";
+        PackageManager m = getPackageManager();
+        String path = getPackageName();
+        PackageInfo p = null;
+        try {
+            p = m.getPackageInfo(path, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        path = p.applicationInfo.dataDir;
+        path = path + "/Photos";
+        //String path = context.getPackageCodePath() + "/Photos";
         File photo_path = new File(path);
         if(photo_path.mkdir())
             Log.v("Create Directory Photos","Failed");
         else
             Log.v("Create Directory Photos","Success");
-        photo_path = new File(path + "/MyFriends");
+        photo_path = new File(path + "/DejaPhotoCopied");
         if(photo_path.mkdir())
-            Log.v("Create Directory MyFriends","Failed");
+            Log.v("Create Directory DejaPhotoCopied","Failed");
         else
-            Log.v("Create Directory MyFriends","Success");
-        photo_path = new File(path + "/MyFriendsAndMe");
+            Log.v("Create Directory DejaPhotoCopied","Success");
+        photo_path = new File(path + "/DejaPhotoFriends");
         if(photo_path.mkdir())
-            Log.v("Create Directory MyFriendsAndMe","Failed");
+            Log.v("Create Directory DejaPhotoFriends","Failed");
         else
-            Log.v("Create Directory MyFriendsAndMe","Success");
+            Log.v("Create Directory DejaPhotoFriends","Success");
+        photo_path = new File(path + "/DejaPhoto");
+        if(photo_path.mkdir())
+            Log.v("Create Directory DejaPhoto","Failed");
+        else
+            Log.v("Create Directory DejaPhoto","Success");
     }
 }
+

@@ -25,6 +25,8 @@ public class User extends AppCompatActivity{
 
         //IDK how to use googleSigninActivity
         //but this should be the email we sign in with
+
+
     }
 
     /** getters and setters **/
