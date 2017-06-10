@@ -1,9 +1,11 @@
 package tests;
 
 
+import android.app.Activity;
 import android.app.Instrumentation;
 import android.support.test.annotation.UiThreadTest;
 import android.support.test.rule.ActivityTestRule;
+import android.support.v7.widget.AppCompatImageButton;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -24,6 +26,7 @@ import comv1nnycdejaphoto.github.dejaphoto.ViewShareOption;
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.assertTrue;
 
@@ -37,7 +40,7 @@ public class JUnitTest {
 
     @Rule
     public ActivityTestRule<MainActivity> mainActivity = new ActivityTestRule<>(MainActivity.class);
-    @Rule
+    //@Rule
     public ActivityTestRule<RateActivity> RateActivity = new ActivityTestRule<>(RateActivity.class);
     @Rule
     public ActivityTestRule<ViewShareOption> viewShareOption = new ActivityTestRule<>(ViewShareOption.class);
@@ -49,14 +52,16 @@ public class JUnitTest {
 
     /* test on the start screen Choose Album button */
     @Test
-    public void test1() {
+    //GOOD
+    public void testChooseButton() {
         Button button = (Button) mainActivity.getActivity().findViewById(R.id.choose);
         button.callOnClick();
     }
 
-    /* test on the start screen Realse button */
+    /* test on the start screen Release button */
     @Test
-    public void test2() {
+    //GOOD
+    public void testReleaseButton() {
         Button button = (Button) mainActivity.getActivity().findViewById(R.id.release);
         button.callOnClick();
     }
@@ -64,20 +69,22 @@ public class JUnitTest {
 
     /* test on the start screen Setting button */
     @Test
-    public void test3() {
-        Button button = (Button) mainActivity.getActivity().findViewById(R.id.setting);
+    //GOOD
+    public void testSettingButton() {
+        AppCompatImageButton button = (AppCompatImageButton) mainActivity.getActivity().findViewById(R.id.setting);
         button.callOnClick();
     }
 
     /* test if clicking the setting button is going to the correct activity */
     @Test
-    public void test4() throws Throwable {
+    //BAD CLASS CAST EXCEPTION
+    public void testSettingButtonActivity() throws Throwable {
         // register next activity that need to be monitored.
         Instrumentation.ActivityMonitor activityMonitor = getInstrumentation().addMonitor
                 (RateActivity.class.getName(), null, false);
 
         // open current activity.
-        final Button button = (Button) mainActivity.getActivity().findViewById(R.id.setting);
+        final AppCompatImageButton button = (AppCompatImageButton) mainActivity.getActivity().findViewById(R.id.setting);
         mainActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -91,12 +98,14 @@ public class JUnitTest {
 
         // next activity is opened and captured.
         assertNotNull(rateActivity);
-        rateActivity.finish();
+        //rateActivity.finish();
     }
 
     /* test whether the TextView defined in the layout has Display Rate */
     @Test
-    public void test5() {
+    //GOOD
+    public void testDisplayRate() {
+        RateActivity = new ActivityTestRule<>(RateActivity.class);
         TextView textView = (TextView) RateActivity.getActivity().findViewById(R.id.textView);
         String value = textView.getText().toString();
         assertEquals("Display Rate", value);
@@ -104,7 +113,8 @@ public class JUnitTest {
 
     /* test whether the TextView defined in the layout has Display Mode */
     @Test
-    public void test6(){
+    //GOOD
+    public void testDisplayMode(){
         TextView textView = (TextView) RateActivity.getActivity().findViewById(R.id.mode);
         String value = textView.getText().toString();
         assertEquals("Display Mode", value);
@@ -112,7 +122,8 @@ public class JUnitTest {
 
     /* test whether the TextView defined in the layout has 5 sec */
     @Test
-    public void test7() {
+    //GOOD
+    public void testDisplayDurationMin() {
         TextView textView = (TextView) RateActivity.getActivity().findViewById(R.id.min);
         String value = textView.getText().toString();
         assertEquals("5 sec", value);
@@ -120,7 +131,8 @@ public class JUnitTest {
 
     /* test whether the TextView defined in the layout has 1 min */
     @Test
-    public void test8() {
+    //GOOD
+    public void testDisplayDurationMax() {
         TextView textView = (TextView) RateActivity.getActivity().findViewById(R.id.max);
         String value = textView.getText().toString();
         assertEquals("1 min", value);
@@ -128,7 +140,9 @@ public class JUnitTest {
 
     /* test if the first radio button is checked */
     @Test
-    public void test9() throws Exception {
+    //GOOD
+    public void testTimeCheckbox() throws Exception {
+        RateActivity = new ActivityTestRule<>(RateActivity.class);
         RadioButton radioButton = (RadioButton) RateActivity.getActivity().findViewById(R.id.time);
         assertTrue("The first radio button should be checked", radioButton.isChecked());
 
@@ -139,7 +153,8 @@ public class JUnitTest {
 
     /* test if the second radio button is checked */
     @Test
-    public void test10() throws Throwable {
+    //GOOD
+    public void testDayCheckbox() throws Throwable {
         final RadioButton radioButton = (RadioButton) RateActivity.getActivity().findViewById(R.id.day);
         RateActivity.runOnUiThread(new Runnable() {
             @Override
@@ -153,7 +168,8 @@ public class JUnitTest {
 
     /* test if the third radio button is checked */
     @Test
-    public void test11() throws Throwable {
+    //GOOD
+    public void testWeekCheckbox() throws Throwable {
         final RadioButton radioButton = (RadioButton) RateActivity.getActivity().findViewById(R.id.week);
         RateActivity.runOnUiThread(new Runnable() {
             @Override
@@ -167,7 +183,8 @@ public class JUnitTest {
 
     /* check if the radio button option is correct for the first button */
     @Test
-    public void test12() {
+    //GOOD
+    public void testTimeButton() {
         RadioButton radioButton = (RadioButton) RateActivity.getActivity().findViewById(R.id.time);
         String value = radioButton.getText().toString();
         assertEquals("Time", value);
@@ -175,7 +192,8 @@ public class JUnitTest {
 
     /* check if the radio button option is correct for the second button */
     @Test
-    public void test13() throws Throwable{
+    //GOOD
+    public void testDayButton() throws Throwable{
         final RadioButton radioButton = (RadioButton) RateActivity.getActivity().findViewById(R.id.day);
         RateActivity.runOnUiThread(new Runnable() {
             @Override
@@ -190,7 +208,8 @@ public class JUnitTest {
 
     /* check if the radio button option is correct for the third button */
     @Test
-    public void test14() throws Throwable {
+    //GOOD
+    public void testWeekButton() throws Throwable {
         final RadioButton radioButton = (RadioButton) RateActivity.getActivity().findViewById(R.id.week);
         RateActivity.runOnUiThread(new Runnable() {
             @Override
@@ -204,6 +223,7 @@ public class JUnitTest {
     }
 
     @Test
+    //GOOD
     public void testViewMyselfButton() {
         Button button = (Button) viewShareOption.getActivity().findViewById(R.id.viewMine);
         String value = button.getText().toString();
@@ -211,6 +231,7 @@ public class JUnitTest {
     }
 
     @Test
+    //GOOD
     public void testViewFrdButton() {
         Button button = (Button) viewShareOption.getActivity().findViewById(R.id.viewFrds);
         String value = button.getText().toString();
@@ -218,6 +239,7 @@ public class JUnitTest {
     }
 
     @Test
+    //GOOD
     public void testShareButton() {
         Button button = (Button) viewShareOption.getActivity().findViewById(R.id.share);
         String value = button.getText().toString();
@@ -225,6 +247,7 @@ public class JUnitTest {
     }
 
     @Test
+    //BAD CALLED FROM WRONG THREAD EXCEPTION
     public void testPhotoPickerButton() {
         Button button = (Button) mainActivity.getActivity().findViewById(R.id.picker);
         button.performClick();
@@ -233,6 +256,7 @@ public class JUnitTest {
     }
 
     @Test
+    //BAD CLASS CAST EXCEPTION
     public void testAddFriendButton() throws Throwable {
         // register next activity that need to be monitored.
         Instrumentation.ActivityMonitor activityMonitor = getInstrumentation().addMonitor
@@ -257,6 +281,7 @@ public class JUnitTest {
     }
 
     @Test
+    //BAD CLASS CAST EXCEPTION
     public void testSignInButton() throws Throwable {
         // register next activity that need to be monitored.
         Instrumentation.ActivityMonitor activityMonitor = getInstrumentation().addMonitor
