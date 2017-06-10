@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:weightSum="1">
 
     <TextView
         android:layout_width="wrap_content"
@@ -81,6 +82,19 @@
             android:text="Request"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
+
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/email"
+        android:layout_marginLeft="70dp"
+        android:text="Friend Requests"
+        android:textColor="@android:color/black"
+        android:textSize="24sp" />
+
+
 </LinearLayout>
 
