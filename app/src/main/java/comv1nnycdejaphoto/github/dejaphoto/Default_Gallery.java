@@ -269,7 +269,7 @@ public class Default_Gallery{
         temp.setValue(json);
 
         temp = ref.child("/user_info");
-        ref.setValue("Update All Others");
+        //ref.setValue("Update All Others");
 
 
 

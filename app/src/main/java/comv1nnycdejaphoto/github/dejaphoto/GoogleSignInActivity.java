@@ -43,7 +43,15 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Demonstrate Firebase Authentication using a Google ID Token.
@@ -62,11 +70,10 @@ public class GoogleSignInActivity extends BaseActivity implements
     private GoogleApiClient mGoogleApiClient;
     private TextView mStatusTextView;
     private TextView mDetailTextView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.signin );
+        setContentView(R.layout.signin);
 
         // Views
         mStatusTextView = (TextView) findViewById(R.id.status);
@@ -94,14 +101,16 @@ public class GoogleSignInActivity extends BaseActivity implements
 
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
-        User user = new User();
-        user.setMyName(mAuth.getCurrentUser().getDisplayName());
-        Log.i("FIREBASE display Name", ""+ mAuth.getCurrentUser().getDisplayName());
-        Gson gson = new Gson();
-        String json = gson.toJson(user);
-        SharedPreferences sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto", MODE_PRIVATE);
-        sharedPreferences.edit().putString("User",json).apply();
-        // [END initialize_auth]
+        if (mAuth != null) {
+            if (mAuth.getCurrentUser() != null) {
+                User user = new User();
+                user.setMyName(mAuth.getCurrentUser().getDisplayName());
+                user.setMyID("s5hui@ucsd.edu");
+                user.uploadDatabase();
+                Log.i("FIREBASE display Name", "" + mAuth.getCurrentUser().getDisplayName());
+            }
+            // [END initialize_auth]
+        }
     }
 
     // [START on_start_check_user]

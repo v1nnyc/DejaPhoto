@@ -19,13 +19,15 @@ import com.google.gson.Gson;
 public class ViewShareOption extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+    User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedPreferences = getSharedPreferences("ViewShareOption", MODE_PRIVATE);
+        readPreferences();
         editor = sharedPreferences.edit();
         setContentView(R.layout.view_share);
+
 
         // set values so checkboxes know what they were previously
         CheckBox mine = (CheckBox)findViewById(R.id.viewMine);
@@ -77,10 +79,19 @@ public class ViewShareOption extends AppCompatActivity {
         share.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked)
-                    editor.putBoolean("Share",true);
-                else
-                    editor.putBoolean("Share",false);
+                if (isChecked) {
+                    if(user == null)
+                        return;
+                    else{
+                        upload_Gallery_Thread uploadGalleryThread = new upload_Gallery_Thread();
+                        uploadGalleryThread.run();
+                    }
+                    editor.putBoolean("Share", true);
+                }
+                else {
+                    user.uploadDatabase();
+                    editor.putBoolean("Share", false);
+                }
                 editor.apply();
             }
 
@@ -128,6 +139,18 @@ public class ViewShareOption extends AppCompatActivity {
         defaultGallery.Load_All(BackgroundService.getContext());
         String json = gson.toJson(defaultGallery);
         sharedPreferences.edit().putString("Gallery", json).apply();
+    }
+    public void readPreferences() {
+        Gson gson = new Gson();
+        sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto", MODE_PRIVATE);
+        String json = sharedPreferences.getString("User","");
+        if(json == ""){
+            Log.d("Json fro user in add friend ", "Not found");
+            return;
+        }
+        else{
+            user = gson.fromJson(json, User.class);
+        }
     }
 
 
