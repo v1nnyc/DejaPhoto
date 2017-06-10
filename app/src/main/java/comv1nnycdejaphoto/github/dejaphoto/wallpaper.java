@@ -73,8 +73,8 @@ public class wallpaper extends Activity {
             paint.setColor(Color.rgb(255, 255, 0));
             paint.setTextSize(55);
             /*Draw on the bitmap*/
-            canvas.drawText(location, 10, (bitmap.getHeight() - bitmap.getHeight()/5)-55, paint);
-            canvas.drawText("Likes: " + Integer.toString(likes), 10, (bitmap.getHeight() - bitmap.getHeight()/5), paint);
+            canvas.drawText(location, 10, (bitmap.getHeight() - bitmap.getHeight()/5), paint);
+            canvas.drawText("Likes: " + Integer.toString(likes), bitmap.getWidth()-300, (bitmap.getHeight() - bitmap.getHeight()/5), paint);
             /*Change the wallpaper to the loaded bitmap*/
             WallpaperManager wallpaperManager = WallpaperManager.getInstance(context);
             wallpaperManager.setBitmap(bitmap);
