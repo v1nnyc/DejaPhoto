@@ -14,7 +14,7 @@ import java.util.Calendar;
  * Created by avery2 on 5/9/17.
  */
 
-public class Picture {
+public class Picture implements IPicture{
 
     private String path;
     private String timeTaken;
