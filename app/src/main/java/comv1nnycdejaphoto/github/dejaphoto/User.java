@@ -1,6 +1,11 @@
 package comv1nnycdejaphoto.github.dejaphoto;
 
 
+
+import android.content.SharedPreferences;
+import android.util.Log;
+import com.google.gson.Gson;
+
 import android.support.v7.app.AppCompatActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -9,33 +14,34 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by VINCENT on 5/31/17.
  */
 
-public class User extends AppCompatActivity{
-    DatabaseReference database = FirebaseDatabase.getInstance().getReferenceFromUrl("https://dejaphoto-ee08f.firebaseio.com/");
-    fireBaseHandler handler = new fireBaseHandler();
+
+public class User {
     private String myID = null;
     private String name = null;
     private ArrayList<String> friendsList;
-
+    private HashSet pending;
+    private Default_Gallery myGallery;
+    private String galleryJson = null;
     public User(){
-
         //IDK how to use googleSigninActivity
         //but this should be the email we sign in with
-
-
     }
 
+
     /** getters and setters **/
+    public void addFreind(String n){pending.add("n");}
     public void setMyID(String n){
         myID = n;
     }
-    public void setMyName(String n){
-        name = n;
-    }
+    public void setMyName(String n){name = n;}
     public String getMyID(){
         return myID;
     }
@@ -51,14 +57,36 @@ public class User extends AppCompatActivity{
      * @param email - id of user to send request to
      * @return whether the id was found on firebase
      */
-    public boolean sendRequest(String email) {
-        //find user with the id on firebase
-        Query query = database.equalTo(email);
+    public void sendRequest(String id) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference myFirebaseRef = database.getReference();
+        myFirebaseRef.child(id).child("Pending").setValue(getName());
+        Log.v("User class send Request", "SENDIONG");
+    }
+    public boolean isFriend(String n){
+        for(int i = 0; i < friendsList.size(); ++i){
+            if(pending.contains(friendsList.get(i)))
+                return true;
+        }
+        return false;
+    }
 
-            return false;
-        //send request to that id
+    public void uploadDatabase(){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference myFirebaseRef = database.getReference();
+        myFirebaseRef.child(getName()).setValue(this);
+        Gson gson= new Gson();
+        String json = gson.toJson(this);
+        SharedPreferences sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto", MODE_PRIVATE);
+        sharedPreferences.edit().putString("User", json).apply();
+        Log.v("Uploaded to DataBase", "Updated sharepref");
+    }
 
-        //return true;
+    public void setMyGallery(Default_Gallery gallery){
+        Gson gson = new Gson();
+        galleryJson = gson.toJson(gallery);
+        myGallery = gallery;
+
     }
 
     /** receives friend request and accepts

@@ -19,32 +19,26 @@ import com.google.gson.Gson;
 public class ViewShareOption extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+    User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedPreferences = getSharedPreferences("ViewShareOption", MODE_PRIVATE);
+        readPreferences();
         editor = sharedPreferences.edit();
         setContentView(R.layout.view_share);
 
+
+        // set values so checkboxes know what they were previously
         CheckBox mine = (CheckBox)findViewById(R.id.viewMine);
+        mine.setChecked(sharedPreferences.getBoolean("ViewMySelf", true));
+
         CheckBox frd = (CheckBox)findViewById(R.id.viewFrds);
+        frd.setChecked(sharedPreferences.getBoolean("ViewFriend", false));
+
         CheckBox share = (CheckBox)findViewById(R.id.share);
+        share.setChecked(sharedPreferences.getBoolean("Share", false));
 
-        if(sharedPreferences.getBoolean("ViewMySelf",true) == true)
-            mine.setChecked(true);
-        else
-            mine.setChecked(false);
-
-        if(sharedPreferences.getBoolean("ViewFriend",false) == true)
-            frd.setChecked(true);
-        else
-            frd.setChecked(false);
-
-        if(sharedPreferences.getBoolean("Share",false) == true)
-            share.setChecked(true);
-        else
-            share.setChecked(false);
 
         mine.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -85,10 +79,19 @@ public class ViewShareOption extends AppCompatActivity {
         share.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked)
-                    editor.putBoolean("Share",true);
-                else
-                    editor.putBoolean("Share",false);
+                if (isChecked) {
+                    if(user == null)
+                        return;
+                    else{
+                        upload_Gallery_Thread uploadGalleryThread = new upload_Gallery_Thread();
+                        uploadGalleryThread.run();
+                    }
+                    editor.putBoolean("Share", true);
+                }
+                else {
+                    user.uploadDatabase();
+                    editor.putBoolean("Share", false);
+                }
                 editor.apply();
             }
 
@@ -102,6 +105,19 @@ public class ViewShareOption extends AppCompatActivity {
         startActivity(new Intent(this, Setting.class));
         finish();
     }
+
+
+    @Override
+    protected void onDestroy(){
+        sharedPreferences = getSharedPreferences("ViewShareOption", MODE_PRIVATE);
+        if(sharedPreferences.getBoolean("Share", false)){
+            loadMyself();
+            upload_Gallery_Thread thread = new upload_Gallery_Thread();
+            thread.start();
+        }
+        super.onDestroy();
+    }
+
     public void loadMyself(){
         Gson gson = new Gson();
         Default_Gallery defaultGallery= new Default_Gallery();
@@ -124,6 +140,19 @@ public class ViewShareOption extends AppCompatActivity {
         String json = gson.toJson(defaultGallery);
         sharedPreferences.edit().putString("Gallery", json).apply();
     }
+    public void readPreferences() {
+        Gson gson = new Gson();
+        sharedPreferences = BackgroundService.getContext().getSharedPreferences("DejaPhoto", MODE_PRIVATE);
+        String json = sharedPreferences.getString("User","");
+        if(json == ""){
+            Log.d("Json fro user in add friend ", "Not found");
+            return;
+        }
+        else{
+            user = gson.fromJson(json, User.class);
+        }
+    }
+
 
 }
 
