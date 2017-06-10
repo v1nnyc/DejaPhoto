@@ -105,7 +105,6 @@ public class GoogleSignInActivity extends BaseActivity implements
             if (mAuth.getCurrentUser() != null) {
                 User user = new User();
                 user.setMyName(mAuth.getCurrentUser().getDisplayName());
-                user.setMyID("s5hui@ucsd.edu");
                 user.uploadDatabase();
                 Log.i("FIREBASE display Name", "" + mAuth.getCurrentUser().getDisplayName());
             }
